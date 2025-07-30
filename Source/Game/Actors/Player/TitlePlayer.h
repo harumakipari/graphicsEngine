@@ -73,7 +73,7 @@ public:
 
         SetPosition(transform.GetLocation());
         //SetQuaternionRotation(transform.GetRotation());
-        //angle = { 0.0f,160.0f,0.0f };
+        angle = { 0.0f,160.0f,0.0f };
         //DirectX::XMFLOAT3 angle = { 0.0f,40.0f,0.0f };    // ‘Î›³
         DirectX::XMVECTOR qutVec = DirectX::XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
         DirectX::XMFLOAT4 qut;

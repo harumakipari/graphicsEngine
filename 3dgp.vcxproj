@@ -384,6 +384,7 @@
     <ClInclude Include="Source\Graphics\PostProcess\Bloom.h" />
     <ClInclude Include="Source\Graphics\PostProcess\FrameBuffer.h" />
     <ClInclude Include="Source\Graphics\PostProcess\FullScreenQuad.h" />
+    <ClInclude Include="Source\Graphics\PostProcess\GBuffer.h" />
     <ClInclude Include="Source\Graphics\PostProcess\MultipleRenderTargets.h" />
     <ClInclude Include="Source\Graphics\Renderer\SceneRenderer.h" />
     <ClInclude Include="Source\Graphics\Renderer\ShapeRenderer.h" />

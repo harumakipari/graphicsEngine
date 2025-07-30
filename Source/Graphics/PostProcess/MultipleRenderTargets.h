@@ -9,7 +9,7 @@
 class MultipleRenderTargets
 {
 public:
-    MultipleRenderTargets(ID3D11Device* device, UINT width, UINT height, UINT bufferCount) :bufferCount(bufferCount)
+    MultipleRenderTargets(ID3D11Device* device, UINT width, UINT height, UINT bufferCount, const DXGI_FORMAT* formats = nullptr) :bufferCount(bufferCount)
     {
         _ASSERT_EXPR(bufferCount <= maxBufferCount, L"The maximum number of buffers has been exceded.");
 
@@ -17,6 +17,9 @@ public:
 
         for (UINT bufferIndex = 0; bufferIndex < bufferCount; ++bufferIndex)
         {
+            DXGI_FORMAT format = formats ? formats[bufferIndex] : DXGI_FORMAT_R32G32B32A32_FLOAT;
+            renderTargetFormats[bufferIndex] = format;  // •Û‘¶
+
             Microsoft::WRL::ComPtr<ID3D11Texture2D> renderTargetBuffer;
 
             D3D11_TEXTURE2D_DESC texture2dDesc = {};
@@ -24,7 +27,8 @@ public:
             texture2dDesc.Height = height;
             texture2dDesc.MipLevels = 1;
             texture2dDesc.ArraySize = 1;
-            texture2dDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  // DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R16G16B16A16FLOAT : DXGI_FORMAT_R32G32B32A332_FLOAT
+            //texture2dDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;  // DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R16G16B16A16FLOAT : DXGI_FORMAT_R32G32B32A332_FLOAT
+            texture2dDesc.Format = format;  // DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R16G16B16A16FLOAT : DXGI_FORMAT_R32G32B32A332_FLOAT
             texture2dDesc.SampleDesc.Count = 1;
             texture2dDesc.SampleDesc.Quality = 0;
             texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -166,5 +170,5 @@ private:
     D3D11_VIEWPORT catchedViewports[D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE];
     ID3D11RenderTargetView* catchedRenderTargetViews[maxBufferCount];
     ID3D11DepthStencilView* catchedDepthStencilView;
-
+    DXGI_FORMAT renderTargetFormats[maxBufferCount];
 };

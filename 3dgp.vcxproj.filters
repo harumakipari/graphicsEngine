@@ -908,6 +908,9 @@
       <Filter>Sources\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Resource\ShaderToy.h" />
+    <ClInclude Include="Source\Graphics\PostProcess\GBuffer.h">
+      <Filter>Sources\Graphics\PostProcess</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BlurPS.hlsl">

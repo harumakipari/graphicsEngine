@@ -10,6 +10,7 @@
 #include "Graphics/PostProcess/FrameBuffer.h"
 #include "Graphics/PostProcess/FullScreenQuad.h"
 #include "Graphics/PostProcess/Bloom.h"
+#include "Graphics/PostProcess/GBuffer.h"
 #include "Core/ActorManager.h"
 
 #include "Graphics/PostProcess/Bloom.h"
@@ -126,6 +127,9 @@ class BootScene : public Scene
 
     // MULTIPLE_RENDER_TARGETS
     std::unique_ptr<MultipleRenderTargets> multipleRenderTargets;
+
+    // GBUFFER
+    std::unique_ptr<GBuffer> gBufferRenderTarget;
 
     //スカイマップ
     std::unique_ptr<SkyMap> skyMap;

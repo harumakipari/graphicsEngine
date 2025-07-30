@@ -77,6 +77,9 @@ bool BootScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
     // MULTIPLE_RENDER_TARGETS
     multipleRenderTargets = std::make_unique<decltype(multipleRenderTargets)::element_type>(device, static_cast<uint32_t>(width), height, 3);
 
+    // GBUFFER
+    gBufferRenderTarget = std::make_unique<decltype(gBufferRenderTarget)::element_type>(device, static_cast<uint32_t>(width), height);
+
     //ブルーム
     bloomer = std::make_unique<Bloom>(device, static_cast<uint32_t>(width), height);
     CreatePsFromCSO(device, "./Shader/FinalPassPS.cso", pixelShaders[0].ReleaseAndGetAddressOf());
@@ -113,7 +116,7 @@ void BootScene::Start()
             titlePlayer->OnPushStart();
             mainCameraActor->OnClick();
         });
-    
+
     auto backButtonObj = objectManager.FindGameObject("BackToTitle");
     auto backButton = backButtonObj->GetComponent<Button>();
     backButton->AddOnClickEvent([&]()
@@ -134,7 +137,6 @@ void BootScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
     ActorManager::Update(deltaTime);
     EventSystem::Update(deltaTime);//追加
     objectManager.Update(deltaTime);//追加
-
 
     mainCameraActor->SetTarget(cameraTarget);
     //if (InputSystem::GetInputState("F8", InputStateMask::Trigger))
@@ -194,7 +196,7 @@ bool BootScene::OnSizeChanged(ID3D11Device* device, UINT64 width, UINT height)
 
     cascadedShadowMaps = std::make_unique<decltype(cascadedShadowMaps)::element_type>(device, 1024 * 4, 1024 * 4);
 
-     //MULTIPLE_RENDER_TARGETS
+    //MULTIPLE_RENDER_TARGETS
     multipleRenderTargets = std::make_unique<decltype(multipleRenderTargets)::element_type>(device, framebufferDimensions.cx, framebufferDimensions.cy, 3);
 
     framebuffers[0] = std::make_unique<FrameBuffer>(device, framebufferDimensions.cx, framebufferDimensions.cy, true);
@@ -291,6 +293,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     immediateContext->UpdateSubresource(constantBuffers[3].Get(), 0, 0, &spriteConstants, 0, 0);
     immediateContext->PSSetConstantBuffers(10, 1, constantBuffers[3].GetAddressOf());
 
+#if 0
     // MULTIPLE_RENDER_TARGETS
     multipleRenderTargets->Clear(immediateContext);
     multipleRenderTargets->Acticate(immediateContext);
@@ -395,7 +398,138 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[0]/*final pass*/.Get());
 
     }
+#else
 
+    gBufferRenderTarget->Clear(immediateContext);
+    gBufferRenderTarget->Acticate(immediateContext);
+
+    // MULTIPLE_RENDER_TARGETS
+    RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+
+    actorRender.RenderOpaque(immediateContext);
+    actorRender.RenderMask(immediateContext);
+    actorRender.RenderBlend(immediateContext);
+
+    gBufferRenderTarget->Deactivate(immediateContext);
+
+    // MULTIPLE_RENDER_TARGETS
+    multipleRenderTargets->Clear(immediateContext);
+    multipleRenderTargets->Acticate(immediateContext);
+
+    // SKY_MAP
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+    //skyMap->Blit(immediateContext, sceneConstants.viewProjection);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+
+    RenderState::BindSamplerStates(immediateContext);
+    RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+    //splash->Render(immediateContext, 0, 0, viewport.Width, viewport.Height);
+
+    RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+
+    // MULTIPLE_RENDER_TARGETS
+    RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+
+
+    // ここでライティングの処理
+    ID3D11ShaderResourceView* shaderResourceViews[]
+    {
+        // MULTIPLE_RENDER_TARGETS
+        gBufferRenderTarget->renderTargetShaderResourceViews[0],  //colorMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[1],   // normalMap
+    };
+    // メインフレームバッファとブルームエフェクトを組み合わせて描画
+    fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, _countof(shaderResourceViews), pixelShaders[0]/*final pass*/.Get());
+
+
+
+    multipleRenderTargets->Deactivate(immediateContext);
+
+
+    DirectX::XMFLOAT4X4 cameraView;
+    DirectX::XMFLOAT4X4 cameraProjection;
+
+    if (camera)
+    {
+        cameraView = camera->GetView();
+        cameraProjection = camera->GetProjection();
+    }
+    // CASCADED_SHADOW_MAPS
+    // Make cascaded shadow maps
+    cascadedShadowMaps->Clear(immediateContext);
+    cascadedShadowMaps->Activate(immediateContext, cameraView, cameraProjection, lightDirection, criticalDepthValue, 3/*cbSlot*/);
+    RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+    actorRender.CastShadowRender(immediateContext);
+    //gameWorld_->CastShadowRender(immediateContext);
+    cascadedShadowMaps->Deactive(immediateContext);
+
+#if 0
+    // FOG
+    {
+        framebuffers[0]->Clear(immediateContext, 0, 0, 0, 0);
+        framebuffers[0]->Activate(immediateContext);
+
+
+        RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        ID3D11ShaderResourceView* shader_resource_views[]
+        {
+            multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+            multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+            cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
+        };
+        fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[2]/*VolumetricFogPS*/.Get());
+
+        framebuffers[0]->Deactivate(immediateContext);
+    }
+
+#endif // 0
+
+    // CASCADED_SHADOW_MAPS
+    // Draw shadow to scene framebuffer
+    // FINAL_PASS
+    {
+        bloomer->bloom_intensity = bloomIntensity;
+        bloomer->bloom_extraction_threshold = bloomThreshold;
+        //ブルーム
+        RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
+        //bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
+
+        ID3D11ShaderResourceView* shader_resource_views[]
+        {
+            // MULTIPLE_RENDER_TARGETS
+            multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+            //framebuffers[1]->shaderResourceViews[0].Get(),
+            multipleRenderTargets->renderTargetShaderResourceViews[1],
+            multipleRenderTargets->renderTargetShaderResourceViews[2],
+            multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+            bloomer->shader_resource_view(),    //bloom
+            framebuffers[0]->shaderResourceViews[0].Get(),  //fog
+            cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
+        };
+        // メインフレームバッファとブルームエフェクトを組み合わせて描画
+        fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[0]/*final pass*/.Get());
+
+    }
+
+
+#endif // 0
 
     // UI描画
     {
