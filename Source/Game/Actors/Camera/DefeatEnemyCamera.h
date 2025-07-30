@@ -26,12 +26,14 @@ public:
     EasingHandler yEasing;
     EasingHandler zEasing;
 
-    void Initialize()override
+    void Initialize(/*const Transform& transform*/)override
     {
         mainCameraComponent = this->NewSceneComponent<class CameraComponent>("mainCamera");
         mainCameraComponent->SetPerspective(DirectX::XMConvertToRadians(45), Graphics::GetScreenWidth() / Graphics::GetScreenHeight(), 0.1f, 1000.0f);
         SetPosition(DirectX::XMFLOAT3(0.0f, 5.0f, -5.0f));
         SetEulerRotation(DirectX::XMFLOAT3(0.0f, 50.0f, 0.0f));
+
+        //SetPosition(transfor)
 
         SetCaemraEasing();
 

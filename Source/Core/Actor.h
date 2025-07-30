@@ -148,13 +148,14 @@ public:
 
 
     // 名前からcomponentをゲットする
+    //template <class T>
+    //std::shared_ptr<T> GetSceneComponentByName(const std::string& name)
     std::shared_ptr<SceneComponent> GetSceneComponentByName(const std::string& name)
     {
         if (name.empty())
         {
             return rootComponent_;
         }
-
 
         decltype(nameToSceneComponent_)::const_iterator nameToComponent = nameToSceneComponent_.find(name);
         if (nameToComponent != nameToSceneComponent_.end())
@@ -597,10 +598,12 @@ public:
     std::vector<std::shared_ptr<Component>> ownedLogicComponents_;
 
     // SceneComponent (Transform) 系
+    //std::vector<std::shared_ptr<Component>> ownedSceneComponents_;
     std::vector<std::shared_ptr<SceneComponent>> ownedSceneComponents_;
 
     // 名前とコンポーネントをキャッシュしておく
     std::unordered_map<std::string, std::shared_ptr<SceneComponent>> nameToSceneComponent_;
+    //std::unordered_map<std::string, std::shared_ptr<Component>> nameToSceneComponent_;
 
     // 名前とコンポーネントをキャッシュしておく
     std::unordered_map<std::string, std::shared_ptr<Component>> nameToLogicComponent_;
@@ -613,7 +616,8 @@ protected:
     // Physxに正しい位置を送るための初期か前の position の保管場所
     DirectX::XMFLOAT3 tempPosition = { 0.0f,0.0f,0.0f };
 
-
+    // オイラー角を使うかどうか
+    DirectX::XMFLOAT3 angle = { 0.0f,0.0f,0.0f };
 };
 
 static inline bool operator==(const std::shared_ptr<Actor>& actor, const std::string& name)

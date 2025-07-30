@@ -36,19 +36,20 @@ public:
     {
         // 描画用コンポーネントを追加
         skeltalMeshComponent = this->NewSceneComponent<class SkeltalMeshComponent>("skeltalComponent");
-        skeltalMeshComponent->SetModel("./Data/Models/Characters/Player/chara_animation.gltf");
+        //skeltalMeshComponent->SetModel("./Data/Models/Characters/Player/chara_animation.gltf");
+        skeltalMeshComponent->SetModel("./Data/Models/Characters/GirlSoldier/Idle.gltf");
         //skeltalMeshComponent->SetModel("./Data/Models/Characters/Player/chara_idle.gltf");
-        skeltalMeshComponent->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
-        CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelEmissionPS.cso", skeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+        //skeltalMeshComponent->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
+        //CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelEmissionPS.cso", skeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
         skeltalMeshComponent->SetIsCastShadow(false);
-        //const std::vector<std::string> animationFilenames =
-        //{
-        //    "./Data/Models/Characters/Player/result_win.gltf",
-        //    "./Data/Models/Characters/Player/chara_lose.gltf",
-        //    "./Data/Models/Characters/Player/chara_lose_idle.gltf",
-        //    "./Data/Models/Characters/Player/chara_idle_rotation.gltf",
-        //};
-        //skeltalMeshComponent->AppendAnimations(animationFilenames);
+        const std::vector<std::string> animationFilenames =
+        {
+            "./Data/Models/Characters/GirlSoldier/Emote_Slice.glb",
+            "./Data/Models/Characters/GirlSoldier/Emote_Slice.glb",
+            "./Data/Models/Characters/GirlSoldier/Jog_Fwd.glb",
+            "./Data/Models/Characters/GirlSoldier/Jog_Fwd.glb",
+        };
+        skeltalMeshComponent->AppendAnimations(animationFilenames);
         // アニメーションコントローラーを作成
         auto controller = std::make_shared<AnimationController>(skeltalMeshComponent.get());
         controller->AddAnimation("Idle", 0);
@@ -72,13 +73,13 @@ public:
 
         SetPosition(transform.GetLocation());
         //SetQuaternionRotation(transform.GetRotation());
-        angle = { 0.0f,160.0f,0.0f };
+        //angle = { 0.0f,160.0f,0.0f };
         //DirectX::XMFLOAT3 angle = { 0.0f,40.0f,0.0f };    // 対峙
         DirectX::XMVECTOR qutVec = DirectX::XMQuaternionRotationRollPitchYaw(angle.x, angle.y, angle.z);
         DirectX::XMFLOAT4 qut;
         DirectX::XMStoreFloat4(&qut, qutVec);
-        //SetQuaternionRotation(qut);
-        SetEulerRotation(angle);
+        SetQuaternionRotation(qut);
+        //SetEulerRotation(angle);
         //SetQuaternionRotation(transform.GetRotation());
         SetScale(transform.GetScale());
     }
@@ -281,8 +282,21 @@ public:
         ImGui::DragFloat3("jointOffset", &jointOffset.x, 0.01f);
         ImGui::DragFloat("degreeOffset", &c, 0.01f);
         ImGui::DragFloat("degree", &degree, 0.01f);
+        ImGui::DragFloat3("angle", &angle.x, 1.0f);
         ImGui::End();
+        DirectX::XMFLOAT3 eulerRadNew = 
+        {
+            DirectX::XMConvertToRadians(angle.x),
+            DirectX::XMConvertToRadians(angle.y),
+            DirectX::XMConvertToRadians(angle.z)
+        };
+        DirectX::XMVECTOR quatNew = DirectX::XMQuaternionRotationRollPitchYaw(
+            eulerRadNew.x, eulerRadNew.y, eulerRadNew.z
+        );
 
+        DirectX::XMFLOAT4 qNew;
+        XMStoreFloat4(&qNew, quatNew);
+        SetQuaternionRotation(qNew);
 
 #endif // USE_IMGUI
 
@@ -307,7 +321,6 @@ private:
     EasingHandler yEasing;
     float easeY = 0.0f;
 
-    DirectX::XMFLOAT3 angle = { 0.0f,0.0f,0.0f };
     float elapsedTimer = 0.0f;
     bool isFinishRotate = false;
     bool onPushBack = false;

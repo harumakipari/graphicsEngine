@@ -62,6 +62,8 @@ public:
         effectSparkComponent->SetEffectType(EffectComponent::EffectType::Spark);
     }
 
+
+
     //XVˆ—
     void Update(float deltaTime) override
     {

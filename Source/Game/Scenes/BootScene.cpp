@@ -172,8 +172,8 @@ void BootScene::SetUpActors()
     mainCameraActor = ActorManager::CreateAndRegisterActor<TitleCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
 
-    Transform titleTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    title = ActorManager::CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
+    //Transform titleTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
+    //title = ActorManager::CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
 
     CameraManager::SetGameCamera(mainCameraComponent);
 
@@ -181,8 +181,8 @@ void BootScene::SetUpActors()
     auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
 
     //Transform enemyTr(DirectX::XMFLOAT3{ 6.7f,0.0f,5.6f }, DirectX::XMFLOAT3{ 0.0f,-35.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    Transform enemyTr(DirectX::XMFLOAT3{ 6.7f,0.0f,5.6f }, DirectX::XMFLOAT3{ 0.0f,-15.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    auto enemy = ActorManager::CreateAndRegisterActorWithTransform<EmptyEnemy>("enemy", enemyTr);
+    //Transform enemyTr(DirectX::XMFLOAT3{ 6.7f,0.0f,5.6f }, DirectX::XMFLOAT3{ 0.0f,-15.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
+    //auto enemy = ActorManager::CreateAndRegisterActorWithTransform<EmptyEnemy>("enemy", enemyTr);
 
     CameraManager::SetDebugCamera(debugCamera);
 }

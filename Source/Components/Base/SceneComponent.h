@@ -105,13 +105,54 @@ public:
         if (ImGui::TreeNode((name_ + "  Transform").c_str()))
         {
             ImGui::DragFloat3("Relative Location", &relativeLocation_.x, 0.1f);
-            if (!inspectorEulerInitialized_)
-            {
-                inspectorEulerInitialized_ = true;
-            }
+#if 0
+            //if (!inspectorEulerInitialized_)
+//{
+//    inspectorEulerInitialized_ = true;
+//}
+//inspectorEuler_ = GetComponentEulerRotation();
             if (ImGui::DragFloat3("Relative Rotation", &inspectorEuler_.x, 1.0f))
             {
-                SetRelativeEulerRotationDirect(inspectorEuler_);
+                DirectX::XMFLOAT3 eulerRad =
+                {
+                    DirectX::XMConvertToRadians(inspectorEuler_.x),
+                    DirectX::XMConvertToRadians(inspectorEuler_.y),
+                    DirectX::XMConvertToRadians(inspectorEuler_.z)
+                };
+                DirectX::XMVECTOR quat = DirectX::XMQuaternionRotationRollPitchYaw(eulerRad.x, eulerRad.y, eulerRad.z);
+                DirectX::XMFLOAT4 q;
+                DirectX::XMStoreFloat4(&q, quat);
+                //SetWorldRotationDirect(q);
+                SetRelativeRotationDirect(q);
+            }
+
+#endif // 0
+            DirectX::XMVECTOR q = XMLoadFloat4(&relativeRotation_);
+            DirectX::XMFLOAT3 eulerRad;
+            XMStoreFloat3(&eulerRad, DirectX::XMQuaternionRotationMatrix(DirectX::XMMatrixRotationQuaternion(q)));
+
+            inspectorEuler_ = {
+                DirectX::XMConvertToDegrees(eulerRad.x),
+                DirectX::XMConvertToDegrees(eulerRad.y),
+                DirectX::XMConvertToDegrees(eulerRad.z)
+            };
+
+            // UIで回転角度変更があった場合は反映
+            if (ImGui::DragFloat3("Relative Rotation", &inspectorEuler_.x, 1.0f))
+            {
+                DirectX::XMFLOAT3 eulerRadNew = {
+                    DirectX::XMConvertToRadians(inspectorEuler_.x),
+                    DirectX::XMConvertToRadians(inspectorEuler_.y),
+                    DirectX::XMConvertToRadians(inspectorEuler_.z)
+                };
+
+                DirectX::XMVECTOR quatNew = DirectX::XMQuaternionRotationRollPitchYaw(
+                    eulerRadNew.x, eulerRadNew.y, eulerRadNew.z
+                );
+
+                DirectX::XMFLOAT4 qNew;
+                XMStoreFloat4(&qNew, quatNew);
+                SetRelativeRotationDirect(qNew);
             }
             ImGui::DragFloat3("Relative Scale", &relativeScale_.x, 0.01f, 0.01f, 100.0f);
             ImGui::TreePop();
@@ -235,12 +276,6 @@ public:
     // 直接　相対的な角度を設定
     void SetRelativeEulerRotationDirect(const DirectX::XMFLOAT3& newEulerRotaion)
     {
-        //auto radians = DirectX::XMFLOAT3(
-        //    DirectX::XMConvertToRadians(newEulerRotaion.x),
-        //    DirectX::XMConvertToRadians(newEulerRotaion.y),
-        //    DirectX::XMConvertToRadians(newEulerRotaion.z)
-        //);
-        //relativeRotation_ = QuaternionFromEulerYXZ(radians);
         DirectX::XMStoreFloat4(&relativeRotation_, DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(newEulerRotaion.x), DirectX::XMConvertToRadians(newEulerRotaion.y), DirectX::XMConvertToRadians(newEulerRotaion.z)));
     }
     // 相対的なクォータニオンを取得

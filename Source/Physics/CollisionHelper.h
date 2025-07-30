@@ -22,6 +22,8 @@ enum class CollisionLayer :uint32_t
     Camera = 1 << 12,   // ƒJƒƒ‰
     EraseInArea = 1 << 13, // Á‚·ƒGƒŠƒA@“G‚Ì”š’e‚È‚Ç
     Bomb = 1 << 14,// ”š’e
+
+
 };
 
 
