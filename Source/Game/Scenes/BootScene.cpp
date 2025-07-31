@@ -79,6 +79,7 @@ bool BootScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
 
     // GBUFFER
     gBufferRenderTarget = std::make_unique<decltype(gBufferRenderTarget)::element_type>(device, static_cast<uint32_t>(width), height);
+    CreatePsFromCSO(device, "./Shader/DefefferdPS.cso", pixelShaders[1].ReleaseAndGetAddressOf());
 
     //ブルーム
     bloomer = std::make_unique<Bloom>(device, static_cast<uint32_t>(width), height);
@@ -139,10 +140,10 @@ void BootScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
     objectManager.Update(deltaTime);//追加
 
     mainCameraActor->SetTarget(cameraTarget);
-    //if (InputSystem::GetInputState("F8", InputStateMask::Trigger))
-    //{
-    //    CameraManager::ToggleCamera();
-    //}
+    if (InputSystem::GetInputState("F8", InputStateMask::Trigger))
+    {
+        CameraManager::ToggleCamera();
+    }
 #ifdef _DEBUG
     if (InputSystem::GetInputState("Space", InputStateMask::Trigger))
     {
@@ -403,6 +404,13 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     gBufferRenderTarget->Clear(immediateContext);
     gBufferRenderTarget->Acticate(immediateContext);
 
+    // SKY_MAP
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+    skyMap->Blit(immediateContext, sceneConstants.viewProjection);
+    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+
     // MULTIPLE_RENDER_TARGETS
     RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
@@ -415,16 +423,10 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     gBufferRenderTarget->Deactivate(immediateContext);
 
     // MULTIPLE_RENDER_TARGETS
+#if 0
     multipleRenderTargets->Clear(immediateContext);
     multipleRenderTargets->Acticate(immediateContext);
-
-    // SKY_MAP
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    //skyMap->Blit(immediateContext, sceneConstants.viewProjection);
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
-
+#endif
     RenderState::BindSamplerStates(immediateContext);
     RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
@@ -446,15 +448,18 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     {
         // MULTIPLE_RENDER_TARGETS
         gBufferRenderTarget->renderTargetShaderResourceViews[0],  //colorMap
-        gBufferRenderTarget->renderTargetShaderResourceViews[1],   // normalMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[1],   // positionMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[2],   // normalMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[3],   // normalMap
     };
     // メインフレームバッファとブルームエフェクトを組み合わせて描画
-    fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, _countof(shaderResourceViews), pixelShaders[0]/*final pass*/.Get());
+    fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, _countof(shaderResourceViews), pixelShaders[1]/*DefefferdPS*/.Get());
+    //actorRender.RenderBlend(immediateContext);
 
 
-
+#if 0
     multipleRenderTargets->Deactivate(immediateContext);
-
+#endif
 
     DirectX::XMFLOAT4X4 cameraView;
     DirectX::XMFLOAT4X4 cameraProjection;
@@ -498,6 +503,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
 #endif // 0
 
+#if 0
     // CASCADED_SHADOW_MAPS
     // Draw shadow to scene framebuffer
     // FINAL_PASS
@@ -508,17 +514,25 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
         RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        //bloomer->make(immediateContext, gBufferRenderTarget->renderTargetShaderResourceViews[0]);
         bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
         //bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
 
         ID3D11ShaderResourceView* shader_resource_views[]
         {
             // MULTIPLE_RENDER_TARGETS
-            multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+            //multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+            gBufferRenderTarget->renderTargetShaderResourceViews[0],  //colorMap
             //framebuffers[1]->shaderResourceViews[0].Get(),
-            multipleRenderTargets->renderTargetShaderResourceViews[1],
-            multipleRenderTargets->renderTargetShaderResourceViews[2],
-            multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+#if 0
+            multipleRenderTargets->renderTargetShaderResourceViews[1],  // positionMap
+            multipleRenderTargets->renderTargetShaderResourceViews[2],  // normalMap
+#else
+            gBufferRenderTarget->renderTargetShaderResourceViews[1],   // positionMap
+            gBufferRenderTarget->renderTargetShaderResourceViews[2],   // normalMap
+#endif // 0
+            //multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+            gBufferRenderTarget->depthStencilShaderResourceView,      //depthMap
             bloomer->shader_resource_view(),    //bloom
             framebuffers[0]->shaderResourceViews[0].Get(),  //fog
             cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
@@ -527,7 +541,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[0]/*final pass*/.Get());
 
     }
-
+#endif
 
 #endif // 0
 

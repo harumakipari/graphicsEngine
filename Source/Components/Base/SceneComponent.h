@@ -127,33 +127,47 @@ public:
             }
 
 #endif // 0
-            DirectX::XMVECTOR q = XMLoadFloat4(&relativeRotation_);
-            DirectX::XMFLOAT3 eulerRad;
-            XMStoreFloat3(&eulerRad, DirectX::XMQuaternionRotationMatrix(DirectX::XMMatrixRotationQuaternion(q)));
-
-            inspectorEuler_ = {
-                DirectX::XMConvertToDegrees(eulerRad.x),
-                DirectX::XMConvertToDegrees(eulerRad.y),
-                DirectX::XMConvertToDegrees(eulerRad.z)
+            testAngle = GetRelativeEulerRotation();
+            testAngle.x = DirectX::XMConvertToDegrees(testAngle.x);
+            testAngle.y = DirectX::XMConvertToDegrees(testAngle.y);
+            testAngle.z = DirectX::XMConvertToDegrees(testAngle.z);
+            ImGui::DragFloat3("RelativeAngle", &testAngle.x, 1.0f);
+            //testAngle.x = MathHelper::ClampAngle(testAngle.x);
+            //testAngle.y = MathHelper::ClampAngle(testAngle.y);
+            //testAngle.z = MathHelper::ClampAngle(testAngle.z);
+            DirectX::XMFLOAT3 eulerRadNew =
+            {
+                DirectX::XMConvertToRadians(testAngle.x),
+                DirectX::XMConvertToRadians(testAngle.y),
+                DirectX::XMConvertToRadians(testAngle.z)
             };
 
-            // UIで回転角度変更があった場合は反映
-            if (ImGui::DragFloat3("Relative Rotation", &inspectorEuler_.x, 1.0f))
-            {
-                DirectX::XMFLOAT3 eulerRadNew = {
-                    DirectX::XMConvertToRadians(inspectorEuler_.x),
-                    DirectX::XMConvertToRadians(inspectorEuler_.y),
-                    DirectX::XMConvertToRadians(inspectorEuler_.z)
-                };
+            DirectX::XMVECTOR quatNew = DirectX::XMQuaternionRotationRollPitchYaw(
+                eulerRadNew.x, eulerRadNew.y, eulerRadNew.z
+            );
 
-                DirectX::XMVECTOR quatNew = DirectX::XMQuaternionRotationRollPitchYaw(
-                    eulerRadNew.x, eulerRadNew.y, eulerRadNew.z
-                );
+            DirectX::XMFLOAT4 qNew;
+            XMStoreFloat4(&qNew, quatNew);
+            SetRelativeRotationDirect(qNew);
+            //SetQuaternionRotation(qNew);
 
-                DirectX::XMFLOAT4 qNew;
-                XMStoreFloat4(&qNew, quatNew);
-                SetRelativeRotationDirect(qNew);
-            }
+            //// UIで回転角度変更があった場合は反映
+            //if (ImGui::DragFloat3("Relative Rotation", &inspectorEuler_.x, 1.0f))
+            //{
+            //    DirectX::XMFLOAT3 eulerRadNew = {
+            //        DirectX::XMConvertToRadians(inspectorEuler_.x),
+            //        DirectX::XMConvertToRadians(inspectorEuler_.y),
+            //        DirectX::XMConvertToRadians(inspectorEuler_.z)
+            //    };
+
+            //    DirectX::XMVECTOR quatNew = DirectX::XMQuaternionRotationRollPitchYaw(
+            //        eulerRadNew.x, eulerRadNew.y, eulerRadNew.z
+            //    );
+
+            //    DirectX::XMFLOAT4 qNew;
+            //    XMStoreFloat4(&qNew, quatNew);
+            //    SetRelativeRotationDirect(qNew);
+            //}
             ImGui::DragFloat3("Relative Scale", &relativeScale_.x, 0.01f, 0.01f, 100.0f);
             ImGui::TreePop();
         }
@@ -596,6 +610,9 @@ public:
     DirectX::XMFLOAT4 beforeRotation = { 0.0f,0.0f,0.0f,1.0f }; // クォータニオン
     float lerpTime = 0.0f;
 
+
+    // テスト
+    DirectX::XMFLOAT3 testAngle = { 0.0f,0.0f,0.0f };
 };
 
 

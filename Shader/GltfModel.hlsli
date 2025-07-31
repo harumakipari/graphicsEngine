@@ -124,3 +124,11 @@ struct PS_OUT
     float4 position : SV_TARGET1;
     float4 normal : SV_TARGET2;
 };
+
+struct GBUFFER_PS_OUT
+{
+    float4 normal : SV_TARGET0;
+    float4 msr : SV_TARGET1;    // metallic specular roughness 
+    float4 color : SV_TARGET2;
+    float4 position : SV_TARGET3;   // 
+};

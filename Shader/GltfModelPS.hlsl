@@ -106,6 +106,11 @@ PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
         N = normalize((normalFactor.x * T) + (normalFactor.y * B) + (normalFactor.z * N));
     }
     
+    pout.color =basecolorFactor;
+    pout.position = mul(pin.wPosition, view); // to viewSpace
+    pout.normal = mul(float4(N.xyz, 0), view); //to viewSpace;
+    return pout;
+    
     float3 diffuse = 0;
     float3 specular = 0;
   

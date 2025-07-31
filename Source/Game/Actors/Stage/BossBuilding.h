@@ -72,7 +72,7 @@ public:
         preSkeltalMeshComponent->SetModel("./Data/Models/Building/bomb_bill.gltf", false);
         //preSkeltalMeshComponent->SetModel("./Data/Effect/Models/bom_effect_out.gltf", false);
         preSkeltalMeshComponent->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::LH_Y_UP;
-        CreatePsFromCSO(Graphics::GetDevice(), "./Shader/BuildingPS.cso", preSkeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+        CreatePsFromCSO(Graphics::GetDevice(), "./Data/Shaders/BuildingPS.cso", preSkeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
         auto& model = preSkeltalMeshComponent->model;
         for (auto& material : model->materials)
         {// material ‚ğ‘S‚Ä BLEND ‚É•ÏX‚·‚é

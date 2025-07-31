@@ -148,9 +148,6 @@
     <Filter Include="Sources\Widgets\Utils">
       <UniqueIdentifier>{83b18a5f-62e2-4e19-b344-f32c7a81d302}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Managers">
-      <UniqueIdentifier>{3df6efc0-304d-460f-812e-d72dbcb37f95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Game\Utils">
       <UniqueIdentifier>{0511cc00-701b-4fd8-8012-28b6209c7b68}</UniqueIdentifier>
     </Filter>
@@ -165,6 +162,9 @@
     </Filter>
     <Filter Include="Sources\Utils">
       <UniqueIdentifier>{630ce5c9-6a60-43e6-a216-93c4dd21a60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Game\Scenes\Managers">
+      <UniqueIdentifier>{3df6efc0-304d-460f-812e-d72dbcb37f95}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -361,7 +361,7 @@
       <Filter>Sources\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Managers\GameManager.cpp">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Actors\Beam\Beam.cpp">
       <Filter>Sources\Game\Actors\Beam</Filter>
@@ -415,10 +415,10 @@
       <Filter>Sources\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Managers\BuildingManager.cpp">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Managers\TutorialSystem.cpp">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Scenes\TutorialScene.cpp">
       <Filter>Sources</Filter>
@@ -768,16 +768,16 @@
       <Filter>Sources\Widgets\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Managers\ItemManager.h">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Managers\GameManager.h">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Managers\BuildingManager.h">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Managers\TutorialSystem.h">
-      <Filter>Sources\Game\Managers</Filter>
+      <Filter>Sources\Game\Scenes\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Actors\Item\HeldEnergyCore.h">
       <Filter>Sources\Game\Actors\Item</Filter>
@@ -910,6 +910,9 @@
     <ClInclude Include="Source\Graphics\Resource\ShaderToy.h" />
     <ClInclude Include="Source\Graphics\PostProcess\GBuffer.h">
       <Filter>Sources\Graphics\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Core\Light.h">
+      <Filter>Sources\Graphics\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1121,6 +1124,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shader\AccumulateHuskParticlePS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\DefefferdPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

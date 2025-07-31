@@ -70,7 +70,7 @@ HuskParticles::HuskParticles(ID3D11Device* device, size_t maxParticleCount) : ma
 	CreateGsFromCSO(device, "./Shader/HuskParticleGS.cso", geometryShader.ReleaseAndGetAddressOf());
 	CreateCsFromCSO(device, "./Shader/HuskParticleCS.cso", computeShader.ReleaseAndGetAddressOf());
 
-	CreatePsFromCSO(device, "./Shader/AccumulateHuskParticlePS.cso", accumlateHuskParticlesPs.ReleaseAndGetAddressOf());
+	CreatePsFromCSO(device, ".Data/Shaders/AccumulateHuskParticlePS.cso", accumlateHuskParticlesPs.ReleaseAndGetAddressOf());
 }
 
 UINT align(UINT num, UINT alignment)
