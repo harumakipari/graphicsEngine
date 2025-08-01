@@ -41,7 +41,7 @@ public:
         //skeltalMeshComponent->SetModel("./Data/Models/Characters/Player/chara_idle.gltf");
         //skeltalMeshComponent->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
         //CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelEmissionPS.cso", skeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
-        skeltalMeshComponent->SetIsCastShadow(false);
+        //skeltalMeshComponent->SetIsCastShadow(false);
         const std::vector<std::string> animationFilenames =
         {
             "./Data/Models/Characters/GirlSoldier/Emote_Slice.glb",

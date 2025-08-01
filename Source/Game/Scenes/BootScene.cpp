@@ -168,7 +168,7 @@ void BootScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
 void BootScene::SetUpActors()
 {
     //Transform playerTr(DirectX::XMFLOAT3{ -2.7f,-1.7f,2.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
-    Transform playerTr(DirectX::XMFLOAT3{ 0.0f,0.4f,0.0f }, DirectX::XMFLOAT3{ 0.0f,-6.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
+    Transform playerTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 0.0f,-6.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
     //Transform playerTr(DirectX::XMFLOAT3{ 0.0f,0.4f,0.0f }, DirectX::XMFLOAT3{ 0.0f,30.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
     titlePlayer = ActorManager::CreateAndRegisterActorWithTransform<TitlePlayer>("actor", playerTr);
 
@@ -447,10 +447,11 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     ID3D11ShaderResourceView* shaderResourceViews[]
     {
         // MULTIPLE_RENDER_TARGETS
-        gBufferRenderTarget->renderTargetShaderResourceViews[0],  //colorMap
-        gBufferRenderTarget->renderTargetShaderResourceViews[1],   // positionMap
-        gBufferRenderTarget->renderTargetShaderResourceViews[2],   // normalMap
-        gBufferRenderTarget->renderTargetShaderResourceViews[3],   // normalMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[0],  // normalMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[1],   // msrMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[2],   // colorMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[3],   // positionMap
+        gBufferRenderTarget->renderTargetShaderResourceViews[4],   // emissiveMap
     };
     // メインフレームバッファとブルームエフェクトを組み合わせて描画
     fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, _countof(shaderResourceViews), pixelShaders[1]/*DefefferdPS*/.Get());
@@ -530,8 +531,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
             multipleRenderTargets->renderTargetShaderResourceViews[1],  // positionMap
             multipleRenderTargets->renderTargetShaderResourceViews[2],  // normalMap
 #else
-            gBufferRenderTarget->renderTargetShaderResourceViews[1],   // positionMap
-            gBufferRenderTarget->renderTargetShaderResourceViews[2],   // normalMap
+            gBufferRenderTarget->renderTargetShaderResourceViews[3],   // positionMap
+            gBufferRenderTarget->renderTargetShaderResourceViews[0],   // normalMap
 #endif // 0
             //multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
             gBufferRenderTarget->depthStencilShaderResourceView,      //depthMap
