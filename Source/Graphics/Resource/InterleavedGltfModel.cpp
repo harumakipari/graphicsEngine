@@ -1247,7 +1247,8 @@ void InterleavedGltfModel::CreateAndUploadResources(ID3D11Device* device)
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 
-    hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", pixelShader.ReleaseAndGetAddressOf());
+    //hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", pixelShader.ReleaseAndGetAddressOf());
+    hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", pixelShader.ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     hr = CreateGsFromCSO(device, "./Shader/GltfModelCsmGS.cso", geometryShaderCSM.ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));

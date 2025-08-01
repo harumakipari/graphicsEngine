@@ -423,7 +423,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     gBufferRenderTarget->Deactivate(immediateContext);
 
     // MULTIPLE_RENDER_TARGETS
-#if 0
+#if 1
     multipleRenderTargets->Clear(immediateContext);
     multipleRenderTargets->Acticate(immediateContext);
 #endif
@@ -457,7 +457,9 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     //actorRender.RenderBlend(immediateContext);
 
 
-#if 0
+
+
+#if 1
     multipleRenderTargets->Deactivate(immediateContext);
 #endif
 
@@ -503,7 +505,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
 #endif // 0
 
-#if 0
+#if 1
     // CASCADED_SHADOW_MAPS
     // Draw shadow to scene framebuffer
     // FINAL_PASS
@@ -521,8 +523,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         ID3D11ShaderResourceView* shader_resource_views[]
         {
             // MULTIPLE_RENDER_TARGETS
-            //multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
-            gBufferRenderTarget->renderTargetShaderResourceViews[0],  //colorMap
+            multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+            //gBufferRenderTarget->renderTargetShaderResourceViews[0],  //colorMap
             //framebuffers[1]->shaderResourceViews[0].Get(),
 #if 0
             multipleRenderTargets->renderTargetShaderResourceViews[1],  // positionMap

@@ -131,4 +131,5 @@ struct GBUFFER_PS_OUT
     float4 msr : SV_TARGET1;    // metallic specular roughness 
     float4 color : SV_TARGET2;
     float4 position : SV_TARGET3;   // 
+    float4 emmisive : SV_TARGET4;
 };

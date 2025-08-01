@@ -6,13 +6,14 @@
 class GBuffer :public MultipleRenderTargets
 {
 public:
-    static constexpr UINT GBufferCount = 4;
+    static constexpr UINT GBufferCount = 5;
     static constexpr DXGI_FORMAT GBufferFormats[GBufferCount] =
     {
-        DXGI_FORMAT_R8G8B8A8_UNORM,  //  albedo Opacity + Mask??とか？
         DXGI_FORMAT_R16G16B16A16_FLOAT, // Normal
-        DXGI_FORMAT_R32G32B32A32_FLOAT, // Position
         DXGI_FORMAT_R32G32B32A32_FLOAT, // マテリアルの情報？
+        DXGI_FORMAT_R8G8B8A8_UNORM,  //  albedo Opacity + Mask??とか？
+        DXGI_FORMAT_R32G32B32A32_FLOAT, // Position
+        DXGI_FORMAT_R32G32B32A32_FLOAT, // emmisive
     };
 
     GBuffer(ID3D11Device* device, UINT width, UINT height) :MultipleRenderTargets(device, width, height, GBufferCount, GBufferFormats)
