@@ -93,7 +93,7 @@ bool BootScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
     LoadTextureFromFile(device, L"./Data/Environment/Sky/captured/lut_charlie.dds", shaderResourceViews[0].ReleaseAndGetAddressOf(), &texture2dDesc);
     LoadTextureFromFile(device, L"./Data/Environment/Sky/captured/diffuse_iem.dds", shaderResourceViews[1].ReleaseAndGetAddressOf(), &texture2dDesc);
     LoadTextureFromFile(device, L"./Data/Environment/Sky/captured/specular_pmrem.dds", shaderResourceViews[2].ReleaseAndGetAddressOf(), &texture2dDesc);
-    LoadTextureFromFile(device, L"./Data/Environment/Sky/captured/lut_ggx.dds", shaderResourceViews[3].ReleaseAndGetAddressOf(), &texture2dDesc);
+    LoadTextureFromFile(device, L"./Data/Environment/Sky/captured/lut_sheen_e.dds", shaderResourceViews[3].ReleaseAndGetAddressOf(), &texture2dDesc);
 
     //splash = std::make_unique<Sprite>(device, L"./Data/Textures/Screens/TitleScene/994759-1.jpg");
 
@@ -175,8 +175,8 @@ void BootScene::SetUpActors()
     mainCameraActor = ActorManager::CreateAndRegisterActor<TitleCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
 
-    //Transform titleTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    //title = ActorManager::CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
+    Transform titleTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
+    title = ActorManager::CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
 
     CameraManager::SetGameCamera(mainCameraComponent);
 
@@ -510,8 +510,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     // Draw shadow to scene framebuffer
     // FINAL_PASS
     {
-        bloomer->bloom_intensity = bloomIntensity;
-        bloomer->bloom_extraction_threshold = bloomThreshold;
+        //bloomer->bloom_intensity = bloomIntensity;
+        //bloomer->bloom_extraction_threshold = bloomThreshold;
         //ÉuÉãÅ[ÉÄ
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);

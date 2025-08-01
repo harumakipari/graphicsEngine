@@ -103,7 +103,7 @@ GBUFFER_PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
     pout.position = mul(pin.wPosition, view); // to viewSpace
     pout.normal = mul(float4(N.xyz, 0), view); //to viewSpace;
     pout.emmisive.rgb = emmisiveFactor;
-    pout.msr = float4(metallicFactor, alphaRoughness, roughnessFactor, 0.0);
+    pout.msr = float4(metallicFactor, occlusionFactor, roughnessFactor, occlusionStrength);
     
 	return pout;
 }

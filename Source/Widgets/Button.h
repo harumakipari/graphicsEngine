@@ -35,7 +35,8 @@ public:
 	}
 private:
 	void OnClick() {
-		for (auto& function : onClickFunctions) {
+		for (auto& function : onClickFunctions) 
+		{
 			function();
 		}
 	}
