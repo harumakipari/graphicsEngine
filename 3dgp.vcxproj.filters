@@ -914,6 +914,9 @@
     <ClInclude Include="Source\Graphics\Core\Light.h">
       <Filter>Sources\Graphics\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Core\LightData.h">
+      <Filter>Sources\Graphics\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\BlurPS.hlsl">

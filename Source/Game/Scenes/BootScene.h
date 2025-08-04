@@ -30,15 +30,15 @@ class BootScene : public Scene
     struct SceneConstants
     {
         DirectX::XMFLOAT4X4 viewProjection;
-        DirectX::XMFLOAT4 lightDirection;
+        //DirectX::XMFLOAT4 lightDirection;
         DirectX::XMFLOAT4 cameraPosition;
-        DirectX::XMFLOAT4 colorLight;
+        //DirectX::XMFLOAT4 colorLight;
         DirectX::XMFLOAT4X4 view;   // PARTICLES
         DirectX::XMFLOAT4X4 projection;   // PARTICLES
         // CASCADED_SHADOW_MAPS
         DirectX::XMFLOAT4X4 invProjection;
         DirectX::XMFLOAT4X4 invViewProjection;
-        float iblIntensity;
+        //float iblIntensity;
         bool enableSSAO;
         float reflectionIntensity;
         float time = 0.0f;
@@ -47,9 +47,24 @@ class BootScene : public Scene
         int enableSSR;
         int enableFog;
         int enableBloom;
+        float pad;
         DirectX::XMFLOAT4X4 invView;
     };
     SceneConstants sceneConstants;
+
+    struct PointLights
+    {
+        DirectX::XMFLOAT4 position{ 0.0f,0.0f,0.0f,0.0f };
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
+        float range = 0.0f;
+        float pads[3];
+    };
+    struct SpotLights
+    {
+
+    };
+
+
     struct ShaderConstants
     {
         float extraction_threshold{ 0.8f };
@@ -67,7 +82,6 @@ class BootScene : public Scene
         int steps = 10;// SCREEN_SPACE_REFLECTION
         float thickness = 0.5f;// SCREEN_SPACE_REFLECTION
         float pad;
-
     };
     ShaderConstants shaderConstants;
 

@@ -258,9 +258,9 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
     }
 
-    sceneConstants.lightDirection = lightDirection;
-    sceneConstants.colorLight = colorLight;
-    sceneConstants.iblIntensity = iblIntensity;
+    //sceneConstants.lightDirection = lightDirection;
+    //sceneConstants.colorLight = colorLight;
+    //sceneConstants.iblIntensity = iblIntensity;
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     sceneConstants.enableSSAO = enableSSAO;
     sceneConstants.enableBloom = enableBloom;
