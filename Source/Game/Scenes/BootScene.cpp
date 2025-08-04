@@ -61,6 +61,15 @@ bool BootScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
     bufferDesc.StructureByteStride = 0;
     hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[3].ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    
+    bufferDesc.ByteWidth = sizeof(LightConstants);
+    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bufferDesc.CPUAccessFlags = 0;
+    bufferDesc.MiscFlags = 0;
+    bufferDesc.StructureByteStride = 0;
+    hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[4].ReleaseAndGetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
     sceneConstants.time = 0;//開始時に０にしておく
 
@@ -257,7 +266,11 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         // COMPUTE_PARTICLE_SYSTEM
         DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
     }
-
+    LightConstants lightConstants = {};
+    lightConstants.lightDirection = lightDirection;
+    lightConstants.colorLight = colorLight;
+    lightConstants.iblIntensity = iblIntensity;
+    lightConstants.pointsLight->position = { 0.0f,2.0f,0.0f ,0.0f};
     //sceneConstants.lightDirection = lightDirection;
     //sceneConstants.colorLight = colorLight;
     //sceneConstants.iblIntensity = iblIntensity;
@@ -288,6 +301,9 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
     immediateContext->UpdateSubresource(constantBuffers[2].Get(), 0, 0, &fogConstants, 0, 0);
     immediateContext->PSSetConstantBuffers(4, 1, constantBuffers[2].GetAddressOf());    //3 は cascadedShadowMap に使用中
+
+    immediateContext->UpdateSubresource(constantBuffers[4].Get(), 0, 0, &lightConstants, 0, 0);
+    immediateContext->PSSetConstantBuffers(11, 1, constantBuffers[4].GetAddressOf());    //3 は cascadedShadowMap に使用中
 
     spriteConstants.elapsedTime += delta_time;
     spriteConstants.enableGlitch = 0;

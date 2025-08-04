@@ -19,6 +19,7 @@
 #include "Graphics/Shadow/CascadeShadowMap.h"
 #include "Graphics/PostProcess/MultipleRenderTargets.h"
 #include "Graphics/Effect/EffectSystem.h"
+#include "Graphics/Core/Light.h"
 
 #include "Game/Actors/Player/TitlePlayer.h"
 #include "Game/Actors/Stage/TitleStage.h"
@@ -55,8 +56,8 @@ class BootScene : public Scene
     struct PointLights
     {
         DirectX::XMFLOAT4 position{ 0.0f,0.0f,0.0f,0.0f };
-        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
-        float range = 0.0f;
+        DirectX::XMFLOAT4 color{ 1.0f,0.0f,1.0f,1.0f };
+        float range = 0.5f;
         float pads[3];
     };
     struct SpotLights
@@ -64,7 +65,14 @@ class BootScene : public Scene
 
     };
 
-
+    struct LightConstants
+    {
+        DirectX::XMFLOAT4 lightDirection;
+        DirectX::XMFLOAT4 colorLight;
+        float iblIntensity;
+        float pads[3];
+        PointLights pointsLight[8];
+    };
     struct ShaderConstants
     {
         float extraction_threshold{ 0.8f };
@@ -155,6 +163,9 @@ class BootScene : public Scene
 	std::unique_ptr<FullScreenQuad> frameBufferBlit;
 
 	void SetUpActors();
+
+    // ƒ‰ƒCƒg
+    Light light;
 
     SIZE framebufferDimensions;
 public:

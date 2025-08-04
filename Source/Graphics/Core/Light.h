@@ -55,7 +55,7 @@ struct LightProbes
 class Light
 {
 public:
-    Light(LightType type) :type(type)
+    Light(/*LightType type*/)/* :type(type)*/
     {
         D3D11_BUFFER_DESC bufferDesc{};
         bufferDesc.ByteWidth = sizeof(LightConstants);

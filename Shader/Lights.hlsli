@@ -4,6 +4,7 @@ struct PointLights
     float4 position;
     float4 color;
     float range;
+    float3 pads;
 };
 
 struct SpotLights
@@ -16,3 +17,10 @@ struct SpotLights
     float outerCorn;
 };
 
+cbuffer LIGHT_CONSTANT_BUFFER : register(b11)
+{
+    float4 lightDirection;
+    float4 colorLight; //w colorPower
+    float iblIntensity;
+    PointLights pointLights[8];
+};

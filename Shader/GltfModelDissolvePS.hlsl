@@ -1,6 +1,7 @@
 #include "GltfModel.hlsli"
 #include "imageBasedLighting.hlsli"
 #include "BidirectionalReflectanceDistributionFunction.hlsli"
+#include "Lights.hlsli"
 
 #define BASECOLOR_TEXTURE 0 
 #define METALLIC_ROUGHNESS_TEXTURE 1 

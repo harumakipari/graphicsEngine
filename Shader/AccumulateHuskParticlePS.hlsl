@@ -1,4 +1,5 @@
 #include "GltfModel.hlsli"
+#include "Lights.hlsli"
 
 #define POINT 0
 #define LINEAR 1

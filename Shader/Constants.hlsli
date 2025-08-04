@@ -3,14 +3,14 @@
 cbuffer SCENE_CONSTANT_BUFFER : register(b1)
 {
     row_major float4x4 viewProjection;
-    float4 lightDirection;
+    //float4 lightDirection;
     float4 cameraPositon;
-    float4 colorLight; //w colorPower
+    //float4 colorLight; //w colorPower
     row_major float4x4 view;
     row_major float4x4 projection;
     row_major float4x4 inverseProjection;
     row_major float4x4 inverseViewProjection;
-    float iblIntensity;
+    //float iblIntensity;
     bool enableSSAO;
     float reflectionIntensity;
     float time;
@@ -19,6 +19,7 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     bool enableSSR;
     bool enableFog;
     bool enableBloom;
+    float pad;
     row_major float4x4 invView;
 }
 
@@ -87,5 +88,6 @@ cbuffer VOLUMETRIC_CLOUDSCAPES_CONSTANT_BUFFER : register(b5)
     uint rayMarchingSteps;
     bool autoRayMarchingSteps;
 }
+
 
 #endif

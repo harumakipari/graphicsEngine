@@ -1,5 +1,6 @@
 #include "FullScreenQuad.hlsli"
 #include "Constants.hlsli"
+#include "Lights.hlsli"
 
 
 SamplerState pointSamplerState : register(s0);

@@ -316,7 +316,6 @@
     <ClInclude Include="Source\Components\Transform\Transform.h" />
     <ClInclude Include="Source\Core\Actor.h" />
     <ClInclude Include="Source\Core\ActorManager.h" />
-    <ClInclude Include="Source\Core\LightData.h" />
     <ClInclude Include="Source\Core\World.h" />
     <ClInclude Include="Source\Engine\Audio\Audio.h" />
     <ClInclude Include="Source\Engine\Camera\CameraManager.h" />
@@ -770,6 +769,7 @@
     <None Include="Shader\geometricPrimitive.hlsli" />
     <None Include="Shader\GltfModel.hlsli" />
     <None Include="Shader\imageBasedLighting.hlsli" />
+    <None Include="Shader\Lights.hlsli" />
     <None Include="Shader\LineSegment.hlsli" />
     <None Include="Shader\Particle.hlsli" />
     <None Include="Shader\PerlinWorleyNoise.hlsli" />
