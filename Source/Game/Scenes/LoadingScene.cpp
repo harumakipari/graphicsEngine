@@ -98,7 +98,7 @@ bool LoadingScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, c
     //CreatePsFromCSO(device, "./Shader/RoundedLoadingPS.cso", pixel_shaders[1].ReleaseAndGetAddressOf());
     //renderingState = std::make_unique<decltype(renderingState)::element_type>(device);
 
-    cbuffer = std::make_unique<constant_buffer<constants>>(device);
+    cbuffer = std::make_unique<ConstantBuffer<constants>>(device);
 
 
     //shaderToy

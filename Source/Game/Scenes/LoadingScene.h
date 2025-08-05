@@ -148,7 +148,7 @@ class LoadingScene : public Scene
         float seedScale = 5.0f;
     };
 
-    std::unique_ptr<constant_buffer<constants>> cbuffer;
+    std::unique_ptr<ConstantBuffer<constants>> cbuffer;
     //‘O‚ÌƒV[ƒ“
     std::unique_ptr<ID3D11ShaderResourceView> preSceneTexture;
 

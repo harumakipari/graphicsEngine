@@ -1568,6 +1568,7 @@ void InterleavedGltfModel::BatchRender(ID3D11DeviceContext* immediateContext, co
             material.data.occlusionTexture.index,
         };
         RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
 
         ID3D11ShaderResourceView* nullShaderResourceView{};
         std::vector<ID3D11ShaderResourceView*> shaderResourceViews(_countof(textureIndices));

@@ -3,6 +3,7 @@
 
 #include <map>
 #include <memory>
+#include <vector>
 #include <string>
 #include <unordered_map>
 #include <d3d11.h>
@@ -44,5 +45,24 @@ public:
 
     // マテリアルの variants
     std::vector<std::string> variants;
+
+    struct Scene
+    {
+        std::string name;
+        std::vector<int> nodes;// ルートノードの配列
+    };
+    std::vector<Scene> scenes;
+    int defaultScene = 0;
+
+    struct Node
+    {
+        std::string name;
+        int camera = -1;
+        int skin = -1;
+        int mesh = -1;
+
+        std::vector<int> children;
+    };
+
 };
 #endif // !MODEL_H
