@@ -63,6 +63,8 @@ class BootScene : public Scene
     DirectX::XMFLOAT4 pointLightPosition{ 0.0f,0.0f,0.0f,0.0f };
     DirectX::XMFLOAT4 pointLightColor{ 1.0f,0.0f,0.0f,1.0f };
     float pointLightRange = 0.5f;
+    bool directionalLightEnable = true; // ïΩçsåıåπÇÃ on / off
+    bool pointLightEnable = true;
 
     struct SpotLights
     {

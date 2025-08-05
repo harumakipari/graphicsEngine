@@ -270,6 +270,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     lightConstants.lightDirection = lightDirection;
     lightConstants.colorLight = colorLight;
     lightConstants.iblIntensity = iblIntensity;
+    lightConstants.directionalLightEnable = static_cast<int>(directionalLightEnable);
+    lightConstants.pointLightEnable = static_cast<int>(pointLightEnable);
     lightConstants.pointsLight.position = pointLightPosition;
     lightConstants.pointsLight.color = pointLightColor;
     lightConstants.pointsLight.range = pointLightRange;
@@ -751,10 +753,12 @@ void BootScene::DrawGui()
             // -------------------------
             if (ImGui::CollapsingHeader("Light Settings", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::Checkbox("directionalLightEnable", &directionalLightEnable);
                 ImGui::SliderFloat3("Light Direction", &lightDirection.x, -1.0f, 1.0f);
                 ImGui::SliderFloat3("Light Color", &colorLight.x, -1.0f, 1.0f);
                 ImGui::SliderFloat("Light Intensity", &iblIntensity, 0.0f, 10.0f);
                 ImGui::SliderFloat("Light Threshold", &colorLight.w, 0.0f, 10.0f);
+                ImGui::Checkbox("pointLightEnable", &pointLightEnable);
                 ImGui::DragFloat4("Point Light Position", &pointLightPosition.x, 0.1f);
                 ImGui::ColorEdit3("Point Light Color", &pointLightColor.x);
                 ImGui::SliderFloat("Point Light Range", &pointLightRange, 0.0f, 10.0f);
