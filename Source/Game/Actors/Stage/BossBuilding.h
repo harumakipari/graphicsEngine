@@ -185,7 +185,8 @@ public:
         bombTimerMeshComponent->SetIsVisible(false);
 
 
-        std::shared_ptr<TimerActionComponent> timerActionComponent = this->NewLogicComponent<class TimerActionComponent>("timerActionComponent");
+        //std::shared_ptr<TimerActionComponent> timerActionComponent = this->NewLogicComponent<class TimerActionComponent>("timerActionComponent");
+        std::shared_ptr<TimerActionComponent> timerActionComponent = this->NewSceneComponent<class TimerActionComponent>("timerActionComponent");
         timerActionComponent->SetTimer(explodeTimer, [&]()
             {
                 if (state == BuildingState::Idle)

@@ -274,7 +274,8 @@ void Building::CallHitShockWave(float power, int beamItemCount, const DirectX::X
         effectExplosionComponent->SetEffectType(EffectComponent::EffectType::Explosion);
         effectExplosionComponent->Activate();
 
-        auto buildlifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        auto buildlifeTimeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeTimeComponent");
+        //auto buildlifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
         buildlifeTimeComponent->SetLifeTime(5.0f);
     }
 }

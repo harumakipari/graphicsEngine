@@ -196,10 +196,10 @@ public:
                 component->Tick(deltaTime);
             }
 
-            for (auto& component : actor->ownedLogicComponents_)
-            {
-                component->Tick(deltaTime);
-            }
+            //for (auto& component : actor->ownedLogicComponents_)
+            //{
+            //    component->Tick(deltaTime);
+            //}
 
             if (actor->rootComponent_)
             {
@@ -922,10 +922,10 @@ public:
                 component->Tick(deltaTime);
             }
 
-            for (auto& component : actor->ownedLogicComponents_)
-            {
-                component->Tick(deltaTime);
-            }
+            //for (auto& component : actor->ownedLogicComponents_)
+            //{
+            //    component->Tick(deltaTime);
+            //}
 
             if (actor->rootComponent_)
             {

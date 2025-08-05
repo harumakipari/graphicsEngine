@@ -224,7 +224,8 @@ public:
             //”š”j‰¹
             Audio::PlayOneShot(L"./Data/Sound/SE/missile_explosion.wav");
 
-            auto lifeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeComponent");
+            //auto lifeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeComponent");
+            auto lifeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeComponent");
             lifeComponent->SetLifeTime(0.1f);
             
             //auto delayComponent = this->NewLogicComponent<TimerActionComponent>("timerComponent");

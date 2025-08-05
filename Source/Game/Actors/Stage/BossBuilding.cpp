@@ -61,7 +61,8 @@ void BossBuilding::Update(float deltaTime)
 
         eraseInAreaComponent->EnableCollision();
         {
-            auto lifeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeComponent");
+            auto lifeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeComponent");
+            //auto lifeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeComponent");
             lifeComponent->SetLifeTime(1.0f);
         }
         state = BossBuilding::BuildingState::Exploded;
@@ -281,7 +282,8 @@ void BossBuilding::CallHitShockWave(float power, int beamItemCount, const Direct
         itemSpawner->SpawnItems(beamItemCount, true);
 
 
-        auto buildlifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        auto buildlifeTimeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeTimeComponent");
+        //auto buildlifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
         buildlifeTimeComponent->SetLifeTime(5.0f);
 
     }

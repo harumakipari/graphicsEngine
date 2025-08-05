@@ -129,7 +129,8 @@ void Beam::OnHit(std::pair<CollisionComponent*, CollisionComponent*> hitPair)
         //effectBeamComponent->Deactivate();
         this->ScheduleDestroyComponentByName("skeltalComponent");
         this->ScheduleDestroyComponentByName("sphereComponent");
-        auto  lifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        //auto  lifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        auto  lifeTimeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeTimeComponent");
         lifeTimeComponent->SetLifeTime(3.0f);
 
     }
@@ -158,7 +159,8 @@ void Beam::OnHit(std::pair<CollisionComponent*, CollisionComponent*> hitPair)
         //effectBeamComponent->Deactivate();
         this->ScheduleDestroyComponentByName("skeltalComponent");
         this->ScheduleDestroyComponentByName("sphereComponent");
-        auto  lifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        //auto  lifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        auto  lifeTimeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeTimeComponent");
         lifeTimeComponent->SetLifeTime(3.0f);
 
     }
@@ -173,7 +175,8 @@ void Beam::OnHit(std::pair<CollisionComponent*, CollisionComponent*> hitPair)
         this->ScheduleDestroyComponentByName("skeltalComponent");
         this->ScheduleDestroyComponentByName("sphereComponent");
 
-        auto  lifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        //auto  lifeTimeComponent = this->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+        auto  lifeTimeComponent = this->NewSceneComponent<LifeTimeComponent>("lifeTimeComponent");
         lifeTimeComponent->SetLifeTime(3.0f);
     }
     else if (auto stageProps = std::dynamic_pointer_cast<Stage>(hitPair.second->GetActor()))

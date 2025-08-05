@@ -79,22 +79,26 @@ public:
 
         //std::shared_ptr<T> newComponent = std::make_shared<T>(name, this);
 
-        if (parentName.empty())
+        if constexpr ((std::is_base_of<SceneComponent, T>::value))
         {
-            if (rootComponent_)
+            std::shared_ptr<SceneComponent> sceneComponent = std::dynamic_pointer_cast<SceneComponent>(newComponent);
+            if (parentName.empty())
             {
-                newComponent->AttachTo(rootComponent_);
+                if (rootComponent_)
+                {
+                    sceneComponent->AttachTo(rootComponent_);
+                }
+                else
+                {
+                    SetRootComponent(sceneComponent);
+                }
             }
             else
             {
-                SetRootComponent(newComponent);
+                std::shared_ptr<SceneComponent> parent = std::dynamic_pointer_cast<SceneComponent>(GetSceneComponentByName(parentName));
+                sceneComponent->AttachTo(parent);
             }
         }
-        else
-        {
-            newComponent->AttachTo(GetSceneComponentByName(parentName));
-        }
-
         // 所有リストに追加
         ownedSceneComponents_.push_back(newComponent);
 
@@ -106,18 +110,18 @@ public:
     }
 
     // Transform 不要の Component用
-    template <class T>
-    std::shared_ptr<T> NewLogicComponent(const std::string& name)
-    {
+    //template <class T>
+    //std::shared_ptr<T> NewLogicComponent(const std::string& name)
+    //{
 
-        std::shared_ptr<Actor> sharedThis = shared_from_this();
-        std::shared_ptr<T> newComponent = std::make_shared<T>(name, sharedThis);
+    //    std::shared_ptr<Actor> sharedThis = shared_from_this();
+    //    std::shared_ptr<T> newComponent = std::make_shared<T>(name, sharedThis);
 
-        ownedLogicComponents_.push_back(newComponent);
-        newComponent->OnRegister();
+    //    ownedLogicComponents_.push_back(newComponent);
+    //    newComponent->OnRegister();
 
-        return newComponent;
-    }
+    //    return newComponent;
+    //}
 
     // 他の Actor の Component を親にしたいとき用
     template <class T>
@@ -150,7 +154,8 @@ public:
     // 名前からcomponentをゲットする
     //template <class T>
     //std::shared_ptr<T> GetSceneComponentByName(const std::string& name)
-    std::shared_ptr<SceneComponent> GetSceneComponentByName(const std::string& name)
+    //std::shared_ptr<SceneComponent> GetSceneComponentByName(const std::string& name)
+    std::shared_ptr<Component> GetSceneComponentByName(const std::string& name)
     {
         if (name.empty())
         {
@@ -174,30 +179,30 @@ public:
         return nullptr;
     }
 
-    // 名前からcomponentをゲットする
-    std::shared_ptr<Component> GetLogicComponentByName(const std::string& name)
-    {
-        if (name.empty())
-        {
-            _ASSERT("GetLogicComponentByName 関数の引数の名前がありません。");
-        }
+    //// 名前からcomponentをゲットする
+    //std::shared_ptr<Component> GetLogicComponentByName(const std::string& name)
+    //{
+    //    if (name.empty())
+    //    {
+    //        _ASSERT("GetLogicComponentByName 関数の引数の名前がありません。");
+    //    }
 
 
-        decltype(nameToLogicComponent_)::const_iterator nameToComponent = nameToLogicComponent_.find(name);
-        if (nameToComponent != nameToLogicComponent_.end())
-        {
-            return nameToComponent->second;
-        }
+    //    decltype(nameToLogicComponent_)::const_iterator nameToComponent = nameToLogicComponent_.find(name);
+    //    if (nameToComponent != nameToLogicComponent_.end())
+    //    {
+    //        return nameToComponent->second;
+    //    }
 
-        decltype(ownedLogicComponents_)::const_iterator component = std::find(ownedLogicComponents_.begin(), ownedLogicComponents_.end(), name);
-        if (component != ownedLogicComponents_.end())
-        {
-            nameToLogicComponent_.emplace(name, *component);
-            return *component;
-        }
+    //    decltype(ownedLogicComponents_)::const_iterator component = std::find(ownedLogicComponents_.begin(), ownedLogicComponents_.end(), name);
+    //    if (component != ownedLogicComponents_.end())
+    //    {
+    //        nameToLogicComponent_.emplace(name, *component);
+    //        return *component;
+    //    }
 
-        return nullptr;
-    }
+    //    return nullptr;
+    //}
 
 
     // 名前からcomponentを削除する
@@ -224,16 +229,17 @@ public:
         }
 
         // キャッシュからも探す
-        auto itNameComp = nameToLogicComponent_.find(name);
-        if (itNameComp != nameToLogicComponent_.end())
-        {
-            // キャッシュから削除対象を削除（Destroy呼び出しはownedComponents_で行う想定）
-            nameToLogicComponent_.erase(itNameComp);
-        }
+        //auto itNameComp = nameToLogicComponent_.find(name);
+        //if (itNameComp != nameToLogicComponent_.end())
+        //{
+        //    // キャッシュから削除対象を削除（Destroy呼び出しはownedComponents_で行う想定）
+        //    nameToLogicComponent_.erase(itNameComp);
+        //}
 
 
         auto it = std::remove_if(ownedSceneComponents_.begin(), ownedSceneComponents_.end(),
-            [&](const std::shared_ptr<SceneComponent>& comp)
+            //[&](const std::shared_ptr<SceneComponent>& comp)
+            [&](const std::shared_ptr<Component>& comp)
             {
                 if (comp->name() == name) {
                     comp->Destroy(); // 上で定義した Destroy 呼ぶ
@@ -250,7 +256,8 @@ public:
     T* GetComponent()
     {
         // SceneComponent から探す
-        for (const std::shared_ptr<SceneComponent>& compent : ownedSceneComponents_)
+        //for (const std::shared_ptr<SceneComponent>& compent : ownedSceneComponents_)
+        for (const std::shared_ptr<Component>& compent : ownedSceneComponents_)
         {
             T* casted = dynamic_cast<T*>(compent.get());
             if (casted != nullptr)
@@ -260,14 +267,14 @@ public:
         }
 
         // LogicComponent から探す
-        for (const std::shared_ptr<Component>& compent : ownedLogicComponents_)
-        {
-            T* casted = dynamic_cast<T*>(compent.get());
-            if (casted != nullptr)
-            {
-                return casted;
-            }
-        }
+        //for (const std::shared_ptr<Component>& compent : ownedLogicComponents_)
+        //{
+        //    T* casted = dynamic_cast<T*>(compent.get());
+        //    if (casted != nullptr)
+        //    {
+        //        return casted;
+        //    }
+        //}
 
         _ASSERT(L"Actor の GetComponent が nullptr を返しています。");
         return nullptr;
@@ -286,14 +293,14 @@ public:
             }
         }
 
-        for (auto component : ownedLogicComponents_)
-        {
-            T* downCastComponent = dynamic_cast<T*>(component.get());
-            if (downCastComponent)
-            {
-                components.push_back(downCastComponent);
-            }
-        }
+        //for (auto component : ownedLogicComponents_)
+        //{
+        //    T* downCastComponent = dynamic_cast<T*>(component.get());
+        //    if (downCastComponent)
+        //    {
+        //        components.push_back(downCastComponent);
+        //    }
+        //}
     }
 
 
@@ -329,13 +336,13 @@ public:
                 }
             }
 
-            for (auto& comp : ownedLogicComponents_)
-            {
-                if (comp != rootComponent_) {
-                    ImGui::Text("%s", typeid(*comp).name());
-                    comp->DrawImGuiInspector();
-                }
-            }
+            //for (auto& comp : ownedLogicComponents_)
+            //{
+            //    if (comp != rootComponent_) {
+            //        ImGui::Text("%s", typeid(*comp).name());
+            //        comp->DrawImGuiInspector();
+            //    }
+            //}
 
             DrawImGuiDetails();
 
@@ -531,21 +538,21 @@ public:
         }
 
         // 全コンポーネントの破棄
-        for (auto& comp : ownedLogicComponents_)
-        {
-            if (comp)
-            {
-                comp->Destroy();          // PhysXからの除去など内部的なクリーンアップ
-                comp->OnUnregister();     // Sceneなどからの登録解除
-            }
-        }
+        //for (auto& comp : ownedLogicComponents_)
+        //{
+        //    if (comp)
+        //    {
+        //        comp->Destroy();          // PhysXからの除去など内部的なクリーンアップ
+        //        comp->OnUnregister();     // Sceneなどからの登録解除
+        //    }
+        //}
 
         Finalize();
 
         ownedSceneComponents_.clear();
-        ownedLogicComponents_.clear();
+        //ownedLogicComponents_.clear();
         nameToSceneComponent_.clear();
-        nameToLogicComponent_.clear();
+        //nameToLogicComponent_.clear();
         rootComponent_ = nullptr;
 
         isValid = false;
@@ -595,18 +602,18 @@ public:
     std::shared_ptr<SceneComponent> rootComponent_;
 
     // Component（Transform不要系）
-    std::vector<std::shared_ptr<Component>> ownedLogicComponents_;
+    //std::vector<std::shared_ptr<Component>> ownedLogicComponents_;
 
     // SceneComponent (Transform) 系
-    //std::vector<std::shared_ptr<Component>> ownedSceneComponents_;
-    std::vector<std::shared_ptr<SceneComponent>> ownedSceneComponents_;
+    std::vector<std::shared_ptr<Component>> ownedSceneComponents_;
+    //std::vector<std::shared_ptr<SceneComponent>> ownedSceneComponents_;
 
     // 名前とコンポーネントをキャッシュしておく
-    std::unordered_map<std::string, std::shared_ptr<SceneComponent>> nameToSceneComponent_;
-    //std::unordered_map<std::string, std::shared_ptr<Component>> nameToSceneComponent_;
+    //std::unordered_map<std::string, std::shared_ptr<SceneComponent>> nameToSceneComponent_;
+    std::unordered_map<std::string, std::shared_ptr<Component>> nameToSceneComponent_;
 
     // 名前とコンポーネントをキャッシュしておく
-    std::unordered_map<std::string, std::shared_ptr<Component>> nameToLogicComponent_;
+    //std::unordered_map<std::string, std::shared_ptr<Component>> nameToLogicComponent_;
 
     // 削除予約用リスト　
     // physx の simulate 途中に pxShape が付いた shapeComponent を削除するのを防ぐため

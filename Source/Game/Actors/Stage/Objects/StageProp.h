@@ -66,7 +66,8 @@ public:
                         itemSpawner->SpawnItems(1, true);
 
                         // アイテムが出たら、3秒後に削除する
-                        auto lifeTimeComponent =this ->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+                        //auto lifeTimeComponent =this ->NewLogicComponent<LifeTimeComponent>("lifeTimeComponent");
+                        auto lifeTimeComponent =this ->NewSceneComponent<LifeTimeComponent>("lifeTimeComponent");
                         lifeTimeComponent->SetLifeTime(3.0f);
 
 #if 0

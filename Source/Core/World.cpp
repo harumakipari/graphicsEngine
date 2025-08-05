@@ -7,7 +7,8 @@ void World::Tick(float deltaTime)
     {
         for (std::shared_ptr<Actor>& actor : allActors_)
         {
-            for (std::shared_ptr<SceneComponent>& component : actor->ownedSceneComponents_)
+            //for (std::shared_ptr<SceneComponent>& component : actor->ownedSceneComponents_)
+            for (std::shared_ptr<Component>& component : actor->ownedSceneComponents_)
             {
                 component->Tick(deltaTime);
             }
