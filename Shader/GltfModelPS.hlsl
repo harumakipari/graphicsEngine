@@ -120,15 +120,15 @@ PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
     float3 pointSpecular = 0;
     if (pointLightEnable != 0)
     {
-    //for (int i = 0; i < 8; i++)
-    {
-            float LP = pin.wPosition.xyz - pointLights /*[i]*/.position.xyz;
+        for (int i = 0; i < pointLightCount; i++)
+        {
+            float LP = pin.wPosition.xyz - pointLights[i].position.xyz;
             float len = length(LP);
-            if (len >= pointLights /*[i]*/.range)
+            if (len >= pointLights[i].range)
             {
-            //continue;
+                continue;
             }
-            float attenuateLength = saturate(1.0 - len / pointLights /*[i]*/.range);
+            float attenuateLength = saturate(1.0 - len / pointLights[i].range);
             float attenuation = attenuateLength * attenuateLength;
             LP /= len;
             const float pNoV = max(0.0, dot(N, V));
@@ -136,7 +136,7 @@ PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
             {
                 const float3 R = reflect(-LP, N);
                 const float3 H = normalize(V + LP);
-                float3 pLi = float3(pointLights /*[i]*/.color.xyz) * pointLights /*[i]*/.color.w; // Radiance of the light 
+                float3 pLi = float3(pointLights[i].color.xyz) * pointLights[i].color.w; // Radiance of the light 
                 const float NoH = max(0.0, dot(N, H));
                 const float HoV = max(0.0, dot(H, V));
                 float pNoL = max(0, 0.5 * dot(N, LP) + 0.5);

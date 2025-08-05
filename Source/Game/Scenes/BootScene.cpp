@@ -266,15 +266,18 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         // COMPUTE_PARTICLE_SYSTEM
         DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
     }
-    LightConstants lightConstants = {};
     lightConstants.lightDirection = lightDirection;
     lightConstants.colorLight = colorLight;
     lightConstants.iblIntensity = iblIntensity;
     lightConstants.directionalLightEnable = static_cast<int>(directionalLightEnable);
     lightConstants.pointLightEnable = static_cast<int>(pointLightEnable);
-    lightConstants.pointsLight[0].position = pointLightPosition;
-    lightConstants.pointsLight[0].color = pointLightColor;
-    lightConstants.pointsLight[0].range = pointLightRange;
+    lightConstants.pointLightCount = pointLightCount;
+    for (int i = 0; i < pointLightCount; i++)
+    {
+        lightConstants.pointsLight[i].position = pointLightPosition[i];
+        lightConstants.pointsLight[i].color = pointLightColor[i];
+        lightConstants.pointsLight[i].range = pointLightRange[i];
+    }
     //sceneConstants.lightDirection = lightDirection;
     //sceneConstants.colorLight = colorLight;
     //sceneConstants.iblIntensity = iblIntensity;
@@ -763,10 +766,23 @@ void BootScene::DrawGui()
                 ImGui::SliderFloat("Light Intensity", &iblIntensity, 0.0f, 10.0f);
                 ImGui::SliderFloat("Light Threshold", &colorLight.w, 0.0f, 10.0f);
                 ImGui::Checkbox("pointLightEnable", &pointLightEnable);
-                ImGui::DragFloat4("Point Light Position", &pointLightPosition.x, 0.1f);
-                ImGui::ColorEdit3("Point Light Color", &pointLightColor.x);
-                ImGui::SliderFloat("Point Light Range", &pointLightRange, 0.0f, 10.0f);
-                ImGui::SliderFloat("Point Light Threshold", &pointLightColor.w, 0.0f, 10.0f);
+                ImGui::SliderInt("Point Light Count", &pointLightCount, 0, 8);
+                for (int i = 0; i < pointLightCount; i++)
+                {
+                    std::string header = "PointLight[" + std::to_string(i) + "]";
+                    if (ImGui::CollapsingHeader(header.c_str()))
+                    {
+                        ImGui::DragFloat3(("Position##" + std::to_string(i)).c_str(), &pointLightPosition[i].x, 0.1f);
+                        ImGui::ColorEdit3(("Color##" + std::to_string(i)).c_str(), &pointLightColor[i].x);
+                        ImGui::SliderFloat(("Range##" + std::to_string(i)).c_str(), &pointLightRange[i], 0.0f, 10.0f);
+                        ImGui::SliderFloat(("Threshold##" + std::to_string(i)).c_str(), &pointLightColor[i].w, 0.0f, 10.0f);
+                    }
+                }
+
+                //ImGui::DragFloat4("Point Light Position", &pointLightPosition.x, 0.1f);
+                //ImGui::ColorEdit3("Point Light Color", &pointLightColor.x);
+                //ImGui::SliderFloat("Point Light Range", &pointLightRange, 0.0f, 10.0f);
+                //ImGui::SliderFloat("Point Light Threshold", &pointLightColor.w, 0.0f, 10.0f);
             }
 
             // -------------------------
