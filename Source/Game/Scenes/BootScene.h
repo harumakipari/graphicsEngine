@@ -56,10 +56,14 @@ class BootScene : public Scene
     struct PointLights
     {
         DirectX::XMFLOAT4 position{ 0.0f,0.0f,0.0f,0.0f };
-        DirectX::XMFLOAT4 color{ 1.0f,0.0f,1.0f,1.0f };
+        DirectX::XMFLOAT4 color{ 1.0f,0.0f,0.0f,1.0f };
         float range = 0.5f;
         float pads[3];
     };
+    DirectX::XMFLOAT4 pointLightPosition{ 0.0f,0.0f,0.0f,0.0f };
+    DirectX::XMFLOAT4 pointLightColor{ 1.0f,0.0f,0.0f,1.0f };
+    float pointLightRange = 0.5f;
+
     struct SpotLights
     {
 
@@ -70,9 +74,13 @@ class BootScene : public Scene
         DirectX::XMFLOAT4 lightDirection;
         DirectX::XMFLOAT4 colorLight;
         float iblIntensity;
-        float pads[3];
-        PointLights pointsLight[8];
+        int directionalLightEnable = 1; // 平行光源の on / off
+        int pointLightEnable = 1;
+        float pad;
+        PointLights pointsLight;
     };
+
+
     struct ShaderConstants
     {
         float extraction_threshold{ 0.8f };
@@ -113,7 +121,7 @@ class BootScene : public Scene
         float pads[3];
     };
     FogConstants fogConstants;
-    
+
     //Glitch
     struct SpriteConstants
     {
@@ -122,7 +130,7 @@ class BootScene : public Scene
         float pads[2];
     };
     SpriteConstants spriteConstants;
-    
+
     Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffers[8];
 
     //DirectX::XMFLOAT4 lightDirection{ -0.75f, -0.64f, -0.4f, 0.0f };
@@ -131,10 +139,10 @@ class BootScene : public Scene
     //float iblIntensity = 1.0f;  //Image Basesd Lightingの強度
     float iblIntensity = 2.0f;  //Image Basesd Lightingの強度
 
-	std::unique_ptr<Sprite> splash;
+    std::unique_ptr<Sprite> splash;
 
     Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShaders[8];
-	//std::unique_ptr<RenderState> renderState;
+    //std::unique_ptr<RenderState> renderState;
 
     // フルスクリーンクアッドを使ったレンダーターゲットのブレンド・コピー処理
     std::unique_ptr<FullScreenQuad> fullscreenQuadTransfer;
@@ -156,26 +164,26 @@ class BootScene : public Scene
     //スカイマップ
     std::unique_ptr<SkyMap> skyMap;
 
-	std::unique_ptr<FrameBuffer> framebuffers[8];
+    std::unique_ptr<FrameBuffer> framebuffers[8];
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
 
-	std::unique_ptr<FullScreenQuad> frameBufferBlit;
+    std::unique_ptr<FullScreenQuad> frameBufferBlit;
 
-	void SetUpActors();
+    void SetUpActors();
 
     // ライト
     Light light;
 
     SIZE framebufferDimensions;
 public:
-	bool Initialize(ID3D11Device* device, UINT64 width, UINT height, const std::unordered_map<std::string, std::string>& props) override;
+    bool Initialize(ID3D11Device* device, UINT64 width, UINT height, const std::unordered_map<std::string, std::string>& props) override;
 
     void Start() override;
 
-	void Update(ID3D11DeviceContext* immediate_context, float delta_time) override;
+    void Update(ID3D11DeviceContext* immediate_context, float delta_time) override;
 
-	void Render(ID3D11DeviceContext* immediate_context, float delta_time) override;
+    void Render(ID3D11DeviceContext* immediate_context, float delta_time) override;
 
     bool Uninitialize(ID3D11Device* device) override;
 
@@ -183,8 +191,8 @@ public:
 
     void DrawGui() override;
 
-	//シーンの自動登録
-	static inline Scene::Autoenrollment<BootScene> _autoenrollment;
+    //シーンの自動登録
+    static inline Scene::Autoenrollment<BootScene> _autoenrollment;
 
 private:
     std::shared_ptr<TitlePlayer> titlePlayer;
@@ -193,7 +201,7 @@ private:
     // ImGuiで使用する
     std::shared_ptr<Actor> selectedActor_;  // 選択中のアクターを保持
 
-	DirectX::XMFLOAT3 cameraTarget = { 0.0f,0.0f,0.0f };
+    DirectX::XMFLOAT3 cameraTarget = { 0.0f,0.0f,0.0f };
 
     Renderer actorRender;
 

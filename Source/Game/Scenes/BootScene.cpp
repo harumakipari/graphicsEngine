@@ -61,7 +61,7 @@ bool BootScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
     bufferDesc.StructureByteStride = 0;
     hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[3].ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-    
+
     bufferDesc.ByteWidth = sizeof(LightConstants);
     bufferDesc.Usage = D3D11_USAGE_DEFAULT;
     bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -270,7 +270,9 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     lightConstants.lightDirection = lightDirection;
     lightConstants.colorLight = colorLight;
     lightConstants.iblIntensity = iblIntensity;
-    lightConstants.pointsLight->position = { 0.0f,2.0f,0.0f ,0.0f};
+    lightConstants.pointsLight.position = pointLightPosition;
+    lightConstants.pointsLight.color = pointLightColor;
+    lightConstants.pointsLight.range = pointLightRange;
     //sceneConstants.lightDirection = lightDirection;
     //sceneConstants.colorLight = colorLight;
     //sceneConstants.iblIntensity = iblIntensity;
@@ -753,6 +755,10 @@ void BootScene::DrawGui()
                 ImGui::SliderFloat3("Light Color", &colorLight.x, -1.0f, 1.0f);
                 ImGui::SliderFloat("Light Intensity", &iblIntensity, 0.0f, 10.0f);
                 ImGui::SliderFloat("Light Threshold", &colorLight.w, 0.0f, 10.0f);
+                ImGui::DragFloat4("Point Light Position", &pointLightPosition.x, 0.1f);
+                ImGui::ColorEdit3("Point Light Color", &pointLightColor.x);
+                ImGui::SliderFloat("Point Light Range", &pointLightRange, 0.0f, 10.0f);
+                ImGui::SliderFloat("Point Light Threshold", &pointLightColor.w, 0.0f, 10.0f);
             }
 
             // -------------------------

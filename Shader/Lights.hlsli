@@ -22,5 +22,8 @@ cbuffer LIGHT_CONSTANT_BUFFER : register(b11)
     float4 lightDirection;
     float4 colorLight; //w colorPower
     float iblIntensity;
-    PointLights pointLights[8];
+    int directionalLightEnable; // ïΩçsåıåπÇÃ on / off
+    int pointLightEnable;
+    float align;
+    PointLights pointLights;
 };

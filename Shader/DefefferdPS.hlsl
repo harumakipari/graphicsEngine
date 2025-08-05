@@ -39,15 +39,15 @@ float4 main(VS_OUT pin) : SV_TARGET
     // ì_åıåπÇÃèàóù
     float3 pointDiffuse = 0;
     float3 pointSpecular = 0;
-    for (int i = 0; i < 8; i++)
+    //for (int i = 0; i < 8; i++)
     {
-        float LP = position.xyz - pointLights[i].position.xyz;
+        float LP = position.xyz - pointLights/*[i]*/.position.xyz;
         float len = length(LP);
-        if (len >= pointLights[i].range)
+        if (len >= pointLights/*[i]*/.range)
         {
-            continue;
+            //continue;
         }
-        float attenuateLength = saturate(1.0 - len / pointLights[i].range);
+        float attenuateLength = saturate(1.0 - len / pointLights/*[i]*/.range);
         float attenuation = attenuateLength * attenuateLength;
         LP /= len;
         const float pNoV = max(0.0, dot(N, V));
@@ -55,14 +55,12 @@ float4 main(VS_OUT pin) : SV_TARGET
         {
             const float3 R = reflect(-LP, N);
             const float3 H = normalize(V + LP);
-        
+            float3 pLi = float3(pointLights/*[i]*/.color.xyz) * pointLights/*[i]*/.color.w; // Radiance of the light 
             const float NoH = max(0.0, dot(N, H));
             const float HoV = max(0.0, dot(H, V));
             float pNoL = max(0, 0.5 * dot(N, LP) + 0.5);
-            pointDiffuse += Li * NoL * BrdfLambertian(f0, f90, cDiff, HoV);
-            pointSpecular += Li * NoL * BrdfSpecularGgx(f0, f90, alphaRoughness, HoV, NoL, pNoV, NoH);
-            pointDiffuse += IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0) * iblIntensity;
-            pointSpecular += IblRadianceGgx(N, V, roughnessFactor, f0) * iblIntensity;
+            pointDiffuse += pLi * pNoL * BrdfLambertian(f0, f90, cDiff, HoV);
+            pointSpecular += pLi * pNoL * BrdfSpecularGgx(f0, f90, alphaRoughness, HoV, NoL, pNoV, NoH);
         }
     }
     
@@ -81,12 +79,6 @@ float4 main(VS_OUT pin) : SV_TARGET
         specular += Li * NoL * BrdfSpecularGgx(f0, f90, alphaRoughness, HoV, NoL, NoV, NoH);
     }
 #endif
-    
-#if 1   //äOÇÃîwåiÇà⁄Ç∑
-    diffuse += IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0) * iblIntensity;
-    specular += IblRadianceGgx(N, V, roughnessFactor, f0) * iblIntensity;
-#endif
-    
     float occlusionFactor = msr.y;
     float occlusionStrength = msr.w;
     float3 emmisive = emmisiveFactor;
@@ -94,6 +86,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     float3 totalDiffuse = diffuse + pointDiffuse;
     float3 totalSpecular = specular + pointSpecular;
     
+#if 1   //äOÇÃîwåiÇà⁄Ç∑
+    totalDiffuse += IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0) * iblIntensity;
+    totalSpecular += IblRadianceGgx(N, V, roughnessFactor, f0) * iblIntensity;
+#endif
     diffuse = lerp(totalDiffuse, totalDiffuse * occlusionFactor, occlusionStrength);
     specular = lerp(totalSpecular, totalSpecular * occlusionFactor, occlusionStrength);
     //diffuse = lerp(diffuse, diffuse * occlusionFactor, occlusionStrength);
