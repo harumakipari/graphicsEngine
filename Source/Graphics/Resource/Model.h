@@ -62,6 +62,8 @@ public:
         int mesh = -1;
 
         std::vector<int> children;
+
+        // ƒ[ƒJƒ‹‚Ì
     };
 
 };
