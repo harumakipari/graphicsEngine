@@ -9,6 +9,7 @@
 #include "Components/Camera/CameraComponent.h"
 #include "Components/CollisionShape/ShapeComponent.h"
 #include "Physics/PhysicsUtility.h"
+#include "Physics/Physics.h"
 
 #include "Game/Actors/Stage/Building.h"
 #include "Game/Actors/Stage/BossBuilding.h"
@@ -93,7 +94,7 @@ public:
             // lerp æ‚Ì position ‚ð•Û‘¶
             afterTarget = clampedTarget;
             afterEye = eye;
-            RaycastHit result;
+            RaycastHit2 result;
             DirectX::XMFLOAT3 origin = GetPosition();
             DirectX::XMFLOAT3 direction;
             direction.x = mainCameraComponent->GetView()._31;
@@ -105,8 +106,9 @@ public:
             DirVec = DirectX::XMVector3Normalize(DirVec);
             DirectX::XMStoreFloat3(&direction, DirVec);
             DirectX::XMStoreFloat(&distance, distanceVec);
-            if (PhysicsTest::Instance().SphereCast(origin, direction, distance, 0.4f, result, CollisionHelper::ToBit(CollisionLayer::Camera),     // myLayer
-                CollisionHelper::ToBit(CollisionLayer::Building)))   // wantHitRayer)
+            //if (PhysicsTest::Instance().SphereCast(origin, direction, distance, 0.4f, result, CollisionHelper::ToBit(CollisionLayer::Camera),     // myLayer
+            //    CollisionHelper::ToBit(CollisionLayer::Building)))   // wantHitRayer)
+            if (Physics::Instance().SphereCast(origin, direction, distance, 1.0f, result))   // wantHitRayer)
             {
                 if (auto build = dynamic_cast<Building*>(result.actor))
                 {

@@ -85,7 +85,6 @@ public:
         }
     }
 
-
     void SetGravity(bool isUseGravity)
     {
         if (rigidBody_)

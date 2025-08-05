@@ -9,7 +9,6 @@
 
 #include "Graphics/Renderer/ShapeRenderer.h"
 #include "DefferdPhysicsOperation.h"
-
 struct HitResult
 {
     DirectX::XMFLOAT3	position;
@@ -18,6 +17,16 @@ struct HitResult
 };
 
 
+class Actor;
+class ShapeComponent;
+struct RaycastHit2
+{
+    Actor* actor = nullptr;     // 衝突した相手
+    ShapeComponent* component = nullptr;    // 衝突したコンポーネント
+    float distance = 0.0f;      // 距離
+    DirectX::XMFLOAT3 hitPoint;     // ヒット距離
+    DirectX::XMFLOAT3 normal;       // 法線
+};
 // フィジクス
 class Physics
     : public physx::PxQueryFilterCallback		// NOTE:③フィルタリングインターフェースの継承
@@ -71,7 +80,7 @@ public:
 
     // スフィアキャスト
     bool SphereCast(const DirectX::XMFLOAT3& origin, const DirectX::XMFLOAT3& direction, float distance, float radius, HitResult& result);
-
+    bool SphereCast(const DirectX::XMFLOAT3& origin, const DirectX::XMFLOAT3& direction, float distance, float radius, RaycastHit2& result);
     // simulate 後でする処理を追加する
     static void EnqueueDefferfOperations(const DefferdPhysicsOperation& op)
     {

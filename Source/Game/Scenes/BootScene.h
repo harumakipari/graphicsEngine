@@ -79,7 +79,7 @@ class BootScene : public Scene
         int directionalLightEnable = 1; // ïΩçsåıåπÇÃ on / off
         int pointLightEnable = 1;
         float pad;
-        PointLights pointsLight;
+        PointLights pointsLight[8];
     };
 
 

@@ -272,9 +272,9 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     lightConstants.iblIntensity = iblIntensity;
     lightConstants.directionalLightEnable = static_cast<int>(directionalLightEnable);
     lightConstants.pointLightEnable = static_cast<int>(pointLightEnable);
-    lightConstants.pointsLight.position = pointLightPosition;
-    lightConstants.pointsLight.color = pointLightColor;
-    lightConstants.pointsLight.range = pointLightRange;
+    lightConstants.pointsLight[0].position = pointLightPosition;
+    lightConstants.pointsLight[0].color = pointLightColor;
+    lightConstants.pointsLight[0].range = pointLightRange;
     //sceneConstants.lightDirection = lightDirection;
     //sceneConstants.colorLight = colorLight;
     //sceneConstants.iblIntensity = iblIntensity;

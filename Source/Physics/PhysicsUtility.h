@@ -107,8 +107,8 @@ public:
             physx::PxQueryFlag::ePREFILTER |
             physx::PxQueryFlag::ePOSTFILTER
         );
-        //pxQueryFilterData.data.word0 = 0xFFFFFFFF;	// NOTE:⑤レイヤーマスク
-        //pxQueryFilterData.data.word1 = 0xFFFFFFFF;	// NOTE:⑤レイヤーマスク
+        pxQueryFilterData.data.word0 = 0xFFFFFFFF;	// NOTE:⑤レイヤーマスク
+        pxQueryFilterData.data.word1 = 0xFFFFFFFF;	// NOTE:⑤レイヤーマスク
         pxQueryFilterData.data.word0 = (myLayer);	// NOTE:⑤レイヤーマスク
         pxQueryFilterData.data.word1 = (wantHitRayer);	// NOTE:⑤レイヤーマスク
 

@@ -329,7 +329,7 @@ void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
     //デバッグ用
     if (InputSystem::GetInputState("E", InputStateMask::Trigger))
     {
-        player->ApplyDirectHpDamage(100);
+        //player->ApplyDirectHpDamage(100);
     }
 #endif
     // プレイヤーが死亡したら
