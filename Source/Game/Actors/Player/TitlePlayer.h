@@ -84,6 +84,18 @@ public:
         SetScale(transform.GetScale());
     }
 
+    void SwitchPS(bool useDeffered)
+    {
+        if (useDeffered)
+        {
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelDefferedPS.cso", skeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+        }
+        else
+        {
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelPS.cso", skeltalMeshComponent->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+        }
+    }
+
     void Update(float deltaTime)override
     {
         DirectX::XMFLOAT3 playerHead = skeltalMeshComponent->model->GetJointLocalPosition("atama_FK", skeltalMeshComponent->model->nodes);

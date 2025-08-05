@@ -12,7 +12,10 @@ public:
     TitleStage(std::string actorName) :Actor(actorName) {}
     virtual ~TitleStage() = default;
 
-    std::shared_ptr<StaticMeshComponent> titleLogo;
+    std::shared_ptr<StaticMeshComponent> titleLogo; 
+    std::shared_ptr<StaticMeshComponent> stage;
+    std::shared_ptr<StaticMeshComponent> build;
+    std::shared_ptr<SkeltalMeshComponent> trafficLight;
     void Initialize(const Transform& transform)override
     {
         std::shared_ptr<SceneComponent> parent = this->NewSceneComponent<SceneComponent>("empty");
@@ -20,7 +23,7 @@ public:
         SetQuaternionRotation(transform.GetRotation());
         SetScale(transform.GetScale());
 
-        std::shared_ptr<StaticMeshComponent> stage = this->NewSceneComponent<StaticMeshComponent>("stageComponent","empty");
+        stage = this->NewSceneComponent<StaticMeshComponent>("stageComponent","empty");
         //stage->SetModel("./Data/Models/Title/title_yuka_kabe.gltf");
         stage->SetModel("./Data/Models/Stage/SpotLightStage/stydio_6.gltf");
         stage->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
@@ -33,12 +36,12 @@ public:
         titleLogo->SetRelativeLocationDirect({ 0.0f,0.1f,-0.1f });      // yÀ•W 1.9f ‚Å”ÍˆÍŠO
         titleLogo->SetRelativeEulerRotationDirect({ 0.0f,-9.0f,0.0f });
 
-        std::shared_ptr<StaticMeshComponent> build = this->NewSceneComponent<StaticMeshComponent>("buildComponent", "empty");
+        build = this->NewSceneComponent<StaticMeshComponent>("buildComponent", "empty");
         build->SetModel("./Data/Models/Title/title_bill.gltf");
         build->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
         build->SetRelativeScaleDirect({ -1.0f,1.0f,-1.0f });
 
-        std::shared_ptr<SkeltalMeshComponent> trafficLight = this->NewSceneComponent<SkeltalMeshComponent>("trafficLight", "empty");
+        trafficLight = this->NewSceneComponent<SkeltalMeshComponent>("trafficLight", "empty");
         trafficLight->SetModel("./Data/Models/Stage/Props/traffic_light.gltf");
         trafficLight->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
         trafficLight->model->emission = 1.0f;
@@ -48,6 +51,23 @@ public:
         //CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelEmissionPS.cso", trafficLight->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
     }
 
+    void SwitchPS(bool useDeffered)
+    {
+        if (useDeffered)
+        {
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelDefferedPS.cso", stage->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelDefferedPS.cso", titleLogo->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelDefferedPS.cso", build->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelDefferedPS.cso", trafficLight->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+        }
+        else
+        {
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelPS.cso", stage->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelPS.cso", titleLogo->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelPS.cso", build->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+            CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelPS.cso", trafficLight->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
+        }
+    }
 
     void Update(float deltaTime)override
     {
