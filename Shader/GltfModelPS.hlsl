@@ -122,7 +122,7 @@ PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
     {
         for (int i = 0; i < pointLightCount; i++)
         {
-            float LP = pin.wPosition.xyz - pointLights[i].position.xyz;
+            float3 LP = pin.wPosition.xyz - pointLights[i].position.xyz;
             float len = length(LP);
             if (len >= pointLights[i].range)
             {
@@ -164,16 +164,17 @@ PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
 #endif
     
     //return basecolorFactor;
-    float3 totalDiffuse = diffuse + pointDiffuse;
-    float3 totalSpecular = specular + pointSpecular;
 
 #if 1   //ŠO‚Ì”wŒi‚ðˆÚ‚·
-    totalDiffuse += IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0) * iblIntensity;
+    //totalDiffuse += IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0) * iblIntensity;
+    float3 iblDiffuse = IblRadianceLambertian(N, V, roughnessFactor, cDiff, f0) * iblIntensity;
     //specular += IblRadianceGgx(N, V, roughnessFactor, f0);
-    totalSpecular += IblRadianceGgx(N, V, roughnessFactor, f0) * iblIntensity;
+    float3 iblSpecular = IblRadianceGgx(N, V, roughnessFactor, f0) * iblIntensity;
 #endif
     
-    
+    float3 totalDiffuse = diffuse + pointDiffuse + iblDiffuse;
+    float3 totalSpecular = specular + pointSpecular + iblSpecular;
+
     float3 emmisive = emmisiveFactor;
     diffuse = lerp(totalDiffuse, totalDiffuse * occlusionFactor, occlusionStrength);
     specular = lerp(totalSpecular, totalSpecular * occlusionFactor, occlusionStrength);

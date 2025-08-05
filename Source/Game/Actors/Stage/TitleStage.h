@@ -35,6 +35,7 @@ public:
         titleLogo->SetRelativeScaleDirect({ -1.0f,1.0f,-1.0f });        
         titleLogo->SetRelativeLocationDirect({ 0.0f,0.1f,-0.1f });      // yÀ•W 1.9f ‚Å”ÍˆÍŠO
         titleLogo->SetRelativeEulerRotationDirect({ 0.0f,-9.0f,0.0f });
+        titleLogo->SetIsVisible(false);
 
         build = this->NewSceneComponent<StaticMeshComponent>("buildComponent", "empty");
         build->SetModel("./Data/Models/Title/title_bill.gltf");

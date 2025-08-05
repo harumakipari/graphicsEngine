@@ -763,8 +763,8 @@ void BootScene::DrawGui()
                 ImGui::Checkbox("directionalLightEnable", &directionalLightEnable);
                 ImGui::SliderFloat3("Light Direction", &lightDirection.x, -1.0f, 1.0f);
                 ImGui::SliderFloat3("Light Color", &colorLight.x, -1.0f, 1.0f);
-                ImGui::SliderFloat("Light Intensity", &iblIntensity, 0.0f, 10.0f);
-                ImGui::SliderFloat("Light Threshold", &colorLight.w, 0.0f, 10.0f);
+                ImGui::SliderFloat("IBL Intensity", &iblIntensity, 0.0f, 10.0f);
+                ImGui::SliderFloat("Light Intensity", &colorLight.w, 0.0f, 10.0f);
                 ImGui::Checkbox("pointLightEnable", &pointLightEnable);
                 ImGui::SliderInt("Point Light Count", &pointLightCount, 0, 8);
                 for (int i = 0; i < pointLightCount; i++)
@@ -775,7 +775,7 @@ void BootScene::DrawGui()
                         ImGui::DragFloat3(("Position##" + std::to_string(i)).c_str(), &pointLightPosition[i].x, 0.1f);
                         ImGui::ColorEdit3(("Color##" + std::to_string(i)).c_str(), &pointLightColor[i].x);
                         ImGui::SliderFloat(("Range##" + std::to_string(i)).c_str(), &pointLightRange[i], 0.0f, 10.0f);
-                        ImGui::SliderFloat(("Threshold##" + std::to_string(i)).c_str(), &pointLightColor[i].w, 0.0f, 10.0f);
+                        ImGui::SliderFloat(("Intensity##" + std::to_string(i)).c_str(), &pointLightColor[i].w, 0.0f, 10.0f);
                     }
                 }
 

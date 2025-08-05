@@ -100,9 +100,11 @@ GBUFFER_PS_OUT main(VS_OUT pin, bool isFrontFace : SV_IsFrontFace)
     }
     
     pout.color = basecolorFactor;
-    pout.position = mul(pin.wPosition, view); // to viewSpace
-    pout.normal = mul(float4(N.xyz, 0), view); //to viewSpace;
-    pout.emmisive.rgb = emmisiveFactor;
+    //pout.position = mul(pin.wPosition, view); // to viewSpace
+    //pout.normal = mul(float4(N.xyz, 0), view); //to viewSpace;
+    pout.position = pin.wPosition; // to viewSpace
+    pout.normal = float4(N.xyz, 0); //to viewSpace;
+    pout.emmisive = float4(emmisiveFactor, 0);
     pout.msr = float4(metallicFactor, occlusionFactor, roughnessFactor, occlusionStrength);
     
 	return pout;

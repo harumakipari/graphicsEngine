@@ -394,6 +394,7 @@
     <ClInclude Include="Source\Graphics\Resource\GltfModelBase.h" />
     <ClInclude Include="Source\Graphics\Resource\GltfModelStaticBatching.h" />
     <ClInclude Include="Source\Graphics\Resource\InterleavedGltfModel.h" />
+    <ClInclude Include="Source\Graphics\Resource\Model.h" />
     <ClInclude Include="Source\Graphics\Resource\ModelResource.h" />
     <ClInclude Include="Source\Graphics\Resource\PrecomputedNoiseTexture3D.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderToy.h" />
