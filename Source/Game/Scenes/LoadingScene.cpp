@@ -18,6 +18,9 @@
 
 bool LoadingScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, const std::unordered_map<std::string, std::string>& props)
 {
+    OutputDebugStringA((std::string("Scene::Initialize this=") + std::to_string(reinterpret_cast<uintptr_t>(this)) + "\n").c_str());
+    OutputDebugStringA((std::string("_current_scene.get()=") + std::to_string(reinterpret_cast<uintptr_t>(this)) + "\n").c_str());
+    OutputDebugStringA((std::string("actorManager_ ptr=") + std::to_string(reinterpret_cast<uintptr_t>(this->GetActorManager())) + "\n").c_str());
     HRESULT hr;
 
     D3D11_BUFFER_DESC bufferDesc{};
@@ -89,7 +92,7 @@ bool LoadingScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, c
     //splash = std::make_unique<Sprite>(device, L"./Data/Textures/Screens/TitleScene/994759-1.jpg");
 
     //アクターをセット
-    SetUpActors();
+    //SetUpActors();
 
     //hit_space_key = std::make_unique<Sprite>(device, L"./Data/Textures/Screens/LoadingScene/230x0w.png");
 
@@ -119,14 +122,19 @@ bool LoadingScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, c
     return true;
 }
 
+void LoadingScene::Start()
+{
+    SetUpActors();
+}
+
 void LoadingScene::SetUpActors()
 {
-    mainCameraActor = LoadingActorManager::CreateAndRegisterActor<TitleCamera>("mainLoadingCameraActor");
+    mainCameraActor = this->GetActorManager()->CreateAndRegisterActor<TitleCamera>("mainLoadingCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
     mainCameraActor->SetPosition({ -4.1f,1.9f,-4.3f });
-    //CameraManager::SetGameCamera(mainCameraComponent);
+    CameraManager::SetGameCamera(mainCameraActor.get());
     Transform enemyTr(DirectX::XMFLOAT3{ 14.8f,-6.0f,16.5f }, DirectX::XMFLOAT3{ 0.0f,35.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    enemy = LoadingActorManager::CreateAndRegisterActorWithTransform<EmptyEnemy>("Loadingenemy", enemyTr);
+    enemy = GetActorManager()->CreateAndRegisterActorWithTransform<EmptyEnemy>("Loadingenemy", enemyTr);
     enemy->PlayAnimation("Rotate", false);
 }
 
@@ -142,7 +150,7 @@ void LoadingScene::Update(ID3D11DeviceContext* immediate_context, float delta_ti
     }
 
     //auto camera = std::dynamic_pointer_cast<TitleCamera>(ActorManager::GetActorByName("mainLoadingCameraActor"));
-    LoadingActorManager::Update(delta_time);
+    //LoadingActorManager::Update(delta_time);
     //if (InputSystem::GetInputState("Space", InputStateMask::Trigger))
     {
         if (_has_finished_preloading() && !enemy->GetAnimationController()->IsPlayAnimation())
@@ -182,7 +190,7 @@ bool LoadingScene::OnSizeChanged(ID3D11Device* device, UINT64 width, UINT height
 
 bool LoadingScene::Uninitialize(ID3D11Device* device)
 {
-    LoadingActorManager::ClearAll();
+    //LoadingActorManager::ClearAll();
     //ActorManager::ClearAll();
     //enemy->SetPendingDestroy();
     //mainCameraActor->SetPendingDestroy();
@@ -235,7 +243,7 @@ void LoadingScene::Render(ID3D11DeviceContext* immediateContext, float delta_tim
     //}
 #else
     float aspect_ratio{ viewport.Width / viewport.Height };
-    auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
+     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
     auto camera = mainCameraComponent;
     //auto camera = CameraManager::GetCurrentCamera();
     if (camera)
@@ -344,11 +352,11 @@ void LoadingScene::Render(ID3D11DeviceContext* immediateContext, float delta_tim
     DirectX::XMFLOAT4X4 cameraView;
     DirectX::XMFLOAT4X4 cameraProjection;
 
-    if (camera)
-    {
-        cameraView = camera->GetView();
-        cameraProjection = camera->GetProjection();
-    }
+    //if (camera)
+    //{
+    //    cameraView = camera->GetView();
+    //    cameraProjection = camera->GetProjection();
+    //}
     // CASCADED_SHADOW_MAPS
     // Make cascaded shadow maps
     cascadedShadowMaps->Clear(immediateContext);
@@ -356,7 +364,7 @@ void LoadingScene::Render(ID3D11DeviceContext* immediateContext, float delta_tim
     RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
     RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    actorRender.CastShadowRender(immediateContext);
+    //actorRender.CastShadowRender(immediateContext);
     //gameWorld_->CastShadowRender(immediateContext);
     cascadedShadowMaps->Deactive(immediateContext);
 
@@ -444,12 +452,12 @@ void LoadingScene::DrawGui()
     ImGui::SetNextWindowSize(ImVec2(left_panel_width, screen_height));
     ImGui::Begin("Actor Outliner", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-    for (auto& actor : LoadingActorManager::allActors_) {
-        bool is_selected = (selectedActor_ == actor);
-        if (ImGui::Selectable(actor->GetName().c_str(), is_selected)) {
-            selectedActor_ = actor;
-        }
-    }
+    //for (auto& actor : LoadingActorManager::allActors_) {
+    //    bool is_selected = (selectedActor_ == actor);
+    //    if (ImGui::Selectable(actor->GetName().c_str(), is_selected)) {
+    //        selectedActor_ = actor;
+    //    }
+    //}
 
     // ==== UIアウトライナ(追加)　====
     //EditorGUI::DrawMainMenu();

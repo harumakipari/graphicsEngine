@@ -119,7 +119,7 @@ void PickUpItem::Update(float deltaTime)
     }
 
     // Ž•ŽÔ‹«ŠE
-    if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy")))
+    if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(GetOwnerScene()->GetActorManager()->GetActorByName("enemy")))
     {
         if (enemy->IsEnemyJumping())
         {

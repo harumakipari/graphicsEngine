@@ -26,6 +26,8 @@
 #include "Game/Utils/ShockWaveTargetRegistry.h"
 #include "Components/Audio/AudioSourceComponent.h"
 
+#include "Engine/Scene/Scene.h"
+
 class BuildingManager
 {
 public:
@@ -120,7 +122,12 @@ public:
                 building->SetPosition(pos);
                 building->SetPendingDestroy();
                 Transform test2Tr(pos, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-                auto testCollision2 = ActorManager::CreateAndRegisterActorWithTransform<BossBuilding>("bossBuilding", test2Tr);
+                Scene* currentScene = Scene::GetCurrentScene();
+                if (!currentScene)
+                {
+                    return;
+                }
+                auto testCollision2 = currentScene->GetActorManager()->CreateAndRegisterActorWithTransform<BossBuilding>("bossBuilding", test2Tr);
             }
         }
         auto end = std::chrono::high_resolution_clock::now();

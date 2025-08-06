@@ -144,7 +144,7 @@ void TutorialScene::Start()
     TutorialSystem::SetInitializeFunction(TutorialStep::Collect, [&]()
         {
             Transform transform{ DirectX::XMFLOAT3{2.0f,0.175f,-3.0f},DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f},DirectX::XMFLOAT3{1.0f,1.0f,1.0f} };
-            auto item = ActorManager::CreateAndRegisterActorWithTransform<PickUpItem>("tutorialItem", transform);
+            auto item = GetActorManager()->CreateAndRegisterActorWithTransform<PickUpItem>("tutorialItem", transform);
 
             //Collectテキストだけ表示
             for (GameObject* object : objectManager.FindGameObject("TutorialCanvas")->children)
@@ -189,7 +189,7 @@ void TutorialScene::Start()
                     DirectX::XMFLOAT4{0.0f, 0.0f, 0.0f, 1.0f},
                     DirectX::XMFLOAT3{1.0f, 1.0f, 1.0f}
                 };
-                auto item = ActorManager::CreateAndRegisterActorWithTransform<PickUpItem>("tutorialItem", transform);
+                auto item = GetActorManager()->CreateAndRegisterActorWithTransform<PickUpItem>("tutorialItem", transform);
 
             }
 
@@ -226,10 +226,10 @@ void TutorialScene::Start()
         });
     TutorialSystem::SetInitializeFunction(TutorialStep::CreateBuild, [&]()
         {
-            if (!ActorManager::GetActorByName("tutorialBuilding"))
+            if (!GetActorManager()->GetActorByName("tutorialBuilding"))
             {
                 Transform transform{ DirectX::XMFLOAT3{-4.0f,-3.0f,1.0f},DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f},DirectX::XMFLOAT3{1.0f,1.0f,1.0f} };
-                auto build = ActorManager::CreateAndRegisterActorWithTransform<Building>("tutorialBuilding", transform);
+                auto build = GetActorManager()->CreateAndRegisterActorWithTransform<Building>("tutorialBuilding", transform);
                 build->preSkeltalMeshComponent->SetIsVisible(true);
                 audio->Play();
             }
@@ -240,7 +240,7 @@ void TutorialScene::Start()
             std::string itemName = "tutorialItem__" + std::to_string(tutorialItemCounter++);
             Transform itemTransform{ DirectX::XMFLOAT3{x,0.175f,-z},DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f},DirectX::XMFLOAT3{1.0f,1.0f,1.0f} };
             //Transform itemTransform{ DirectX::XMFLOAT3{5.0f,0.175f,-3.0f},DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f},DirectX::XMFLOAT3{1.0f,1.0f,1.0f} };
-            auto item = ActorManager::CreateAndRegisterActorWithTransform<PickUpItem>(itemName, itemTransform);
+            auto item = GetActorManager()->CreateAndRegisterActorWithTransform<PickUpItem>(itemName, itemTransform);
 
             //照準ミッションテキストだけ表示
             for (GameObject* object : objectManager.FindGameObject("TutorialCanvas")->children)
@@ -278,12 +278,12 @@ void TutorialScene::Start()
                 float y = center.y;
 
                 Transform transform{ DirectX::XMFLOAT3{x,y,z},DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f},DirectX::XMFLOAT3{1.0f,1.0f,1.0f} };
-                auto item = ActorManager::CreateAndRegisterActorWithTransform<PickUpItem>("tutorialItem", transform);
+                auto item = GetActorManager()->CreateAndRegisterActorWithTransform<PickUpItem>("tutorialItem", transform);
             }
-            if (!ActorManager::GetActorByName("tutorialBuildingManyCollect2"))
+            if (!GetActorManager()->GetActorByName("tutorialBuildingManyCollect2"))
             {
                 Transform transform{ DirectX::XMFLOAT3{-6.5f,-3.0f,1.0f},DirectX::XMFLOAT4{0.0f,0.0f,0.0f,1.0f},DirectX::XMFLOAT3{1.0f,1.0f,1.0f} };
-                auto build = ActorManager::CreateAndRegisterActorWithTransform<Building>("tutorialBuildingManyCollect2", transform);
+                auto build = GetActorManager()->CreateAndRegisterActorWithTransform<Building>("tutorialBuildingManyCollect2", transform);
                 build->preSkeltalMeshComponent->SetIsVisible(true);
                 audio->Play();
             }
@@ -349,11 +349,11 @@ void TutorialScene::Start()
 
 void TutorialScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
 {
-    auto camera = std::dynamic_pointer_cast<MainCamera>(ActorManager::GetActorByName("mainCameraActor"));
+    auto camera = std::dynamic_pointer_cast<MainCamera>(GetActorManager()->GetActorByName("mainCameraActor"));
 
     TutorialSystem::Update(deltaTime);
     Physics::Instance().Update(deltaTime);
-    ActorManager::Update(deltaTime);
+    //ActorManager::Update(deltaTime);
     EventSystem::Update(deltaTime);//追加
     objectManager.Update(deltaTime);//追加
     CollisionSystem::DetectAndResolveCollisions();
@@ -426,28 +426,28 @@ void TutorialScene::Update(ID3D11DeviceContext* immediate_context, float deltaTi
 
 void TutorialScene::SetUpActors()
 {
-    stage = ActorManager::CreateAndRegisterActor<Stage>("stage");
+    stage = GetActorManager()->CreateAndRegisterActor<Stage>("stage");
 
     Transform playerTr(DirectX::XMFLOAT3{ 0.7f,0.8f,-9.5f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    player = ActorManager::CreateAndRegisterActorWithTransform<Player>("actor", playerTr);
+    player = GetActorManager()->CreateAndRegisterActorWithTransform<Player>("actor", playerTr);
 
-    auto mainCameraActor = ActorManager::CreateAndRegisterActor<MainCamera>("mainCameraActor");
+    auto mainCameraActor = GetActorManager()->CreateAndRegisterActor<MainCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
 
     CameraManager::SetGameCamera(mainCameraActor.get());
 
-    auto debugCameraActor = ActorManager::CreateAndRegisterActor<DebugCamera>("debugCam");
+    auto debugCameraActor = GetActorManager()->CreateAndRegisterActor<DebugCamera>("debugCam");
     //auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
     //auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
     CameraManager::SetDebugCamera(debugCameraActor);
 
     Transform enemyTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
-    enemy = ActorManager::CreateAndRegisterActorWithTransform<TutorialEnemy>("tutorialEnemy", enemyTr);
+    enemy = GetActorManager()->CreateAndRegisterActorWithTransform<TutorialEnemy>("tutorialEnemy", enemyTr);
 }
 
 bool TutorialScene::Uninitialize(ID3D11Device* device)
 {
-    ActorManager::ClearAll();
+    //ActorManager::ClearAll();
     Physics::Instance().Finalize();
     PhysicsTest::Instance().Finalize();
     //SpawnValidator::Clear();    // 登録していた Box を破棄する
@@ -693,7 +693,7 @@ void TutorialScene::DrawGui()
     ImGui::SetNextWindowSize(ImVec2(left_panel_width, screen_height));
     ImGui::Begin("Actor Outliner", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-    for (auto& actor : ActorManager::allActors_) {
+    for (auto& actor : GetActorManager()->allActors_) {
         bool is_selected = (selectedActor_ == actor);
         if (ImGui::Selectable(actor->GetName().c_str(), is_selected)) {
             selectedActor_ = actor;

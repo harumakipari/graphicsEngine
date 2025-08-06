@@ -15,6 +15,7 @@
 #include "Widgets/ObjectManager.h"
 #include "Widgets/Events/EventSystem.h"
 
+#include "Core/ActorManager.h"
 
 //シーンの状態を表す列挙型
 enum class SCENE_STATE
@@ -54,6 +55,10 @@ public:
 
     ObjectManager objectManager;//kuroda
 
+    // ActorManager の取得
+    const ActorManager* GetActorManager() const { return actorManager_.get(); }
+    ActorManager* GetActorManager() { return actorManager_.get(); }
+    //std::unique_ptr<ActorManager>& GetActorManager() { return actorManager_; }
 private:
     // 純粋仮想関数：シーンの初期化
     virtual bool Initialize(ID3D11Device* device, UINT64 width, UINT height, const std::unordered_map<std::string, std::string>& props) = 0;
@@ -94,9 +99,20 @@ public:
         _ASSERT_EXPR(_reflections().find(name) != _reflections().end(), L"Not found scene name in reflections");
         //登録されているシーンの ファクトリ関数（std::function） を実行して std::unique_ptr<scene> を取得。
         _current_scene = _reflections().at(name)();
-
         _current_scene->State(SCENE_STATE::initializing);
+        // ActorManager の生成
+        _current_scene->actorManager_ = std::make_unique<ActorManager>();
+        _current_scene->actorManager_->SetOwnerScene(_current_scene.get());
+
         _current_scene->Initialize(device, width, height, props);
+        if (!_current_scene->GetActorManager())
+        {
+            OutputDebugStringA("actorManager_ is nullptr immediately after creation!\n");
+        }
+        else
+        {
+            OutputDebugStringA("actorManager_ is properly created.\n");
+        }
         _current_scene->State(SCENE_STATE::initialized);
         _current_scene->State(SCENE_STATE::active);
         _current_scene->Start();
@@ -120,6 +136,10 @@ private:
     // GUIの描画
     static void _drawGUI()
     {
+        if (_current_scene->actorManager_)
+        {
+            _current_scene->actorManager_->DrawImGuiAllActors();
+        }
         _current_scene->DrawGui();
     }
 
@@ -131,7 +151,11 @@ private:
         {
             _future.wait();
         }
-
+        // actorManager の破棄処理
+        if (_current_scene->actorManager_)
+        {
+            _current_scene->actorManager_->ClearAll();
+        }
         // 現在のシーンの後処理を実行
         _current_scene->Uninitialize(device);
         // 現在のシーンをリセット（nullptrにする）
@@ -255,6 +279,9 @@ protected:
             Scene::_enroll<T>();
         }
     };
+
+private:
+    std::unique_ptr<ActorManager> actorManager_;
 };
 
 

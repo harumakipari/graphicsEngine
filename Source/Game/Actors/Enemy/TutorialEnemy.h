@@ -12,6 +12,8 @@
 
 #include "Widgets/Mask.h"
 
+#include "Engine/Scene/Scene.h"
+
 class TutorialEnemy :public Enemy
 {
 public:
@@ -120,13 +122,13 @@ public:
         {
             buildAudioComponet->Play();
             Transform buildTr(DirectX::XMFLOAT3(4.0f, -3.0f, -3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-            auto bossBuild = ActorManager::CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr);
+            auto bossBuild = GetOwnerScene()->GetActorManager()->CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr);
             Transform buildTr1(DirectX::XMFLOAT3(-4.0f, -3.0f, -3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-            auto bossBuild1 = ActorManager::CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr1);
+            auto bossBuild1 = GetOwnerScene()->GetActorManager()->CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr1);
             Transform buildTr2(DirectX::XMFLOAT3(4.0f, -3.0f, 3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-            auto bossBuild2 = ActorManager::CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr2);
+            auto bossBuild2 = GetOwnerScene()->GetActorManager()->CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr2);
             Transform buildTr3(DirectX::XMFLOAT3(-4.0f, -3.0f, 3.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-            auto bossBuild3 = ActorManager::CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr3);
+            auto bossBuild3 = GetOwnerScene()->GetActorManager()->CreateAndRegisterActorWithTransform<BossBuilding>("bossBuild", buildTr3);
             isBuildBoss = true;
             //PlayAnimation("Idle", true);
         }

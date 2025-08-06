@@ -16,14 +16,24 @@
 #include "Engine/Debug/Assert.h"
 #include "Math/MathHelper.h"
 
+class Scene;
+
 class Actor :public std::enable_shared_from_this <Actor>
 {
 public:
-    Actor() = default;
+    Actor()
+    {
+        OutputDebugStringA(("Actor constructor: ownedSceneComponents_ size=" + std::to_string(ownedSceneComponents_.size()) + "\n").c_str());
+        OutputDebugStringA((", capacity=" + std::to_string(ownedSceneComponents_.capacity()) + "\n").c_str());
+    }
     virtual ~Actor() = default;
 
     //引数付きコンストラクタ
-    Actor(std::string actorName) :actorName(actorName) {}
+    Actor(std::string actorName) :actorName(actorName) 
+    {
+        OutputDebugStringA(("Actor constructor: ownedSceneComponents_ size=" + std::to_string(ownedSceneComponents_.size()) + "\n").c_str());
+        OutputDebugStringA((", capacity=" + std::to_string(ownedSceneComponents_.capacity()) + "\n").c_str());
+    }
 
     //コピーコンストラクタとコピー代入演算子を禁止にする
     Actor(const Actor&) = delete;
@@ -74,14 +84,17 @@ public:
     {
         // 自分自身が shared_ptr で管理されている前提で、それを渡す
         std::shared_ptr<Actor> sharedThis = shared_from_this(); // Actorは std::enable_shared_from_this 継承が必要
+        // Debugチェック1: 自分自身の確認
+        _ASSERT_EXPR(sharedThis != nullptr , "shared_from_this() returned nullptr!");
 
         std::shared_ptr<T> newComponent = std::make_shared<T>(name, sharedThis);
-
+        _ASSERT_EXPR(newComponent != nullptr , "Failed to create new SceneComponent!");
         //std::shared_ptr<T> newComponent = std::make_shared<T>(name, this);
 
         if constexpr ((std::is_base_of<SceneComponent, T>::value))
         {
             std::shared_ptr<SceneComponent> sceneComponent = std::dynamic_pointer_cast<SceneComponent>(newComponent);
+            _ASSERT_EXPR(sceneComponent != nullptr,"Dynamic cast to SceneComponent failed!");
             if (parentName.empty())
             {
                 if (rootComponent_)
@@ -99,8 +112,21 @@ public:
                 sceneComponent->AttachTo(parent);
             }
         }
-        // 所有リストに追加
-        ownedSceneComponents_.push_back(newComponent);
+
+        _ASSERT_EXPR(reinterpret_cast<void*>(&ownedSceneComponents_) != nullptr, "ownedSceneComponents_ is nullptr!");
+
+        _ASSERT_EXPR(newComponent.use_count() >= 2, "newComponent use_count is invalid!"); 
+
+        OutputDebugStringA(("Before push_back size: " + std::to_string(ownedSceneComponents_.size()) + "\n").c_str());
+        OutputDebugStringA(("Before push_back capacity: " + std::to_string(ownedSceneComponents_.capacity()) + "\n").c_str());
+
+        //ownedSceneComponents_.push_back(newComponent);
+        ownedSceneComponents_.push_back(std::static_pointer_cast<Component>(newComponent));
+
+
+        // push_back後も同様に確認
+        OutputDebugStringA(("After push_back size: " + std::to_string(ownedSceneComponents_.size()) + "\n").c_str());
+        OutputDebugStringA(("After push_back capacity: " + std::to_string(ownedSceneComponents_.capacity()) + "\n").c_str());
 
         // 初期化する
         //newComponent->Initialize();
@@ -586,6 +612,12 @@ private:
     // ワールド変換行列
     DirectX::XMFLOAT4X4 worldTransform{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 
+protected:
+    Scene* ownerScene_ = nullptr;   // 自分が属しているScene
+
+public:
+    void SetOwnerScene(Scene* scene) { ownerScene_ = scene; }
+    Scene* GetOwnerScene() const { return ownerScene_; }
 
 public:
     //アクターが有効かどうか

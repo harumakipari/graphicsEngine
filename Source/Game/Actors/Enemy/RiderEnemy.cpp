@@ -246,7 +246,7 @@ void RiderEnemy::Update(float elapsedTime)
     {
         str = activeNode->GetName();
     }
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     DirectX::XMFLOAT3 pos = player->GetPosition();
     ImGui::Begin("Rider Enemy");
     ImGui::Text("Behavior  %s", str.c_str());
@@ -571,7 +571,7 @@ void RiderEnemy::JumpToTarget(float elapsedTime, float maxHeight, float speedRat
     else
     {
         // Œã”¼‚ÍƒvƒŒƒCƒ„[‚ğŒü‚­
-        auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+        auto player = std::dynamic_pointer_cast<Player>(GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
         if (!player) return;
         DirectX::XMFLOAT3 targetPlayer = player->GetPosition();
         targetDir.x = targetPlayer.x - position.x;

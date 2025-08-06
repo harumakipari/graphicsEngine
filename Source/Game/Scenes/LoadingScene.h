@@ -177,6 +177,7 @@ public:
     void Update(ID3D11DeviceContext* immediate_context, float delta_time) override;
 
     float time = 0;
+    void Start() override;
 
     void Render(ID3D11DeviceContext* immediate_context, float delta_time) override;
 
@@ -199,7 +200,6 @@ private:
 
     DirectX::XMFLOAT3 cameraTarget = { 0.0f,0.0f,0.0f };
 
-    LoadingRenderer actorRender;
 
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     bool enableSSAO = true;
@@ -216,4 +216,5 @@ private:
     int steps = 10;
     float thickness = 0.5f;
 
+    Renderer actorRender;
 };

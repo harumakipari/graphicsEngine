@@ -98,7 +98,7 @@ bool PursuitJudgment::Judgment()
 {
 	//UŒ‚”ÍˆÍŠO‚¾‚Á‚½‚ç
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+	auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
 	DirectX::XMFLOAT3 targetPosition = player->GetPosition();
 
 	float vx = targetPosition.x - position.x;
@@ -118,7 +118,7 @@ bool AttackJudgment::Judgment()
 {
 	//UŒ‚”ÍˆÍ‚É“ü‚Á‚½‚ç
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+	auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
 	DirectX::XMFLOAT3 targetPosition = player->GetPosition();
 
 	float vx = targetPosition.x - position.x;
@@ -138,7 +138,7 @@ bool NormalJudgment::Judgment()
 {
 	//UŒ‚”ÍˆÍ“à{‹——£¬
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+	auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
 	DirectX::XMFLOAT3 targetPosition = player->GetPosition();
 
 	float vx = targetPosition.x - position.x;
@@ -158,7 +158,7 @@ bool ChargeJudgment::Judgment()
 {
 	//UŒ‚”ÍˆÍ“à{‹——£‘å
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+	auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
 	DirectX::XMFLOAT3 targetPosition = player->GetPosition();
 
 	float vx = targetPosition.x - position.x;
@@ -190,7 +190,7 @@ bool CoolIdleJudgment::Judgment()
 {
 	//‹——£‚ª‹ß‚©‚Á‚½‚ç
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+	auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
 	DirectX::XMFLOAT3 targetPosition = player->GetPosition();
 
 	float vx = targetPosition.x - position.x;
@@ -210,7 +210,7 @@ bool CoolPursuitJudgment::Judgment()
 {
 	//‹——£‚ª‰“‚©‚Á‚½‚ç
 	DirectX::XMFLOAT3 position = owner->GetPosition();
-	auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+	auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
 	DirectX::XMFLOAT3 targetPosition = player->GetPosition();
 
 	float vx = targetPosition.x - position.x;

@@ -39,14 +39,14 @@ public:
         SetCaemraEasing();
 
         // enemy ÇêÊÇ…çÏê¨ÇµÇƒÇ¢ÇÈÇΩÇﬂ
-        DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(ActorManager::GetActorByName("defeatEnemy").get());
+        DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(GetOwnerScene()->GetActorManager()->GetActorByName("defeatEnemy").get());
         if (enemy)
         {
             enemy->onAnimationFinished = [this]()
                 {
                     //Transform playerTr(DirectX::XMFLOAT3{ 1.0f,0.4f,6.5f }, DirectX::XMFLOAT3{ 0.0f,-76.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
                     Transform playerTr(DirectX::XMFLOAT3{ 5.0f,0.4f,0.04f }, DirectX::XMFLOAT3{ 0.0f,-76.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-                    resultPlayer = ActorManager::CreateAndRegisterActorWithTransform<TitlePlayer>("resultActor", playerTr);
+                    resultPlayer = GetOwnerScene()->GetActorManager()->CreateAndRegisterActorWithTransform<TitlePlayer>("resultActor", playerTr);
                     resultPlayer->SetType(TitlePlayer::Type::ResultWin);
                     resultPlayer->PlayAnimation("Win");
 
@@ -145,7 +145,7 @@ public:
     void Update(float deltaTime)override
     {
 #if 1
-        DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(ActorManager::GetActorByName("defeatEnemy").get());
+        DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(GetOwnerScene()->GetActorManager()->GetActorByName("defeatEnemy").get());
 
         switch (state)
         {

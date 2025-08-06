@@ -4,7 +4,7 @@
 #include "EnemyMath.h"
 #include "Game/Actors/Stage/Bomb.h"
 #include "Game/Scenes/MainScene.h"
-
+#include "Engine/Scene/Scene.h"
 //TODO:Behavior アクション追加
 
 float animationBaseSpeed = 1.0f;
@@ -295,7 +295,7 @@ ActionBase::State TerrainAction::Run(float elapsedTime)
         //index = rand() % ARRAYSIZE(names);
 
         //出現形式に応じて飛んでいく場所を指定
-        XMFLOAT3 playerPos = ActorManager::GetActorByName("actor")->GetPosition();
+        XMFLOAT3 playerPos = owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor")->GetPosition();
         XMVECTOR PlayerPos = XMLoadFloat3(&playerPos);
 
         float farLengthSq = 0.0f;
@@ -486,7 +486,7 @@ ActionBase::State PursuitAction::Run(float elapsedTime)
     int currentFrame = static_cast<int>(frameCounter);
     currentFrame %= totalFrame; // ループ再生に備えてフレーム数を折り返す
 
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     if (!player)
     {
         return ActionBase::State::Failed;
@@ -574,7 +574,7 @@ ActionBase::State NormalAction::Run(float elapsedTime)
 
     int currentFrame = static_cast<int>(frameCounter);
 
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     if (!player)return ActionBase::State::Failed;
 
     switch (step)
@@ -754,7 +754,7 @@ ActionBase::State DashAction::Run(float elapsedTime)
 //突進処理・改
 ActionBase::State DashAction::Run(float elapsedTime)
 {
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     if (!player)
     {
         return ActionBase::State::Failed;
@@ -887,7 +887,7 @@ ActionBase::State DashAction::Run(float elapsedTime)
 // 爆撃行動
 ActionBase::State BombingAction::Run(float elapsedTime)
 {
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     if (!player)
     {
         return ActionBase::State::Failed;
@@ -1041,7 +1041,7 @@ ActionBase::State BombingAction::Run(float elapsedTime)
                     );
 
                     //爆弾生成
-                    auto bomb = ActorManager::CreateAndRegisterActorWithTransform<Bomb>("bomb", bombTr);
+                    auto bomb = owner->GetOwnerScene()->GetActorManager()->CreateAndRegisterActorWithTransform<Bomb>("bomb", bombTr);
                     if (!bomb)
                     {
                         isBombProduce = false;
@@ -1125,7 +1125,7 @@ ActionBase::State SummonAction::Run(float elapsedTime)
         //index = rand() % ARRAYSIZE(names);
 
         //出現形式に応じて飛んでいく場所を指定
-        XMFLOAT3 playerPos = ActorManager::GetActorByName("actor")->GetPosition();
+        XMFLOAT3 playerPos = owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor")->GetPosition();
         XMVECTOR PlayerPos = XMLoadFloat3(&playerPos);
 
         float farLengthSq = 0.0f;
@@ -1308,7 +1308,7 @@ ActionBase::State SummonAction::Run(float elapsedTime)
 // 待機行動
 ActionBase::State IdleAction::Run(float elapsedTime)
 {
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     if (!player)return ActionBase::State::Failed;
     switch (step)
     {
@@ -1376,7 +1376,7 @@ ActionBase::State CoolPursuitAction::Run(float elapsedTime)
     int currentFrame = static_cast<int>(frameCounter);
     currentFrame %= totalFrame; // ループ再生に備えてフレーム数を折り返す
 
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(owner->GetOwnerScene()->GetActorManager()->GetActorByName("actor"));
     if (!player)return ActionBase::State::Failed;
 
     float runTimer = owner->GetRunTimer();

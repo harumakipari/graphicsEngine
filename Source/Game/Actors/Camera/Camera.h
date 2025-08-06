@@ -207,7 +207,7 @@ public:
         break;
         case MainCamera::State::BossTarget:
         {
-            if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy")))
+            if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(GetOwnerScene()->GetActorManager()->GetActorByName("enemy")))
             {// “G‚ÌˆÊ’u‚ðŽæ‚é
                 mainCameraComponent->customTarget = true;
                 DirectX::XMFLOAT3 targetVec = enemy->bossJointComponent->GetComponentWorldTransform().GetLocation();

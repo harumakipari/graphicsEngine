@@ -274,7 +274,11 @@ void EffectSystem::Initialize()
 
 void EffectSystem::Update(float deltaTime)
 {
-    for (auto& actor : ActorManager::allActors_) {
+    Scene* currentScene = Scene::GetCurrentScene();  // Œ»Ý‚ÌƒV[ƒ“Žæ“¾
+    if (!currentScene) return;
+    auto actorManager = currentScene->GetActorManager();  // ActorManagerŽæ“¾
+
+    for (auto& actor : actorManager->allActors_) {
         if (!actor->rootComponent_ || !actor->isActive) {
             continue;
         }

@@ -219,6 +219,7 @@
     <ClCompile Include="Source\Components\Game\ItemSpawnerComponent.cpp" />
     <ClCompile Include="Source\Components\Game\LifeTimeComponent.cpp" />
     <ClCompile Include="Source\Components\Game\ShockWaveCollisionComponent.cpp" />
+    <ClCompile Include="Source\Core\ActorManager.cpp" />
     <ClCompile Include="Source\Core\World.cpp" />
     <ClCompile Include="Source\Engine\Audio\Audio.cpp" />
     <ClCompile Include="Source\Engine\Framework\Framework.cpp" />

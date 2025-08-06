@@ -960,7 +960,7 @@ void Player::FireBeam()
             vel.x, vel.y, vel.z);
         OutputDebugStringA(buf);
         // Beam Çê∂ê¨Ç∑ÇÈ
-        auto beam = ActorManager::CreateAndRegisterActor<Beam>("beam", false);
+        auto beam = GetOwnerScene()->GetActorManager()->CreateAndRegisterActor<Beam>("beam", false);
         beam->SetItemPower(beamItemPower);
         float maxPower = static_cast<float>(rightItemMax + leftItemMax);
         beam->SetItemMaxPower(maxPower);

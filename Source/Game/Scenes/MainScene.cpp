@@ -56,6 +56,10 @@
 
 bool MainScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, const std::unordered_map<std::string, std::string>& props)
 {
+    OutputDebugStringA((std::string("Scene::Initialize this=") + std::to_string(reinterpret_cast<uintptr_t>(this)) + "\n").c_str());
+    OutputDebugStringA((std::string("_current_scene.get()=") + std::to_string(reinterpret_cast<uintptr_t>(this)) + "\n").c_str());
+    OutputDebugStringA((std::string("actorManager_ ptr=") + std::to_string(reinterpret_cast<uintptr_t>(this->GetActorManager())) + "\n").c_str());
+
     HRESULT hr;
 
     D3D11_BUFFER_DESC bufferDesc{};
@@ -217,7 +221,7 @@ void MainScene::Start()
 
 void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
 {
-    auto camera = std::dynamic_pointer_cast<MainCamera>(ActorManager::GetActorByName("mainCameraActor"));
+    auto camera = std::dynamic_pointer_cast<MainCamera>(GetActorManager()->GetActorByName("mainCameraActor"));
 
     ////elapsedTimeを止めてposeする
     //if (elapsed_time > 0.05f)
@@ -228,7 +232,7 @@ void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
     Physics::Instance().Update(elapsedTime);
     //gameWorld_->Tick(elapsed_time);
-    ActorManager::Update(elapsedTime);
+    //ActorManager::Update(elapsedTime);
     EventSystem::Update(elapsedTime);//追加
     objectManager.Update(elapsedTime);//追加
     GameManager::Update(elapsedTime);
@@ -281,7 +285,7 @@ void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
         //enemies[0]->SetPendingDestroy();
 
         //stop
-        std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy"))->rushAudioComponent->Stop();
+        std::dynamic_pointer_cast<RiderEnemy>(GetActorManager()->GetActorByName("enemy"))->rushAudioComponent->Stop();
 
         GameObject* fadeCanvas = ObjectManager::Find("FadeCanvas");
         fadeCanvas->SetActive(true);
@@ -300,13 +304,13 @@ void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
         fadeHandler.SetEasing(EaseType::OutExp, 0.0f, 1.0f, 0.25f);
         fadeHandler.SetCompletedFunction([&]() {
             fadeHandler.SetEasing(EaseType::OutExp, 1.0f, 0.0f, 0.25f);
-            ActorManager::ClearAll();
-            stage = ActorManager::CreateAndRegisterActor<Stage>("stage");
+            GetActorManager()->ClearAll();
+            stage = GetActorManager()->CreateAndRegisterActor<Stage>("stage");
             Transform transform(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 0.0f,180.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
             //Transform transform(DirectX::XMFLOAT3{ -1.2f,0.1f,-0.9f }, DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-            auto defeatEnemy = ActorManager::CreateAndRegisterActorWithTransform<DefeatEnemy>("defeatEnemy", transform);
+            auto defeatEnemy = GetActorManager()->CreateAndRegisterActorWithTransform<DefeatEnemy>("defeatEnemy", transform);
 
-            auto defeatCamera = ActorManager::CreateAndRegisterActor<DefeatEnemyCamera>("defeatEnemyCamera");
+            auto defeatCamera = GetActorManager()->CreateAndRegisterActor<DefeatEnemyCamera>("defeatEnemyCamera");
             auto mainCameraComponent = defeatCamera->GetComponent<CameraComponent>();
             //XMFLOAT3 target = defeatEnemy->GetPosition();
             //target.y = 2.0f;
@@ -347,7 +351,7 @@ void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
         ObjectManager::Find("MenuCanvas")->SetActive(false);
 
         //stop
-        std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy"))->rushAudioComponent->Stop();
+        std::dynamic_pointer_cast<RiderEnemy>(GetActorManager()->GetActorByName("enemy"))->rushAudioComponent->Stop();
 
         ObjectManager::Find("FadeCanvas")->SetActive(true);
         fadeHandler.Clear();
@@ -356,23 +360,23 @@ void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
             fadeHandler.SetEasing(EaseType::OutExp, 1.0f, 0.0f, 0.25f);
 
             //プレイヤー死亡処理
-            ActorManager::ClearAll();
-            stage = ActorManager::CreateAndRegisterActor<Stage>("stage");
+            GetActorManager()->ClearAll();
+            stage = GetActorManager()->CreateAndRegisterActor<Stage>("stage");
 
-            auto resultCamera = ActorManager::CreateAndRegisterActor<TitleCamera>("resultCamera");
+            auto resultCamera = GetActorManager()->CreateAndRegisterActor<TitleCamera>("resultCamera");
             auto mainCameraComponent = resultCamera->GetComponent<CameraComponent>();
             CameraManager::SetGameCamera(resultCamera.get());
             //CameraManager::SetGameCamera(mainCameraComponent);
 
             Transform playerTr(DirectX::XMFLOAT3{ -3.0f,0.4f,10.0f }, DirectX::XMFLOAT3{ 0.0f,-6.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
             //Transform playerTr(DirectX::XMFLOAT3{ 0.0f,0.4f,0.0f }, DirectX::XMFLOAT3{ 0.0f,30.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
-            auto resultPlayer = ActorManager::CreateAndRegisterActorWithTransform<TitlePlayer>("resultActor", playerTr);
+            auto resultPlayer = GetActorManager()->CreateAndRegisterActorWithTransform<TitlePlayer>("resultActor", playerTr);
             resultPlayer->SetType(TitlePlayer::Type::ResultLose);
             //resultPlayer->PlayAnimation("Lose", false);
             resultPlayer->PlayAnimation("Idle", false);
 
             Transform enemyTr(DirectX::XMFLOAT3{ 6.7f,0.0f,5.6f }, DirectX::XMFLOAT3{ 0.0f,-15.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-            auto defeatEnemy = ActorManager::CreateAndRegisterActorWithTransform<EmptyEnemy>("WinEnemy", enemyTr);
+            auto defeatEnemy = GetActorManager()->CreateAndRegisterActorWithTransform<EmptyEnemy>("WinEnemy", enemyTr);
             defeatEnemy->PlayAnimation("Idle");
 
             waitHandler.SetWait(3.0f);
@@ -843,7 +847,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
     //プロジェクションマッピング更新処理
     int i = 0;
-    for (const auto& actor : ActorManager::allActors_)
+    for (const auto& actor : GetActorManager()->GetAllActors())
     {
         if (auto bomb = std::dynamic_pointer_cast<Bomb>(actor))
         {
@@ -1265,7 +1269,7 @@ void MainScene::DrawGui()
     ImGui::SetNextWindowSize(ImVec2(left_panel_width, screen_height));
     ImGui::Begin("Actor Outliner", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-    for (auto& actor : ActorManager::allActors_) {
+    for (auto& actor : GetActorManager()->allActors_) {
         bool is_selected = (selectedActor_ == actor);
         if (ImGui::Selectable(actor->GetName().c_str(), is_selected)) {
             selectedActor_ = actor;
@@ -1529,7 +1533,7 @@ void MainScene::DrawGui()
 
 bool MainScene::Uninitialize(ID3D11Device* device)
 {
-    ActorManager::ClearAll();
+    //ActorManager::ClearAll();
     GameManager::Finalize();
     Physics::Instance().Finalize();
     PhysicsTest::Instance().Finalize();
@@ -1660,7 +1664,8 @@ void MainScene::SetUpActors()
     ID3D11DeviceContext* immediateContext = Graphics::GetDeviceContext();
 
     //gameWorld_->SpawnActor<Stage>("stage");
-    stage = ActorManager::CreateAndRegisterActor<Stage>("stage");
+    auto actorManager = GetActorManager();
+    stage = actorManager->CreateAndRegisterActor<Stage>("stage");
 #if 0
     auto& stage_ = actors.emplace_back(stage);
     stage_->GetModelComponent().InitializeModel(models["stage"]);
@@ -1676,10 +1681,10 @@ void MainScene::SetUpActors()
     }
 #endif
     Transform playerTr(DirectX::XMFLOAT3{ 0.7f,0.8f,-9.5f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    player = ActorManager::CreateAndRegisterActorWithTransform<Player>("actor", playerTr);
+    player = GetActorManager()->CreateAndRegisterActorWithTransform<Player>("actor", playerTr);
     //player = gameWorld_->SpawnActor<Player>("player");
     Transform enemyTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 0.0f,-180.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    enemies[0] = ActorManager::CreateAndRegisterActorWithTransform<RiderEnemy>("enemy", enemyTr);
+    enemies[0] = GetActorManager()->CreateAndRegisterActorWithTransform<RiderEnemy>("enemy", enemyTr);
     //enemies[0] = gameWorld_->SpawnActor<RiderEnemy>("enemy");
 #if 0
     auto pickUpItem = ActorManager::CreateAndRegisterActor<PickUpItem>("pickUpItem");
@@ -1689,7 +1694,7 @@ void MainScene::SetUpActors()
     //Transform bombTr1(DirectX::XMFLOAT3{ -1.0f,10.0f,3.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.1f,1.1f,1.1f });
     //auto bomb1 = ActorManager::CreateAndRegisterActorWithTransform<Bomb>("bomb", bombTr1);
 
-    auto mainCameraActor = ActorManager::CreateAndRegisterActor<MainCamera>("mainCameraActor");
+    auto mainCameraActor = GetActorManager()->CreateAndRegisterActor<MainCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
     //auto mainCameraActor = gameWorld_->SpawnActor<Actor>("mainCameraActor");
     //auto springArmComponent = mainCameraActor->NewComponent<class SpringArmComponent>("springArm");
@@ -1701,7 +1706,7 @@ void MainScene::SetUpActors()
     //CameraManager::SetGameCamera(mainCameraComponent);
     CameraManager::SetGameCamera(mainCameraActor.get());
 
-    auto debugCameraActor = ActorManager::CreateAndRegisterActor<DebugCamera>("debugCam");
+    auto debugCameraActor = GetActorManager()->CreateAndRegisterActor<DebugCamera>("debugCam");
     //auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
     //auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
     CameraManager::SetDebugCamera(debugCameraActor);

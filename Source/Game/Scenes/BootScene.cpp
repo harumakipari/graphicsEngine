@@ -144,7 +144,7 @@ void BootScene::Start()
 
 void BootScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
 {
-    ActorManager::Update(deltaTime);
+    //ActorManager::Update(deltaTime);
     EventSystem::Update(deltaTime);//’Ç‰Á
     objectManager.Update(deltaTime);//’Ç‰Á
 
@@ -176,21 +176,20 @@ void BootScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
 
 void BootScene::SetUpActors()
 {
-    //Transform playerTr(DirectX::XMFLOAT3{ -2.7f,-1.7f,2.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
     Transform playerTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 0.0f,-6.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    //Transform playerTr(DirectX::XMFLOAT3{ 0.0f,0.4f,0.0f }, DirectX::XMFLOAT3{ 0.0f,30.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
-    titlePlayer = ActorManager::CreateAndRegisterActorWithTransform<TitlePlayer>("actor", playerTr);
+    //titlePlayer = ActorManager::CreateAndRegisterActorWithTransform<TitlePlayer>("actor", playerTr);
+    titlePlayer = this->GetActorManager()->CreateAndRegisterActorWithTransform<TitlePlayer>("actor", playerTr);
 
-    mainCameraActor = ActorManager::CreateAndRegisterActor<TitleCamera>("mainCameraActor");
+    mainCameraActor = this->GetActorManager()->CreateAndRegisterActor<TitleCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
 
     Transform titleTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
-    title = ActorManager::CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
+    title = this->GetActorManager()->CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
 
     //CameraManager::SetGameCamera(mainCameraComponent);
     CameraManager::SetGameCamera(mainCameraActor.get());
 
-    auto debugCameraActor = ActorManager::CreateAndRegisterActor<DebugCamera>("debugCam");
+    auto debugCameraActor = this->GetActorManager()->CreateAndRegisterActor<DebugCamera>("debugCam");
     //auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
     //auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
 
@@ -222,7 +221,7 @@ bool BootScene::OnSizeChanged(ID3D11Device* device, UINT64 width, UINT height)
 
 bool BootScene::Uninitialize(ID3D11Device* device)
 {
-    ActorManager::ClearAll();
+    //ActorManager::ClearAll();
     return true;
 }
 
@@ -646,7 +645,7 @@ void BootScene::DrawGui()
     ImGui::SetNextWindowSize(ImVec2(left_panel_width, screen_height));
     ImGui::Begin("Actor Outliner", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
-    for (auto& actor : ActorManager::allActors_) {
+    for (auto& actor : this->GetActorManager()->GetAllActors()) {
         bool is_selected = (selectedActor_ == actor);
         if (ImGui::Selectable(actor->GetName().c_str(), is_selected)) {
             selectedActor_ = actor;

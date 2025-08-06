@@ -109,7 +109,13 @@ public:
             if (!animationController_->IsPlayAnimation())
             {// 回転のアニメーションが終わったら
                 isFinishRotate = true;
-                if (auto title = std::dynamic_pointer_cast<TitleStage>(ActorManager::GetActorByName("title")))
+                Scene* currentScene = Scene::GetCurrentScene();
+                if (!currentScene)
+                {
+                    // シーンがなければ処理しない or エラー処理
+                    return;
+                }
+                if (auto title = std::dynamic_pointer_cast<TitleStage>(currentScene->GetActorManager()->GetActorByName("title")))
                 {
                     title->OnPushButton();
                     PlayAnimation("Idle");
@@ -175,7 +181,13 @@ public:
             static DirectX::XMFLOAT3 prevPos = GetPosition();
 
             // ボスを中心に円運動
-            DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(ActorManager::GetActorByName("defeatEnemy").get());
+            Scene* currentScene = Scene::GetCurrentScene();
+            if (!currentScene)
+            {
+                // シーンがなければ処理しない or エラー処理
+                return;
+            }
+            DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(currentScene->GetActorManager()->GetActorByName("defeatEnemy").get());
             DirectX::XMFLOAT3 center = enemy->GetPosition();
             float radius = 8.0f;
             //if (isCameraFinish)
@@ -238,7 +250,13 @@ public:
             static DirectX::XMFLOAT3 prevPos = GetPosition();
 
             // ボスを中心に円運動
-            DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(ActorManager::GetActorByName("defeatEnemy").get());
+            Scene* currentScene = Scene::GetCurrentScene();
+            if (!currentScene)
+            {
+                // シーンがなければ処理しない or エラー処理
+                return;
+            }
+            DefeatEnemy* enemy = dynamic_cast<DefeatEnemy*>(currentScene->GetActorManager()->GetActorByName("defeatEnemy").get());
             DirectX::XMFLOAT3 center = enemy->GetPosition();
             float radius = 6.0f;
             elapsedTimer += deltaTime;

@@ -4,6 +4,7 @@
 
 #include "Core/Actor.h"
 #include "Core/ActorManager.h"
+#include "Engine/Scene/Scene.h"
 
 #include "Physics/Physics.h"
 #include "Physics/DefferdPhysicsOperation.h"
@@ -16,7 +17,6 @@
 #include "Components/Transform/Transform.h"
 #include "Game/Actors/Enemy/RiderEnemy.h"
 #include "Components/Audio/AudioSourceComponent.h"
-
 class Bomb :public Actor
 {
 public:
@@ -40,7 +40,7 @@ public:
         skeltalMeshComponent->SetModel("./Data/Models/Stage/Bomb/bomb.gltf");
         skeltalMeshComponent->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::LH_Y_UP;
 
-        if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy")))
+        if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(GetOwnerScene()->GetActorManager()->GetActorByName("enemy")))
         {
             DirectX::XMFLOAT4X4 enemyTr = enemy->GetWorldTransform();
             DirectX::XMFLOAT3 pos;

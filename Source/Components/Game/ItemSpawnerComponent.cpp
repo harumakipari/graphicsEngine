@@ -8,6 +8,7 @@
 #include "Components/Game/LifeTimeComponent.h"
 
 #include "Math/MathHelper.h"
+#include "Engine/Scene/Scene.h"
 void ItemSpawnerComponent::SpawnItems(int count/*, float beamPower = 1.0f*/, bool hasLifeTime, float itemLifeTimer)
 {
     const float spawnRadius = 1.0f;
@@ -29,8 +30,12 @@ void ItemSpawnerComponent::SpawnItems(int count/*, float beamPower = 1.0f*/, boo
         //DirectX::XMFLOAT3 spawnPos = GetOwner()->GetPosition();
         //spawnPos.y += 0.175f; // Optional offset
         Transform transform(DirectX::XMFLOAT3(spawnPos), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f));
-
-        auto item = ActorManager::CreateAndRegisterActorWithTransform<PickUpItem>("spawnItemFrom", transform);
+        Scene* currentScene = Scene::GetCurrentScene();
+        if (!currentScene)
+        {
+            return;
+        }
+        auto item = currentScene->GetActorManager()->CreateAndRegisterActorWithTransform<PickUpItem>("spawnItemFrom", transform);
         item->SetType(PickUpItem::Type::FromProps);
 
         if (hasLifeTime)

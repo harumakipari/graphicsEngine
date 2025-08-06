@@ -20,6 +20,7 @@
 #include "Game/Utils/SpawnValidator.h"
 #include "Components/CollisionShape/ShapeComponent.h"
 
+#include "Engine/Scene/Scene.h"
 
 class ItemManager
 {
@@ -171,8 +172,15 @@ private:
             ++tryCount;
 
             DirectX::XMFLOAT3 spawnPos = area.GetRandomSpawnPosition();
-            auto item = ActorManager::CreateAndRegisterActor<PickUpItem>("item", false);
-            item->SetTempPosition(spawnPos);
+            Scene* currentScene = Scene::GetCurrentScene();
+            if (!currentScene)
+            {
+                // シーンがなければ処理しない or エラー処理
+                return;
+            }
+
+            // ActorManager はポインタなので-> でアクセス
+            auto item = currentScene->GetActorManager()->CreateAndRegisterActor<PickUpItem>("item", false);            item->SetTempPosition(spawnPos);
             item->Initialize();
             item->PostInitialize();
 #if 0

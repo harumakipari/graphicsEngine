@@ -5,6 +5,9 @@
 
 void BuildingManager::SpawnItemArea(Area& area, int col, int row)
 {
+    Scene* currentScene = Scene::GetCurrentScene();  // 現在のシーン取得
+    if (!currentScene) return;
+    auto actorManager = currentScene->GetActorManager();  // ActorManager取得
 #if 0
     SpawnHelper::TrySpawnWithValidation<TestCollision>(3,
         [&area]() {return area.GetRandomSpawnPosition(); }, [&area](auto building) {area.currentItemCount++; });
@@ -45,7 +48,7 @@ void BuildingManager::SpawnItemArea(Area& area, int col, int row)
 
     //std::shared_ptr<InstancedStaticMeshComponent> instanceBuildMeshComponent=
 
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(actorManager->GetActorByName("actor"));
     DirectX::XMFLOAT3 pos = player->GetPosition();
     DirectX::XMVECTOR disVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&pos), DirectX::XMLoadFloat3(&spawnPos));
     float x = DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(disVec));
@@ -60,7 +63,7 @@ void BuildingManager::SpawnItemArea(Area& area, int col, int row)
 
 
 
-    auto building = ActorManager::CreateAndRegisterActorWithTransform<Building>("building", transform);
+    auto building = actorManager->CreateAndRegisterActorWithTransform<Building>("building", transform);
 
     //auto shape = building->GetSceneComponentByName("boxComponent");
     //if (auto box = std::dynamic_pointer_cast<BoxComponet>(shape))
@@ -81,10 +84,13 @@ void BuildingManager::SpawnItemArea(Area& area, int col, int row)
 void BuildingManager::SpawnBossBuildArea(Area& area, int col, int row)
 {
     DirectX::XMFLOAT3 spawnPos = area.GetGridSpawnPosition(col, row);
+    Scene* currentScene = Scene::GetCurrentScene();  // 現在のシーン取得
+    if (!currentScene) return;
+    auto actorManager = currentScene->GetActorManager();  // ActorManager取得
 
     //std::shared_ptr<InstancedStaticMeshComponent> instanceBuildMeshComponent=
 
-    auto player = std::dynamic_pointer_cast<Player>(ActorManager::GetActorByName("actor"));
+    auto player = std::dynamic_pointer_cast<Player>(actorManager->GetActorByName("actor"));
     DirectX::XMFLOAT3 pos = player->GetPosition();
     DirectX::XMVECTOR disVec = DirectX::XMVectorSubtract(DirectX::XMLoadFloat3(&pos), DirectX::XMLoadFloat3(&spawnPos));
     float x = DirectX::XMVectorGetX(DirectX::XMVector3LengthSq(disVec));
@@ -97,7 +103,7 @@ void BuildingManager::SpawnBossBuildArea(Area& area, int col, int row)
     spawnPos.y = -5.0f;
     Transform transform(spawnPos, DirectX::XMFLOAT4(0, 0, 0, 1), DirectX::XMFLOAT3(1, 1, 1));
 
-    auto building = ActorManager::CreateAndRegisterActorWithTransform<BossBuilding>("bossbuilding", transform);
+    auto building = actorManager->CreateAndRegisterActorWithTransform<BossBuilding>("bossbuilding", transform);
 
     //auto shape = building->GetSceneComponentByName("boxComponent");
     //if (auto box = std::dynamic_pointer_cast<BoxComponet>(shape))
