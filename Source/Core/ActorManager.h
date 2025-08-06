@@ -3,7 +3,9 @@
 #include <memory>
 #include <cassert>
 #include "Actor.h"
+
 #include "Graphics/Renderer/ShapeRenderer.h"
+#include "Graphics/Core/ConstantBuffer.h"
 
 #include "Components/CollisionShape/ShapeComponent.h"
 #include "Components/Render/MeshComponent.h"
@@ -11,6 +13,7 @@
 #include "Game/Actors/Item/PickUpItem.h"
 #include "Game/Utils/ShockWaveTargetRegistry.h"
 
+#include "Engine/Camera/CameraConstants.h"
 
 class ActorManager
 {
@@ -254,6 +257,9 @@ public:
 
 class Renderer
 {
+private:
+    std::unique_ptr<ConstantBuffer<ViewConstants>> viewBuffer;
+
 public:
     Renderer()
     {
@@ -261,9 +267,18 @@ public:
         itemModel = std::make_shared<InterleavedGltfModel>(device, "./Data/Models/Items/PickUpEnergyCore/pick_up_item.gltf", InterleavedGltfModel::Mode::InstancedStaticMesh);
         CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelEmissionPS.cso", pipeLineState_.pixelShader.ReleaseAndGetAddressOf());
         itemModel->emission = 3.0f;
+
+        viewBuffer = std::make_unique<ConstantBuffer<ViewConstants>>(device);
     }
 
     virtual ~Renderer() {}
+
+    // View関連の定数バッファを更新する
+    void UpdateViewConstants(ID3D11DeviceContext* immediateContext, ViewConstants data)
+    {
+        viewBuffer->data = data;
+        viewBuffer->Activate(immediateContext, 8);
+    }
 
     void RenderParticle(ID3D11DeviceContext* immediateContext)
     {

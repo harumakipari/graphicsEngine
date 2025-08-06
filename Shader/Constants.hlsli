@@ -89,5 +89,15 @@ cbuffer VOLUMETRIC_CLOUDSCAPES_CONSTANT_BUFFER : register(b5)
     bool autoRayMarchingSteps;
 }
 
+cbuffer VIEW_CONSTANTS_BUFFER : register(b8)
+{
+    row_major float4x4 vviewProjection;
+    float4 vcameraPositon;
+    row_major float4x4 vview;
+    row_major float4x4 vprojection;
+    row_major float4x4 vinverseProjection;
+    row_major float4x4 vinverseViewProjection;
+    row_major float4x4 vinvView;
+}
 
 #endif

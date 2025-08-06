@@ -284,6 +284,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
 
 #endif // 0
+        actorRender.UpdateViewConstants(immediateContext, data);
     }
     lightConstants.lightDirection = lightDirection;
     lightConstants.colorLight = colorLight;
