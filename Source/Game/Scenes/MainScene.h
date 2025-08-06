@@ -36,6 +36,8 @@
 #include "Physics/CollisionMesh.h"
 #include "Graphics/Effect/Particles.h"
 #include "Graphics/Cloud/VolumetricCloudscapes.h"
+#include "Graphics/Core/Light.h"
+#include "Graphics/PostProcess/GBuffer.h"
 
 #include "Graphics/Effect/EffectSystem.h"
 
@@ -52,15 +54,15 @@ class MainScene : public Scene
     struct SceneConstants
     {
         DirectX::XMFLOAT4X4 viewProjection;
-        DirectX::XMFLOAT4 lightDirection;
+        //DirectX::XMFLOAT4 lightDirection;
         DirectX::XMFLOAT4 cameraPosition;
-        DirectX::XMFLOAT4 colorLight;
+        //DirectX::XMFLOAT4 colorLight;
         DirectX::XMFLOAT4X4 view;   // PARTICLES
         DirectX::XMFLOAT4X4 projection;   // PARTICLES
         // CASCADED_SHADOW_MAPS
         DirectX::XMFLOAT4X4 invProjection;
         DirectX::XMFLOAT4X4 invViewProjection;
-        float iblIntensity;
+        //float iblIntensity;
         bool enableSSAO;
         float reflectionIntensity;
         float time = 0.0f;
@@ -69,9 +71,72 @@ class MainScene : public Scene
         int enableSSR;
         int enableFog;
         int enableBloom;
+        float pad;
         DirectX::XMFLOAT4X4 invView;
     };
     SceneConstants sceneConstants;
+
+    struct PointLights
+    {
+        DirectX::XMFLOAT4 position{ 0.0f,0.0f,0.0f,0.0f };
+        DirectX::XMFLOAT4 color{ 1.0f,0.0f,0.0f,1.0f };
+        float range = 0.5f;
+        float pads[3];
+    };
+    DirectX::XMFLOAT4 pointLightPosition[8] =
+    {
+        { -2.0f,  2.0f, 0.0f, 10.0f },
+        { -1.0f,  2.0f, 0.0f, 10.0f },
+        { 0.0f,  2.0f, 0.0f, 10.0f },
+        { 1.0f,  2.0f, 0.0f, 10.0f },
+        { 2.0f,  2.0f, 0.0f, 10.0f },
+        { 3.0f,  2.0f, 0.0f, 10.0f },
+        { 4.0f,  2.0f, 0.0f, 10.0f },
+        { 5.0f,  2.0f, 0.0f, 10.0f },
+    };
+
+    DirectX::XMFLOAT4 pointLightColor[8] =
+    {
+        { 1.0f, 0.0f, 0.0f, 10.0f },  // 赤
+        { 0.0f, 1.0f, 0.0f, 10.0f },  // 緑
+        { 0.0f, 0.0f, 1.0f, 10.0f },  // 青
+        { 1.0f, 1.0f, 0.0f, 10.0f },  // 黄
+        { 1.0f, 0.0f, 1.0f, 10.0f },  // マゼンタ
+        { 0.0f, 1.0f, 1.0f, 10.0f },  // シアン
+        { 1.0f, 0.5f, 0.0f, 10.0f },  // オレンジ
+        { 0.5f, 0.0f, 1.0f, 10.0f },  // 紫
+    };
+
+    float pointLightRange[8] =
+    {
+        3.0f,
+        3.0f,
+        3.0f,
+        3.0f,
+        3.0f,
+        3.0f,
+        3.0f,
+        3.0f,
+    };
+    bool directionalLightEnable = true; // 平行光源の on / off
+    bool pointLightEnable = true;
+    int pointLightCount = 8;
+    struct SpotLights
+    {
+
+    };
+
+    struct LightConstants
+    {
+        DirectX::XMFLOAT4 lightDirection;
+        DirectX::XMFLOAT4 colorLight;
+        float iblIntensity;
+        int directionalLightEnable = 1; // 平行光源の on / off
+        int pointLightEnable = 1;
+        int pointLightCount = 1;
+        PointLights pointsLight[8];
+    };
+    LightConstants lightConstants = {};
     struct ShaderConstants
     {
         float extraction_threshold{ 0.8f };
@@ -303,6 +368,10 @@ public:
     // VOLUMETRIC_CLOUDSCAPES
     //std::unique_ptr<VolumetricCloudscapes> volumetricCloudscapes;
     //int downsamplingFactor = 4;
+    
+    // GBUFFER
+    std::unique_ptr<GBuffer> gBufferRenderTarget;
+    bool useDeferredRendering = true;
 
 
     // VOLUMETRIC_CLOUDSCAPES

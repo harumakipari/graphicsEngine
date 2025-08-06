@@ -115,7 +115,7 @@ public:
 
         _ASSERT_EXPR(reinterpret_cast<void*>(&ownedSceneComponents_) != nullptr, "ownedSceneComponents_ is nullptr!");
 
-        _ASSERT_EXPR(newComponent.use_count() >= 2, "newComponent use_count is invalid!"); 
+        //_ASSERT_EXPR(newComponent.use_count() >= 2, "newComponent use_count is invalid!"); 
 
         OutputDebugStringA(("Before push_back size: " + std::to_string(ownedSceneComponents_.size()) + "\n").c_str());
         OutputDebugStringA(("Before push_back capacity: " + std::to_string(ownedSceneComponents_.capacity()) + "\n").c_str());

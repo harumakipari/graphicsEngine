@@ -335,7 +335,6 @@ void LoadingScene::Render(ID3D11DeviceContext* immediateContext, float delta_tim
     }
 
 
-
     // MULTIPLE_RENDER_TARGETS
     RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);

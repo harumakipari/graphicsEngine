@@ -100,6 +100,14 @@ bool MainScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
     hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[3].ReleaseAndGetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
+    bufferDesc.ByteWidth = sizeof(LightConstants);
+    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bufferDesc.CPUAccessFlags = 0;
+    bufferDesc.MiscFlags = 0;
+    bufferDesc.StructureByteStride = 0;
+    hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffers[4].ReleaseAndGetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
     // FOG 
     framebuffers[0] = std::make_unique<FrameBuffer>(device, static_cast<uint32_t>(width), height, true);
@@ -127,6 +135,10 @@ bool MainScene::Initialize(ID3D11Device* device, UINT64 width, UINT height, cons
 
     // MULTIPLE_RENDER_TARGETS
     multipleRenderTargets = std::make_unique<decltype(multipleRenderTargets)::element_type>(device, static_cast<uint32_t>(width), height, 3);
+
+    // GBUFFER
+    gBufferRenderTarget = std::make_unique<decltype(gBufferRenderTarget)::element_type>(device, static_cast<uint32_t>(width), height);
+    CreatePsFromCSO(device, "./Shader/DefefferdPS.cso", pixelShaders[1].ReleaseAndGetAddressOf());
 
     //ブルーム
     bloomer = std::make_unique<Bloom>(device, static_cast<uint32_t>(width), height);
@@ -764,9 +776,22 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
         DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
     }
 
-    sceneConstants.lightDirection = lightDirection;
-    sceneConstants.colorLight = colorLight;
-    sceneConstants.iblIntensity = iblIntensity;
+    //sceneConstants.lightDirection = lightDirection;
+    //sceneConstants.colorLight = colorLight;
+    //sceneConstants.iblIntensity = iblIntensity;
+    lightConstants.lightDirection = lightDirection;
+    lightConstants.colorLight = colorLight;
+    lightConstants.iblIntensity = iblIntensity;
+    lightConstants.directionalLightEnable = static_cast<int>(directionalLightEnable);
+    lightConstants.pointLightEnable = static_cast<int>(pointLightEnable);
+    lightConstants.pointLightCount = pointLightCount;
+    for (int i = 0; i < pointLightCount; i++)
+    {
+        lightConstants.pointsLight[i].position = pointLightPosition[i];
+        lightConstants.pointsLight[i].color = pointLightColor[i];
+        lightConstants.pointsLight[i].range = pointLightRange[i];
+    }
+
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     sceneConstants.enableSSAO = enableSSAO;
     sceneConstants.enableBloom = enableBloom;
@@ -781,6 +806,8 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
     immediateContext->UpdateSubresource(constantBuffers[0].Get(), 0, 0, &sceneConstants, 0, 0);
     immediateContext->VSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
     immediateContext->PSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
+
+
 
 #if 1
     // PROJECTION_MAPPING
@@ -928,6 +955,9 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
     immediateContext->UpdateSubresource(constantBuffers[3].Get(), 0, 0, &projectionMappingConstants, 0, 0);
     immediateContext->PSSetConstantBuffers(5, 1, constantBuffers[3].GetAddressOf());
+
+    immediateContext->UpdateSubresource(constantBuffers[4].Get(), 0, 0, &lightConstants, 0, 0);
+    immediateContext->PSSetConstantBuffers(11, 1, constantBuffers[4].GetAddressOf());    //3 は cascadedShadowMap に使用中
 
     //定数バッファをGPUに送信
     {
