@@ -398,8 +398,10 @@ float3 CalculatedSSRColor(VS_OUT pin)
 
 float CalculatedSSAOColor(VS_OUT pin)
 {
-    float4 position = positionTexture.Sample(linearBorderWhiteSamplerState, pin.texcoord); //viewSpace
-    float3 normal = normalTexture.Sample(linearBorderBlackSamplerState, pin.texcoord).xyz; //viewSpace
+    float4 position = positionTexture.Sample(linearBorderWhiteSamplerState, pin.texcoord); //worldSpace
+    float3 normal = normalTexture.Sample(linearBorderBlackSamplerState, pin.texcoord).xyz; //worldSpace
+    //float4 position = positionTexture.Sample(linearBorderWhiteSamplerState, pin.texcoord); //viewSpace
+    //float3 normal = normalTexture.Sample(linearBorderBlackSamplerState, pin.texcoord).xyz; //viewSpace
 
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     float3 randomVec = noise[(pin.position.x % 4) + 4 * (pin.position.y % 4)];
@@ -417,10 +419,12 @@ float CalculatedSSAOColor(VS_OUT pin)
         const float radius = 1.0;
         samplePosition = position.xyz + samplePosition * radius;
         
-        float4 intersection = mul(float4(samplePosition, 1.0), projection); // from view to clip-space
+        //float4 intersection = mul(float4(samplePosition, 1.0), projection); // from view to clip-space
+        float4 intersection = mul(float4(samplePosition, 1.0), viewProjection); // from world to clip-space
         intersection /= intersection.w; // from clip-space to ndc
         intersection.z = depthTexture.SampleLevel(linearBorderWhiteSamplerState, NdcToUv(intersection.xy), 0).x;
-        intersection = mul(intersection, inverseProjection); // from ndc to view-space
+        //intersection = mul(intersection, inverseProjection); // from ndc to view-space
+        intersection = mul(intersection, inverseViewProjection); // from ndc to world-space
         intersection /= intersection.w; // perspective divide
 		
         float3 v = intersection.xyz - position.xyz;
@@ -517,9 +521,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     uint mipLevel = 0, numberOfLevels;
     positionTexture.GetDimensions(mipLevel, dimensions.x, dimensions.y, numberOfLevels);
     
-    float4 position = positionTexture.Sample(linearBorderWhiteSamplerState, pin.texcoord); //viewSpace
-    float3 normal = normalTexture.Sample(linearBorderBlackSamplerState, pin.texcoord).xyz; //viewSpace
-
     // SCREEN_SPACE_REFLECTION
     if (enableSSR)
     {
