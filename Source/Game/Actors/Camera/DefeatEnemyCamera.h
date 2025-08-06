@@ -8,12 +8,13 @@
 #include "Utils/EasingHandler.h"
 #include "Game/Actors/Player/TitlePlayer.h"
 #include "Core/ActorManager.h"
+#include "Game/Actors/Camera/Camera.h"
 
-class DefeatEnemyCamera :public Actor
+class DefeatEnemyCamera :public Camera
 {
 public:
     //引数付きコンストラクタ
-    DefeatEnemyCamera(std::string actorName) :Actor(actorName) {}
+    DefeatEnemyCamera(std::string actorName) :Camera(actorName) {}
 
     virtual ~DefeatEnemyCamera() = default;
     std::shared_ptr<CameraComponent> mainCameraComponent;

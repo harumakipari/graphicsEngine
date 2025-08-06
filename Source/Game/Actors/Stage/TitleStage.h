@@ -48,7 +48,7 @@ public:
         trafficLight->SetModel("./Data/Models/Stage/Props/traffic_light.gltf");
         trafficLight->model->modelCoordinateSystem = InterleavedGltfModel::CoordinateSystem::RH_Y_UP;
         trafficLight->model->emission = 1.0f;
-        trafficLight->SetRelativeScaleDirect({ 2.0f,2.0f,-2.0f });
+        trafficLight->SetRelativeScaleDirect({ 2.0f,2.0f,2.0f });
         trafficLight->SetRelativeLocationDirect({ 4.25f,0.09f,7.27f });     
         trafficLight->SetRelativeEulerRotationDirect({ -12.4f,8.169f,53.431f });
         //CreatePsFromCSO(Graphics::GetDevice(), "./Shader/GltfModelEmissionPS.cso", trafficLight->pipeLineState_.pixelShader.ReleaseAndGetAddressOf());

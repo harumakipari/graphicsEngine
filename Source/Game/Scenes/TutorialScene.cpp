@@ -434,14 +434,12 @@ void TutorialScene::SetUpActors()
     auto mainCameraActor = ActorManager::CreateAndRegisterActor<MainCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
 
-    CameraManager::SetGameCamera(mainCameraComponent);
+    CameraManager::SetGameCamera(mainCameraActor.get());
 
-    auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
-    //auto debugCameraActor = gameWorld_->SpawnActor<Actor>("debugCam");
-    //auto armSpring= debugCameraActor->NewComponent<SpringArmComponent>("springArmComponent");
-    //auto debugCamera = debugCameraActor->NewComponent<DebugCameraComponent>("debugCamera", "springArmComponent");
-    auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
-    CameraManager::SetDebugCamera(debugCamera);
+    auto debugCameraActor = ActorManager::CreateAndRegisterActor<DebugCamera>("debugCam");
+    //auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
+    //auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
+    CameraManager::SetDebugCamera(debugCameraActor);
 
     Transform enemyTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,-1.0f });
     enemy = ActorManager::CreateAndRegisterActorWithTransform<TutorialEnemy>("tutorialEnemy", enemyTr);
@@ -480,16 +478,15 @@ void TutorialScene::Render(ID3D11DeviceContext* immediateContext, float delta_ti
     auto camera = CameraManager::GetCurrentCamera();
     if (camera)
     {
-        //DirectX::XMFLOAT3 cameraPosition = camera->GetWorldPosition();
-        DirectX::XMFLOAT3 cameraPosition = camera->GetComponentWorldTransform().GetTranslation();
-        sceneConstants.cameraPosition = { cameraPosition.x,cameraPosition.y,cameraPosition.z,1.0f };
-        sceneConstants.view = camera->GetView();
-        sceneConstants.projection = camera->GetProjection();
-        //sceneConstants.viewProjection = camera->GetViewProjection();
+        ViewConstants data = camera->GetViewConstants();
+        sceneConstants.cameraPosition = data.cameraPosition;
+        sceneConstants.view = data.view;
+        sceneConstants.projection = data.projection;
 
-        DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&camera->GetProjection());
-        DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&camera->GetView());
+        DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&data.projection);
+        DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&data.view);
         DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, V * P);
+
 
         // CASCADED_SHADOW_MAPS
         DirectX::XMStoreFloat4x4(&sceneConstants.invProjection, DirectX::XMMatrixInverse(NULL, P));
@@ -587,8 +584,14 @@ void TutorialScene::Render(ID3D11DeviceContext* immediateContext, float delta_ti
 
     if (camera)
     {
+        ViewConstants data = camera->GetViewConstants();
+        cameraView = data.view;
+        cameraProjection = data.projection;
+#if 0
         cameraView = camera->GetView();
         cameraProjection = camera->GetProjection();
+
+#endif // 0
     }
     // CASCADED_SHADOW_MAPS
     // Make cascaded shadow maps

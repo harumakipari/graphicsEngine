@@ -36,7 +36,7 @@ public:
         mainCameraComponent->SetPerspective(DirectX::XMConvertToRadians(45), Graphics::GetScreenWidth() / Graphics::GetScreenHeight(), 0.1f, 1000.0f);
     }
 
-    ViewConstants GetViewConstants() const
+    virtual ViewConstants GetViewConstants() const
     {
         ViewConstants viewConstants;
         DirectX::XMFLOAT3 cameraPosition = GetPosition();
@@ -58,25 +58,54 @@ protected:
     std::shared_ptr<CameraComponent> mainCameraComponent;
 };
 
-class MainCamera :public Actor
+class DebugCamera :public Camera
 {
 public:
     //引数付きコンストラクタ
-    MainCamera(std::string actorName) :Actor(actorName) {}
+    DebugCamera(std::string actorName) :Camera(actorName) {}
+
+    virtual ~DebugCamera() = default;
+    void Initialize()override
+    {
+        debugCameraComponent = this->NewSceneComponent<class DebugCameraComponent>("debugCamera");
+    }
+
+    virtual ViewConstants GetViewConstants() const override
+    {
+        ViewConstants viewConstants;
+        DirectX::XMFLOAT3 cameraPosition = GetPosition();
+        viewConstants.cameraPosition = { cameraPosition.x,cameraPosition.y,cameraPosition.z,1.0f };
+        viewConstants.view = debugCameraComponent->GetView();
+        viewConstants.projection = debugCameraComponent->GetProjection();
+
+        DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&debugCameraComponent->GetProjection());
+        DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&debugCameraComponent->GetView());
+        DirectX::XMStoreFloat4x4(&viewConstants.viewProjection, V * P);
+
+        DirectX::XMStoreFloat4x4(&viewConstants.invProjection, DirectX::XMMatrixInverse(NULL, P));
+        DirectX::XMStoreFloat4x4(&viewConstants.invViewProjection, DirectX::XMMatrixInverse(NULL, V * P));
+
+        DirectX::XMStoreFloat4x4(&viewConstants.invView, DirectX::XMMatrixInverse(NULL, V));
+        return viewConstants;
+    }
+private:
+    std::shared_ptr<DebugCameraComponent> debugCameraComponent;
+};
+
+class MainCamera :public Camera
+{
+public:
+    //引数付きコンストラクタ
+    MainCamera(std::string actorName) :Camera(actorName) {}
 
     virtual ~MainCamera() = default;
-    std::shared_ptr<CameraComponent> mainCameraComponent;
     std::shared_ptr<SphereComponent> sphereComponent;
     void Initialize()override
     {
-        std::shared_ptr<SpringArmComponent> springArmComponent = this->NewSceneComponent<class SpringArmComponent>("springArm");
-        springArmComponent->SetRelativeEulerRotationDirect({ 40.0f, 0.0f, 0.0f });
-        //springArmComponent->SetRelativeLocationDirect({ 1.5f,9.0f,-10.9f });
-        mainCameraComponent = this->NewSceneComponent<class CameraComponent>("mainCamera", "springArm");
-        mainCameraComponent->SetPerspective(DirectX::XMConvertToRadians(45), Graphics::GetScreenWidth() / Graphics::GetScreenHeight(), 0.1f, 1000.0f);
-
+        Camera::Initialize();
         // 当たり判定のコンポーネントを追加
-        sphereComponent = this->NewSceneComponent<class SphereComponent>("sphereComponent", "springArm");
+        //sphereComponent = this->NewSceneComponent<class SphereComponent>("sphereComponent", "springArm");
+        sphereComponent = this->NewSceneComponent<class SphereComponent>("sphereComponent", mainCameraComponent->name());
         sphereComponent->SetRadius(0.2f);
         //sphereComponent->SetMass(40.0f);
         sphereComponent->SetLayer(CollisionLayer::Camera);

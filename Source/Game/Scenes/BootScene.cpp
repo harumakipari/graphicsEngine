@@ -187,16 +187,17 @@ void BootScene::SetUpActors()
     Transform titleTr(DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
     title = ActorManager::CreateAndRegisterActorWithTransform<TitleStage>("title", titleTr);
 
-    CameraManager::SetGameCamera(mainCameraComponent);
+    //CameraManager::SetGameCamera(mainCameraComponent);
+    CameraManager::SetGameCamera(mainCameraActor.get());
 
-    auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
-    auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
+    auto debugCameraActor = ActorManager::CreateAndRegisterActor<DebugCamera>("debugCam");
+    //auto debugCameraActor = ActorManager::CreateAndRegisterActor<Actor>("debugCam");
+    //auto debugCamera = debugCameraActor->NewSceneComponent<DebugCameraComponent>("debugCamera");
 
     //Transform enemyTr(DirectX::XMFLOAT3{ 6.7f,0.0f,5.6f }, DirectX::XMFLOAT3{ 0.0f,-35.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
     //Transform enemyTr(DirectX::XMFLOAT3{ 6.7f,0.0f,5.6f }, DirectX::XMFLOAT3{ 0.0f,-15.0f,0.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
     //auto enemy = ActorManager::CreateAndRegisterActorWithTransform<EmptyEnemy>("enemy", enemyTr);
-
-    CameraManager::SetDebugCamera(debugCamera);
+    CameraManager::SetDebugCamera(debugCameraActor);
 }
 
 bool BootScene::OnSizeChanged(ID3D11Device* device, UINT64 width, UINT height)
@@ -248,6 +249,22 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     auto camera = CameraManager::GetCurrentCamera();
     if (camera)
     {
+        ViewConstants data = camera->GetViewConstants();
+        sceneConstants.cameraPosition = data.cameraPosition;
+        sceneConstants.view =data.view;
+        sceneConstants.projection = data.projection;
+
+        DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&data.projection);
+        DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&data.view);
+        DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, V * P);
+
+        // CASCADED_SHADOW_MAPS
+        DirectX::XMStoreFloat4x4(&sceneConstants.invProjection, DirectX::XMMatrixInverse(NULL, P));
+        DirectX::XMStoreFloat4x4(&sceneConstants.invViewProjection, DirectX::XMMatrixInverse(NULL, V * P));
+
+        // COMPUTE_PARTICLE_SYSTEM
+        DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
+#if 0
         //DirectX::XMFLOAT3 cameraPosition = camera->GetWorldPosition();
         DirectX::XMFLOAT3 cameraPosition = camera->GetComponentWorldTransform().GetTranslation();
         sceneConstants.cameraPosition = { cameraPosition.x,cameraPosition.y,cameraPosition.z,1.0f };
@@ -265,6 +282,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
         // COMPUTE_PARTICLE_SYSTEM
         DirectX::XMStoreFloat4x4(&sceneConstants.invView, DirectX::XMMatrixInverse(NULL, V));
+
+#endif // 0
     }
     lightConstants.lightDirection = lightDirection;
     lightConstants.colorLight = colorLight;
@@ -359,8 +378,14 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
         if (camera)
         {
+            ViewConstants data = camera->GetViewConstants();
+            cameraView = data.view;
+            cameraProjection = data.projection;
+#if 0
             cameraView = camera->GetView();
             cameraProjection = camera->GetProjection();
+
+#endif // 0
         }
         // CASCADED_SHADOW_MAPS
         // Make cascaded shadow maps
@@ -496,8 +521,14 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
         if (camera)
         {
+            ViewConstants data = camera->GetViewConstants();
+            cameraView = data.view;
+            cameraProjection = data.projection;
+#if 0
             cameraView = camera->GetView();
             cameraProjection = camera->GetProjection();
+
+#endif // 0
         }
         // CASCADED_SHADOW_MAPS
         // Make cascaded shadow maps

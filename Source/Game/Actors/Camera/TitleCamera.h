@@ -7,22 +7,21 @@
 #include "Core/ActorManager.h"
 
 #include "Components/Camera/CameraComponent.h"
+#include "Game/Actors/Camera/Camera.h"
 
-
-class TitleCamera :public Actor
+class TitleCamera :public Camera
 {
 public:
     //引数付きコンストラクタ
-    TitleCamera(std::string actorName) :Actor(actorName) {}
+    TitleCamera(std::string actorName) :Camera(actorName) {}
 
     virtual ~TitleCamera() = default;
-    std::shared_ptr<CameraComponent> mainCameraComponent;
+    //std::shared_ptr<CameraComponent> mainCameraComponent;
 
 
     void Initialize()override
     {
         mainCameraComponent = this->NewSceneComponent<class CameraComponent>("mainCamera");
-        //mainCameraComponent->SetPerspective(DirectX::XMConvertToRadians(45), Graphics::GetScreenWidth() / Graphics::GetScreenHeight(), 0.1f, 1000.0f);
         mainCameraComponent->SetPerspective(DirectX::XMConvertToRadians(35), Graphics::GetScreenWidth() / Graphics::GetScreenHeight(), 0.1f, 1000.0f);
         SetPosition(DirectX::XMFLOAT3(-0.13f, 1.2f, -4.3f));
         SetEulerRotation(DirectX::XMFLOAT3(1.4f, 20.6f, 0.0f));
