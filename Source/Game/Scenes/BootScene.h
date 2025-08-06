@@ -243,7 +243,7 @@ private:
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     bool enableSSAO = true;
     bool enableCascadedShadowMaps = true;
-    bool enableSSR = false;
+    bool enableSSR = true;
     bool enableFog = false;
     bool enableBloom = true;
 

@@ -227,29 +227,35 @@ float3 CalculatedSSRColor(VS_OUT pin)
     uint mipLevel = 0, numberOfLevels;
     positionTexture.GetDimensions(mipLevel, dimensions.x, dimensions.y, numberOfLevels);
     
-    float4 position = positionTexture.Sample(linearBorderWhiteSamplerState, pin.texcoord); //viewSpace
-    float3 normal = normalTexture.Sample(linearBorderBlackSamplerState, pin.texcoord).xyz; //viewSpace
+    float4 position = positionTexture.Sample(linearBorderWhiteSamplerState, pin.texcoord); // worldSpace
+    float3 normal = normalTexture.Sample(linearBorderBlackSamplerState, pin.texcoord).xyz; // worldSpace
 
     float4 positionFrom = position;
     float4 positionTo = positionFrom;
     
+#if 0
     float3 incident = normalize(position);
+#else
+    float3 incident = normalize(position.xyz - cameraPositon.xyz);
+#endif
     float3 reflection = normalize(reflect(incident, normal.xyz));
 
-    float4 startView = float4(positionFrom.xyz + (reflection * 0), 1);
-    float4 endView = float4(positionFrom.xyz + (reflection * maxDistance), 1);
-    if (endView.z < 0)
+    float4 startWorld = float4(positionFrom.xyz + (reflection * 0), 1);
+    float4 endWorld = float4(positionFrom.xyz + (reflection * maxDistance), 1);
+    if (endWorld.z < 0)
     {
-        float3 v = endView.xyz - startView.xyz;
-        endView.xyz = startView.xyz + v * abs(startView.z / v.z);
+        float3 v = endWorld.xyz - startWorld.xyz;
+        endWorld.xyz = startWorld.xyz + v * abs(startWorld.z / v.z);
     }
 
-    float4 startFrag = mul(startView, projection); // from view to clipSpace
+    //float4 startFrag = mul(startWorld, projection); // from view to clipSpace
+    float4 startFrag = mul(startWorld, viewProjection); // from world to clipSpace
     startFrag /= startFrag.w; //from clipSpave to ndc
     startFrag.xy = NdcToUv(startFrag.xy); // from uv to fragment/pixel coordinate
     startFrag.xy *= dimensions;
     
-    float4 endFrag = mul(endView, projection); //from view to clipSpace
+    //float4 endFrag = mul(endWorld, projection); //from world to clipSpace
+    float4 endFrag = mul(endWorld, viewProjection); //from world to clipSpace
     endFrag /= endFrag.w; //from clipSpace to ndc
     endFrag.xy = NdcToUv(endFrag.xy); //from ndc to uv
     endFrag.xy *= dimensions;
@@ -273,7 +279,7 @@ float3 CalculatedSSRColor(VS_OUT pin)
     int hit0 = 0;
     int hit1 = 0;
     
-    float viewDistance = startView.z;
+    float viewDistance = startWorld.z;
     float depth = thickness;
     
 #define MAX_DELTA 64
@@ -288,17 +294,24 @@ float3 CalculatedSSRColor(VS_OUT pin)
             hit0 = 0;
             break;
         }
-        
+#if 0
         positionTo = positionTexture.Sample(linearBorderWhiteSamplerState, uv.xy); //viewSpace
-        
+#else
+        positionTo = positionTexture.Sample(linearBorderWhiteSamplerState, uv.xy); // worldSpace
+        float4 positionToClip = mul(float4(positionTo.xyz, 1.0), viewProjection);
+        positionToClip /= positionToClip.w;
+#endif   
         search1 = lerp((frag.y - startFrag.y) / deltaY, (frag.x - startFrag.x) / deltaX, useX);
         search1 = clamp(search1, 0.0, 1.0);
         
         // Perspective Correct Interpolation
-        viewDistance = (startView.z * endView.z) / lerp(endView.z, startView.z, search1);
-        
+        // NDC.z ベースで比較する
+        float interpolatedZ = lerp(startFrag.z, endFrag.z, search1);
+        float depthDiff = interpolatedZ - positionToClip.z;
+
+        viewDistance = (startWorld.z * endWorld.z) / lerp(endWorld.z, startWorld.z, search1);
         depth = viewDistance - positionTo.z;
-        
+#if 0
         if (depth > 0 && depth < thickness)
         {
             hit0 = 1;
@@ -308,6 +321,17 @@ float3 CalculatedSSRColor(VS_OUT pin)
         {
             search0 = search1;
         }
+#else
+        if (depthDiff > 0 && depthDiff < thickness)
+        {
+            hit0 = 1;
+            break;
+        }
+        else
+        {
+            search0 = search1;
+        }
+#endif
     }
 #if 0
     hit1 = hit0;
@@ -322,10 +346,12 @@ float3 CalculatedSSRColor(VS_OUT pin)
         uv.xy = frag / dimensions;
         
         positionTo = positionTexture.Sample(linearBorderWhiteSamplerState, uv.xy); //viewSpace
-    
-        // PerspectiveCorrect Interpolation
-        viewDistance = (startView.z * endView.z) / lerp(endView.z, startView.z, search1);
+        float4 positionToClip = mul(float4(positionTo.xyz, 1.0), viewProjection);
+        positionToClip /= positionToClip.w;
         
+        // PerspectiveCorrect Interpolation
+#if 0
+        viewDistance = (startWorld.z * endWorld.z) / lerp(endWorld.z, startWorld.z, search1);
         depth = viewDistance - positionTo.z;
         
         if (depth > 0 && depth < thickness)
@@ -339,6 +365,22 @@ float3 CalculatedSSRColor(VS_OUT pin)
             search1 = search1 + ((search1 - search0) / 2);
             search0 = temp;
         }
+#else
+        float interpolatedZ = lerp(startFrag.z, endFrag.z, search1);
+        float depthDiff = interpolatedZ - positionToClip.z;
+
+        if (depthDiff > 0 && depthDiff < thickness)
+        {
+            hit1 = 1;
+            search1 = search0 + ((search1 - search0) / 2);
+        }
+        else
+        {
+            float temp = search1;
+            search1 = search1 + ((search1 - search0) / 2);
+            search0 = temp;
+        }
+#endif
     }
 #endif
     float visiblity = hit1;
@@ -535,7 +577,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float2 block = floor(pin.texcoord * float2(30 * rand + 1, 10 * rand + 1));
     float2 noise = frac(sin(dot(block, float2(12.9898 + t, 78.233 + t))) * 43758.5433);
     glitchUV += (noise - 0.5) * 0.1;
-    #if 0
+#if 0
     //RGBずらし（色収差）
     float2 offset = float2(0.005, 0);
     
@@ -543,10 +585,10 @@ float4 main(VS_OUT pin) : SV_TARGET
     float g = colorTexture.Sample(pointSamplerState, glitchUV).g;
     float b = colorTexture.Sample(pointSamplerState, glitchUV - offset).b;
     color.rgb = float3(r, g, b);
-    #else
+#else
     float3 col = colorTexture.Sample(pointSamplerState, glitchUV).rgb;
     color.rgb = col * lerp(1.0, 1.5, step(0.9, noise.x));
-    #endif
+#endif
 #else
 #if 0
     float2 glitchUV = pin.texcoord;

@@ -348,7 +348,7 @@ public:
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     bool enableSSAO = true;
     bool enableCascadedShadowMaps = true;
-    bool enableSSR = false;
+    bool enableSSR = true;
     bool enableFog = false;
     bool enableBloom = true;
 
@@ -371,8 +371,7 @@ public:
     
     // GBUFFER
     std::unique_ptr<GBuffer> gBufferRenderTarget;
-    bool useDeferredRendering = true;
-
+    bool useDeferredRendering = false;
 
     // VOLUMETRIC_CLOUDSCAPES
     DirectX::XMFLOAT4 cameraFocus{ 0.0f, 1.0f, 0.0f, 1.0f };

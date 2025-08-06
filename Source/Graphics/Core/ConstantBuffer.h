@@ -46,6 +46,7 @@ public:
         immediateContext->UpdateSubresource(constantBuffer.Get(), 0, nullptr, &data, 0, 0);
         immediateContext->PSSetConstantBuffers(slot, 1, constantBuffer.GetAddressOf());
         immediateContext->VSSetConstantBuffers(slot, 1, constantBuffer.GetAddressOf());
+        // TODO
 #endif
     }
 private:

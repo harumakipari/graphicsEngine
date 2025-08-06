@@ -136,10 +136,10 @@ private:
     // GUI‚Ì•`‰æ
     static void _drawGUI()
     {
-        if (_current_scene->actorManager_)
-        {
-            _current_scene->actorManager_->DrawImGuiAllActors();
-        }
+        //if (_current_scene->actorManager_)
+        //{
+        //    _current_scene->actorManager_->DrawImGuiAllActors();
+        //}
         _current_scene->DrawGui();
     }
 

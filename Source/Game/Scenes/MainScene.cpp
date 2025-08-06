@@ -767,7 +767,6 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
         DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&data.view);
         DirectX::XMStoreFloat4x4(&sceneConstants.viewProjection, V * P);
 
-
         // CASCADED_SHADOW_MAPS
         DirectX::XMStoreFloat4x4(&sceneConstants.invProjection, DirectX::XMMatrixInverse(NULL, P));
         DirectX::XMStoreFloat4x4(&sceneConstants.invViewProjection, DirectX::XMMatrixInverse(NULL, V * P));
@@ -973,283 +972,285 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
     //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
     //volumetricCloudscapes->Blit(immediateContext);
     //framebuffers[1]->Deactivate(immediateContext);
-
-    // MULTIPLE_RENDER_TARGETS
-    multipleRenderTargets->Clear(immediateContext);
-    multipleRenderTargets->Acticate(immediateContext);
-
-    // SKY_MAP
-    //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-    //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    //skyMap->Blit(immediateContext, sceneConstants.viewProjection);
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
-
-
-    // VOLUMETRIC_CLOUDSCAPES
-    //RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
-    //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-    //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    //volumetricCloudscapes->Blit(immediateContext);
-    //fullscreenQuadTransfer->Blit(immediateContext, framebuffers[1]/*volumetric cloudscapes*/->shaderResourceViews[0].GetAddressOf(), 0, 1);
-
-    RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    //sprite_batches[0]->Begin(immediateContext);
-    //sprite_batches[0]->Render(immediateContext, 0, 0, 1280, 720);
-    //sprite_batches[0]->End(immediateContext);
-
-    // Shader Toy
+    if (!useDeferredRendering)
     {
-        //shaderToyFrameBuffer->Clear(immediateContext);// 512 * 512
-        //shaderToyFrameBuffer->Activate(immediateContext);
+        // MULTIPLE_RENDER_TARGETS
+        multipleRenderTargets->Clear(immediateContext);
+        multipleRenderTargets->Acticate(immediateContext);
 
-        ID3D11ShaderResourceView* shaderResourceViews[]
+        // SKY_MAP
+        //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+        //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        //skyMap->Blit(immediateContext, sceneConstants.viewProjection);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+
+
+        // VOLUMETRIC_CLOUDSCAPES
+        //RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+        //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+        //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        //volumetricCloudscapes->Blit(immediateContext);
+        //fullscreenQuadTransfer->Blit(immediateContext, framebuffers[1]/*volumetric cloudscapes*/->shaderResourceViews[0].GetAddressOf(), 0, 1);
+
+        RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        //sprite_batches[0]->Begin(immediateContext);
+        //sprite_batches[0]->Render(immediateContext, 0, 0, 1280, 720);
+        //sprite_batches[0]->End(immediateContext);
+
+        // Shader Toy
         {
-            //shaderToyFrameBuffer->shaderResourceViews[0].Get(), //color Map
-            nullptr
-        };
-        fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, 1, pixelShaders[3].Get());
-        //shaderToyTransfer->Blit(immediateContext, shaderResourceViews, 0, 1, shaderToyPS.Get());
-        //shaderToyFrameBuffer->Deactivate(immediateContext);
-        //if (isBossDeath)
-        {
-            //if (auto enemy = std::dynamic_pointer_cast<DefeatEnemy>(ActorManager::GetActorByName("defetEnemy")))
+            //shaderToyFrameBuffer->Clear(immediateContext);// 512 * 512
+            //shaderToyFrameBuffer->Activate(immediateContext);
+
+            ID3D11ShaderResourceView* shaderResourceViews[]
             {
-                //if (enemy->isFinish)
+                //shaderToyFrameBuffer->shaderResourceViews[0].Get(), //color Map
+                nullptr
+            };
+            fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, 1, pixelShaders[3].Get());
+            //shaderToyTransfer->Blit(immediateContext, shaderResourceViews, 0, 1, shaderToyPS.Get());
+            //shaderToyFrameBuffer->Deactivate(immediateContext);
+            //if (isBossDeath)
+            {
+                //if (auto enemy = std::dynamic_pointer_cast<DefeatEnemy>(ActorManager::GetActorByName("defetEnemy")))
                 {
-                    //fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, 1, pixelShaders[4].Get());
+                    //if (enemy->isFinish)
+                    {
+                        //fullscreenQuadTransfer->Blit(immediateContext, shaderResourceViews, 0, 1, pixelShaders[4].Get());
+                    }
                 }
             }
         }
-    }
 
 
-    RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
 
-    // MULTIPLE_RENDER_TARGETS
-    RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
-
-
-    //gameWorld_->Render(immediateContext);
-
-    actorRender.RenderOpaque(immediateContext);
-    actorRender.RenderMask(immediateContext);
-    actorRender.RenderBlend(immediateContext);
-    actorRender.RenderInstanced(immediateContext);
-    actorRender.RenderBuilding(immediateContext);
+        // MULTIPLE_RENDER_TARGETS
+        RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
 
 
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::WIREFRAME_CULL_NONE);
+        //gameWorld_->Render(immediateContext);
 
-    // デバック描画
+        actorRender.RenderOpaque(immediateContext);
+        actorRender.RenderMask(immediateContext);
+        actorRender.RenderBlend(immediateContext);
+        actorRender.RenderInstanced(immediateContext);
+        actorRender.RenderBuilding(immediateContext);
+
+
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::WIREFRAME_CULL_NONE);
+
+        // デバック描画
 #if _DEBUG
-    actorColliderManager.DebugRender(immediateContext);
-    PhysicsTest::Instance().DebugRender(immediateContext);
-    GameManager::DebugRender(immediateContext);
+    //actorColliderManager.DebugRender(immediateContext);
+    //PhysicsTest::Instance().DebugRender(immediateContext);
+    //GameManager::DebugRender(immediateContext);
 #endif
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
 #if 1
-    // PARTICLE
-    //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_OFF);
-    //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    //if (blendMode == 0)
-    //{
-    //    RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
-    //}
-    //else
-    //{
-    //    RenderState::BindBlendState(immediateContext, BLEND_STATE::ADD);
-    //}
-    immediateContext->GSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
-    immediateContext->PSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
-    immediateContext->CSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
+        // PARTICLE
+        //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_OFF);
+        //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        //if (blendMode == 0)
+        //{
+        //    RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
+        //}
+        //else
+        //{
+        //    RenderState::BindBlendState(immediateContext, BLEND_STATE::ADD);
+        //}
+        immediateContext->GSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
+        immediateContext->PSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
+        immediateContext->CSSetConstantBuffers(1, 1, constantBuffers[0].GetAddressOf());
 
-    //瓦礫のDissolve
-    immediateContext->PSSetShaderResources(11, 1, noise2d.GetAddressOf());
-    for (const auto& actor : ShockWaveTargetRegistry::GetTargets())
-    {
-        if (auto build = std::dynamic_pointer_cast<Building>(actor))
+        //瓦礫のDissolve
+        immediateContext->PSSetShaderResources(11, 1, noise2d.GetAddressOf());
+        for (const auto& actor : ShockWaveTargetRegistry::GetTargets())
         {
-            if (auto& debri = build->convexComponent)
+            if (auto build = std::dynamic_pointer_cast<Building>(actor))
             {
-                if (debri->GetActive())
+                if (auto& debri = build->convexComponent)
                 {
-                    //effectSystem->computeParticles[9]->PixelEmitBegin(immediateContext, elapsedTime);
-
-                    //RenderState::BindDepthStencilState(Graphics::GetDeviceContext(), DEPTH_STATE::ZT_OFF_ZW_OFF, 0);
-                    //RenderState::BindRasterizerState(Graphics::GetDeviceContext(), RASTER_STATE::SOLID_CULL_NONE);
-
-                    DirectX::XMFLOAT4X4 world;
-                    DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
-                    PipeLineState pipelineState;
-                    pipelineState.pixelShader = effectSystem->dissolvePixelShader;
-
-                    debri->GetMeshComponent()->SetPipeLineState(pipelineState);
-
-                    for (auto& material : debri->GetMeshComponent()->model->materials)
+                    if (debri->GetActive())
                     {
-                        material.replacedPixelShader = effectSystem->dissolvePixelShader;
+                        //effectSystem->computeParticles[9]->PixelEmitBegin(immediateContext, elapsedTime);
+
+                        //RenderState::BindDepthStencilState(Graphics::GetDeviceContext(), DEPTH_STATE::ZT_OFF_ZW_OFF, 0);
+                        //RenderState::BindRasterizerState(Graphics::GetDeviceContext(), RASTER_STATE::SOLID_CULL_NONE);
+
+                        DirectX::XMFLOAT4X4 world;
+                        DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
+                        PipeLineState pipelineState;
+                        pipelineState.pixelShader = effectSystem->dissolvePixelShader;
+
+                        debri->GetMeshComponent()->SetPipeLineState(pipelineState);
+
+                        for (auto& material : debri->GetMeshComponent()->model->materials)
+                        {
+                            material.replacedPixelShader = effectSystem->dissolvePixelShader;
+                        }
+                        //if (value > 1.f) value = 1.f;
+                        debri->GetMeshComponent()->model->SetDisolveFactor(build->GetDissolveRate());
+
+                        //描画
+                        debri->GetMeshComponent()->model->Render(immediateContext, world, debri->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::All, pipelineState);
+
+                        //effectSystem->computeParticles[9]->PixelEmitEnd(immediateContext);
+                        //meshComponent->model->Render(immediateContext, world, convexComponent->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::Mask);
                     }
-                    //if (value > 1.f) value = 1.f;
-                    debri->GetMeshComponent()->model->SetDisolveFactor(build->GetDissolveRate());
+                }
+            }
+            else if (auto build = std::dynamic_pointer_cast<BossBuilding>(actor))
+            {
+                if (auto& debri = build->convexComponent)
+                {
+                    if (debri->GetActive())
+                    {
+                        //effectSystem->computeParticles[9]->PixelEmitBegin(immediateContext, elapsedTime);
 
-                    //描画
-                    debri->GetMeshComponent()->model->Render(immediateContext, world, debri->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::All, pipelineState);
+                        //RenderState::BindDepthStencilState(Graphics::GetDeviceContext(), DEPTH_STATE::ZT_OFF_ZW_OFF, 0);
+                        //RenderState::BindRasterizerState(Graphics::GetDeviceContext(), RASTER_STATE::SOLID_CULL_NONE);
 
-                    //effectSystem->computeParticles[9]->PixelEmitEnd(immediateContext);
-                    //meshComponent->model->Render(immediateContext, world, convexComponent->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::Mask);
+                        DirectX::XMFLOAT4X4 world;
+                        DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
+                        PipeLineState pipelineState;
+                        pipelineState.pixelShader = effectSystem->dissolvePixelShader;
+
+                        debri->GetMeshComponent()->SetPipeLineState(pipelineState);
+
+                        for (auto& material : debri->GetMeshComponent()->model->materials)
+                        {
+                            material.replacedPixelShader = effectSystem->dissolvePixelShader;
+                        }
+                        //if (value > 1.f) value = 1.f;
+                        debri->GetMeshComponent()->model->SetDisolveFactor(build->GetDissolveRate());
+
+                        //描画
+                        debri->GetMeshComponent()->model->Render(immediateContext, world, debri->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::All, pipelineState);
+
+                        //effectSystem->computeParticles[9]->PixelEmitEnd(immediateContext);
+                        //meshComponent->model->Render(immediateContext, world, convexComponent->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::Mask);
+                    }
                 }
             }
         }
-        else if (auto build = std::dynamic_pointer_cast<BossBuilding>(actor))
-        {
-            if (auto& debri = build->convexComponent)
-            {
-                if (debri->GetActive())
-                {
-                    //effectSystem->computeParticles[9]->PixelEmitBegin(immediateContext, elapsedTime);
-
-                    //RenderState::BindDepthStencilState(Graphics::GetDeviceContext(), DEPTH_STATE::ZT_OFF_ZW_OFF, 0);
-                    //RenderState::BindRasterizerState(Graphics::GetDeviceContext(), RASTER_STATE::SOLID_CULL_NONE);
-
-                    DirectX::XMFLOAT4X4 world;
-                    DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
-                    PipeLineState pipelineState;
-                    pipelineState.pixelShader = effectSystem->dissolvePixelShader;
-
-                    debri->GetMeshComponent()->SetPipeLineState(pipelineState);
-
-                    for (auto& material : debri->GetMeshComponent()->model->materials)
-                    {
-                        material.replacedPixelShader = effectSystem->dissolvePixelShader;
-                    }
-                    //if (value > 1.f) value = 1.f;
-                    debri->GetMeshComponent()->model->SetDisolveFactor(build->GetDissolveRate());
-
-                    //描画
-                    debri->GetMeshComponent()->model->Render(immediateContext, world, debri->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::All, pipelineState);
-
-                    //effectSystem->computeParticles[9]->PixelEmitEnd(immediateContext);
-                    //meshComponent->model->Render(immediateContext, world, convexComponent->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::Mask);
-                }
-            }
-        }
-    }
-    //immediateContext->PSSetShaderResources(0, 1, particleTexture.GetAddressOf());
-    //immediateContext->GSSetShaderResources(0, 1, colorTemperChart.GetAddressOf());
-    //actorRender.RenderParticle(immediateContext);
-    effectSystem->Render(immediateContext);
-    //particles->Render(immediateContext);
+        //immediateContext->PSSetShaderResources(0, 1, particleTexture.GetAddressOf());
+        //immediateContext->GSSetShaderResources(0, 1, colorTemperChart.GetAddressOf());
+        //actorRender.RenderParticle(immediateContext);
+        effectSystem->Render(immediateContext);
+        //particles->Render(immediateContext);
 
 
 #endif
-    multipleRenderTargets->Deactivate(immediateContext);
+        multipleRenderTargets->Deactivate(immediateContext);
 
 
-    DirectX::XMFLOAT4X4 cameraView;
-    DirectX::XMFLOAT4X4 cameraProjection;
+        DirectX::XMFLOAT4X4 cameraView;
+        DirectX::XMFLOAT4X4 cameraProjection;
 
-    if (camera)
-    {
-        ViewConstants data = camera->GetViewConstants();
-        cameraView = data.view;
-        cameraProjection = data.projection;
+        if (camera)
+        {
+            ViewConstants data = camera->GetViewConstants();
+            cameraView = data.view;
+            cameraProjection = data.projection;
 #if 0
-        cameraView = camera->GetView();
-        cameraProjection = camera->GetProjection();
+            cameraView = camera->GetView();
+            cameraProjection = camera->GetProjection();
 
 #endif // 0
-    }
-    // CASCADED_SHADOW_MAPS
-    // Make cascaded shadow maps
-    cascadedShadowMaps->Clear(immediateContext);
-    cascadedShadowMaps->Activate(immediateContext, cameraView, cameraProjection, lightDirection, criticalDepthValue, 3/*cbSlot*/);
-    RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
-    RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-    actorRender.CastShadowRender(immediateContext);
-    //gameWorld_->CastShadowRender(immediateContext);
-    cascadedShadowMaps->Deactive(immediateContext);
+        }
+        // CASCADED_SHADOW_MAPS
+        // Make cascaded shadow maps
+        cascadedShadowMaps->Clear(immediateContext);
+        cascadedShadowMaps->Activate(immediateContext, cameraView, cameraProjection, lightDirection, criticalDepthValue, 3/*cbSlot*/);
+        RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
+        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        actorRender.CastShadowRender(immediateContext);
+        //gameWorld_->CastShadowRender(immediateContext);
+        cascadedShadowMaps->Deactive(immediateContext);
 
-    // FOG
-    {
+        // FOG
+        {
 #if 0
-        framebuffers[0]->Clear(immediateContext, 0, 0, 0, 0);
-        framebuffers[0]->Activate(immediateContext);
+            framebuffers[0]->Clear(immediateContext, 0, 0, 0, 0);
+            framebuffers[0]->Activate(immediateContext);
 
 
-        RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
-        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-        ID3D11ShaderResourceView* shader_resource_views[]
-        {
-            multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
-            multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
-            cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
-        };
-        fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[2]/*VolumetricFogPS*/.Get());
+            RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+            RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+            RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+            ID3D11ShaderResourceView* shader_resource_views[]
+            {
+                multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+                multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+                cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
+            };
+            fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[2]/*VolumetricFogPS*/.Get());
 
-        framebuffers[0]->Deactivate(immediateContext);
+            framebuffers[0]->Deactivate(immediateContext);
 #endif
-    }
+        }
 
-    framebuffers[1]->Clear(immediateContext, 0, 0, 0, 0);
-    framebuffers[1]->Activate(immediateContext);
+        framebuffers[1]->Clear(immediateContext, 0, 0, 0, 0);
+        framebuffers[1]->Activate(immediateContext);
 
-    // ScreenSpace-ProjectionMapping
-    {
-        ID3D11ShaderResourceView* srvs[]
+        // ScreenSpace-ProjectionMapping
         {
-            multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
-            multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
-        };
+            ID3D11ShaderResourceView* srvs[]
+            {
+                multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+                multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+            };
 
-        //プロジェクションマッピングで出すテクスチャをセット
-        immediateContext->PSSetShaderResources(15, 1, effectSystem->projectionTexture.GetAddressOf());
-        immediateContext->PSSetShaderResources(16, 1, &multipleRenderTargets->renderTargetShaderResourceViews[0]);
+            //プロジェクションマッピングで出すテクスチャをセット
+            immediateContext->PSSetShaderResources(15, 1, effectSystem->projectionTexture.GetAddressOf());
+            immediateContext->PSSetShaderResources(16, 1, &multipleRenderTargets->renderTargetShaderResourceViews[0]);
 
-        //シーンのSRVとDepth値をPixelShaderに送って描画
-        fullscreenQuadTransfer->Blit(immediateContext, srvs, 20, _countof(srvs), screenSpaceProjectionMappingPixelShader.Get());
-    }
+            //シーンのSRVとDepth値をPixelShaderに送って描画
+            fullscreenQuadTransfer->Blit(immediateContext, srvs, 20, _countof(srvs), screenSpaceProjectionMappingPixelShader.Get());
+        }
 
 
-    framebuffers[1]->Deactivate(immediateContext);
+        framebuffers[1]->Deactivate(immediateContext);
 
-    //framebuffers[1]->Clear(immediateContext, 0, 0, 0, 0);
-    //framebuffers[1]->Activate(immediateContext);
+        //framebuffers[1]->Clear(immediateContext, 0, 0, 0, 0);
+        //framebuffers[1]->Activate(immediateContext);
 
-    // CASCADED_SHADOW_MAPS
-    // Draw shadow to scene framebuffer
-    // FINAL_PASS
-    {
-        //ブルーム
-        RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
-        RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-        //bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
-        bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
-
-        ID3D11ShaderResourceView* shader_resource_views[]
+        // CASCADED_SHADOW_MAPS
+        // Draw shadow to scene framebuffer
+        // FINAL_PASS
         {
-            // MULTIPLE_RENDER_TARGETS
-            //multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
-            framebuffers[1]->shaderResourceViews[0].Get(),
-            multipleRenderTargets->renderTargetShaderResourceViews[1],
-            multipleRenderTargets->renderTargetShaderResourceViews[2],
-            multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
-            bloomer->shader_resource_view(),    //bloom
-            framebuffers[0]->shaderResourceViews[0].Get(),  //fog
-            cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
-        };
-        // メインフレームバッファとブルームエフェクトを組み合わせて描画
-        fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[0]/*final pass*/.Get());
+            //ブルーム
+            RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
+            RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
+            RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+            //bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
+            bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
 
+            ID3D11ShaderResourceView* shader_resource_views[]
+            {
+                // MULTIPLE_RENDER_TARGETS
+                //multipleRenderTargets->renderTargetShaderResourceViews[0],  //colorMap
+                framebuffers[1]->shaderResourceViews[0].Get(),
+                multipleRenderTargets->renderTargetShaderResourceViews[1],
+                multipleRenderTargets->renderTargetShaderResourceViews[2],
+                multipleRenderTargets->depthStencilShaderResourceView,      //depthMap
+                bloomer->shader_resource_view(),    //bloom
+                framebuffers[0]->shaderResourceViews[0].Get(),  //fog
+                cascadedShadowMaps->depthMap().Get(),   //cascaededShadowMaps
+            };
+            // メインフレームバッファとブルームエフェクトを組み合わせて描画
+            fullscreenQuadTransfer->Blit(immediateContext, shader_resource_views, 0, _countof(shader_resource_views), pixelShaders[0]/*final pass*/.Get());
+
+        }
     }
 
     // UI描画
@@ -1444,10 +1445,25 @@ void MainScene::DrawGui()
             // -------------------------
             if (ImGui::CollapsingHeader("Light Settings", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::Checkbox("useDeferredRendering", &useDeferredRendering);
+                ImGui::Checkbox("directionalLightEnable", &directionalLightEnable);
                 ImGui::SliderFloat3("Light Direction", &lightDirection.x, -1.0f, 1.0f);
                 ImGui::SliderFloat3("Light Color", &colorLight.x, -1.0f, 1.0f);
                 ImGui::SliderFloat("IBL Intensity", &iblIntensity, 0.0f, 10.0f);
-                ImGui::SliderFloat("Light Threshold", &colorLight.w, 0.0f, 10.0f);
+                ImGui::SliderFloat("Light Intensity", &colorLight.w, 0.0f, 10.0f);
+                ImGui::Checkbox("pointLightEnable", &pointLightEnable);
+                ImGui::SliderInt("Point Light Count", &pointLightCount, 0, 8);
+                for (int i = 0; i < pointLightCount; i++)
+                {
+                    std::string header = "PointLight[" + std::to_string(i) + "]";
+                    if (ImGui::CollapsingHeader(header.c_str()))
+                    {
+                        ImGui::DragFloat3(("Position##" + std::to_string(i)).c_str(), &pointLightPosition[i].x, 0.1f);
+                        ImGui::ColorEdit3(("Color##" + std::to_string(i)).c_str(), &pointLightColor[i].x);
+                        ImGui::SliderFloat(("Range##" + std::to_string(i)).c_str(), &pointLightRange[i], 0.0f, 10.0f);
+                        ImGui::SliderFloat(("Intensity##" + std::to_string(i)).c_str(), &pointLightColor[i].w, 0.0f, 10.0f);
+                    }
+                }
             }
 
             // -------------------------
