@@ -63,7 +63,24 @@ public:
 
         std::vector<int> children;
 
-        // ローカルの
+        // ローカルのトランスフォーム
+        DirectX::XMFLOAT4 rotation = { 0,0,0,1 };
+        DirectX::XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+        DirectX::XMFLOAT3 translation = { 0,0,0 };
+        std::vector<double> weights;
+
+        DirectX::XMFLOAT4X4 globalTransform =
+        {
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            0,0,0,1,
+        };
+
+        DirectX::XMFLOAT3 minValue=
+        {
+
+        }
     };
 
 };

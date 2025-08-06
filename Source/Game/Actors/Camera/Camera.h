@@ -17,13 +17,54 @@
 #include "Game/Actors/Enemy/RiderEnemy.h"
 
 #include "Game/Managers/GameManager.h"
+
+#include "Engine/Camera/CameraConstants.h"
+
 class Camera :public Actor
 {
 public:
     //引数付きコンストラクタ
-    Camera(std::string actorName) :Actor(actorName) {}
+    Camera(std::string actorName) :Actor(actorName) 
+    {
+    }
 
     virtual ~Camera() = default;
+
+    virtual void Initialize()override
+    {
+        mainCameraComponent = this->NewSceneComponent<class CameraComponent>("mainCamera");
+        mainCameraComponent->SetPerspective(DirectX::XMConvertToRadians(45), Graphics::GetScreenWidth() / Graphics::GetScreenHeight(), 0.1f, 1000.0f);
+    }
+
+    ViewConstants GetViewConstants() const
+    {
+        ViewConstants viewConstants;
+        DirectX::XMFLOAT3 cameraPosition = GetPosition();
+        viewConstants.cameraPosition={ cameraPosition.x,cameraPosition.y,cameraPosition.z,1.0f };
+        viewConstants.view = mainCameraComponent->GetView();
+        viewConstants.projection = mainCameraComponent->GetProjection();
+       
+        DirectX::XMMATRIX P = DirectX::XMLoadFloat4x4(&mainCameraComponent->GetProjection());
+        DirectX::XMMATRIX V = DirectX::XMLoadFloat4x4(&mainCameraComponent->GetView());
+        DirectX::XMStoreFloat4x4(&viewConstants.viewProjection, V * P);
+
+        DirectX::XMStoreFloat4x4(&viewConstants.invProjection, DirectX::XMMatrixInverse(NULL, P));
+        DirectX::XMStoreFloat4x4(&viewConstants.invViewProjection, DirectX::XMMatrixInverse(NULL, V * P));
+
+        DirectX::XMStoreFloat4x4(&viewConstants.invView, DirectX::XMMatrixInverse(NULL, V));
+        return viewConstants;
+    }
+protected:
+    std::shared_ptr<CameraComponent> mainCameraComponent;
+};
+
+class MainCamera :public Actor
+{
+public:
+    //引数付きコンストラクタ
+    MainCamera(std::string actorName) :Actor(actorName) {}
+
+    virtual ~MainCamera() = default;
     std::shared_ptr<CameraComponent> mainCameraComponent;
     std::shared_ptr<SphereComponent> sphereComponent;
     void Initialize()override
@@ -53,7 +94,7 @@ public:
         using namespace DirectX;
         switch (state)
         {
-        case Camera::State::Normal:
+        case MainCamera::State::Normal:
         {
             mainCameraComponent->customTarget = true;
 
@@ -135,17 +176,13 @@ public:
             }
         }
         break;
-        case Camera::State::BossTarget:
+        case MainCamera::State::BossTarget:
         {
             if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy")))
             {// 敵の位置を取る
                 mainCameraComponent->customTarget = true;
                 DirectX::XMFLOAT3 targetVec = enemy->bossJointComponent->GetComponentWorldTransform().GetLocation();
                 mainCameraComponent->_target = targetVec;
-                //DirectX::XMFLOAT3 eye;
-                //eye.x = 1.285f;
-                //eye.y = 12.183f;
-                //eye.z = -22.4f;
                 DirectX::XMFLOAT3 playerFirstPos = { 0.7f,0.8f,-9.5f };
                 playerFirstPos.y += 1.5f;
                 playerFirstPos.x += distanceX;
@@ -182,7 +219,7 @@ public:
             }
         }
         break;
-        case Camera::State::Lerp:
+        case MainCamera::State::Lerp:
         {
             elapsedTime += deltaTime;
             float lerpTime = 1.5f;
@@ -193,11 +230,6 @@ public:
             // 最初の　target　はプレイヤーの初期位置
             DirectX::XMVECTOR AftTargetVec = DirectX::XMLoadFloat3(&afterTarget);
             DirectX::XMVECTOR AftEyeVec = DirectX::XMLoadFloat3(&afterEye);
-            //DirectX::XMVECTOR AftTargetVec = DirectX::XMLoadFloat3(&clampedTarget);
-            //DirectX::XMVECTOR AftEyeVec = DirectX::XMLoadFloat3(&eye);
-            //DirectX::XMVECTOR AftEyeVec = DirectX::XMVectorSet(1.317f, 12.2f, -22.4f, 1.0f);
-            //DirectX::XMVECTOR AftEyeVec = DirectX::XMVectorSet(1.297f, 12.197f, -22.4f, 1.0f);
-            //DirectX::XMVECTOR AftEyeVec = DirectX::XMVectorSet(1.297f, 12.197f, -22.4f, 1.0f);
             DirectX::XMVECTOR NowTar = XMVectorLerp(PreTargetVec, AftTargetVec, t);
             DirectX::XMVECTOR NowEye = XMVectorLerp(PreEyeVec, AftEyeVec, t);
             DirectX::XMFLOAT3 nowTarget, nowEye;
@@ -217,156 +249,6 @@ public:
         default:
             break;
         }
-#if 0
-        if (isTargetBoss)
-        {
-#if 0
-            if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy")))
-            {// 敵の位置を取る
-                XMFLOAT3 forward = enemy->GetForward();
-                DirectX::XMFLOAT3 focus = enemy->bossJointComponent->GetComponentWorldTransform().GetLocation();
-                XMVECTOR Focus = XMLoadFloat3(&focus);
-
-                XMVECTOR Forward = XMVector3Normalize(XMLoadFloat3(&forward));
-                XMVECTOR Up = XMVectorSet(0, 1, 0, 0);
-                XMVECTOR Right = XMVector3Normalize(XMVector3Cross(Forward, Up));
-                Up = XMVector3Normalize(XMVector3Cross(Forward, Right));
-
-                XMVECTOR Eye = Focus + (Right * distanceX) + (Forward * distanceZ) + (Up * distanceY);
-                XMFLOAT3 eye;
-                XMStoreFloat3(&eye, Eye);
-
-                mainCameraComponent->customTarget = true;
-                mainCameraComponent->_target = focus;
-                SetPosition(eye);
-
-            }
-
-#endif // 0
-            if (auto enemy = std::dynamic_pointer_cast<RiderEnemy>(ActorManager::GetActorByName("enemy")))
-            {// 敵の位置を取る
-                mainCameraComponent->customTarget = true;
-                DirectX::XMFLOAT3 targetVec = enemy->bossJointComponent->GetComponentWorldTransform().GetLocation();
-                mainCameraComponent->_target = targetVec;
-                DirectX::XMFLOAT3 eye;
-                eye.x = 1.285f;
-                eye.y = 12.183f;
-                eye.z = -22.4f;
-                DirectX::XMFLOAT3 playerFirstPos = { 0.7f,0.8f,-9.5f };
-                playerFirstPos.y += 1.5f;
-                SetPosition(playerFirstPos); // プレイヤーの位置をEyeにする
-                if (isFinishFirstPerf)
-                {// 最初の演出が終わったら
-                    // その時のカメラの位置
-                    preEye = playerFirstPos;
-                    // その時の focus の位置
-                    preTarget = targetVec;
-                }
-            }
-        }
-        else
-        {
-            if (isFinishFirstPerf)
-            {// 敵の最初の演出が終わったら
-                isFinishFirstPerf = false;
-                elapsedTime = 0.0f;
-            }
-            elapsedTime += deltaTime;
-            float lerpTime = 1.0f;
-            elapsedTime += deltaTime;
-            float t = std::clamp(elapsedTime / lerpTime, 0.0f, 1.0f);
-            DirectX::XMVECTOR PreTargetVec = DirectX::XMLoadFloat3(&preTarget);
-            DirectX::XMVECTOR PreEyeVec = DirectX::XMLoadFloat3(&preEye);
-            // 最初の　target　はプレイヤーの初期位置
-            DirectX::XMVECTOR AftTargetVec = DirectX::XMVectorSet(0.7f, 0.8f, -9.5f, 1.0f);
-            // 最初の　Eye
-            DirectX::XMVECTOR AftEyeVec = DirectX::XMVectorSet(1.285f, 12.183f, -22.4f, 1.0f);
-            DirectX::XMVECTOR NowTar = XMVectorLerp(PreTargetVec, AftTargetVec, t);
-            DirectX::XMVECTOR NowEye = XMVectorLerp(PreEyeVec, AftEyeVec, t);
-            DirectX::XMFLOAT3 nowTarget, nowEye;
-            DirectX::XMStoreFloat3(&nowTarget, NowTar);
-            DirectX::XMStoreFloat3(&nowEye, NowEye);
-
-
-            mainCameraComponent->customTarget = false;
-
-            XMVECTOR vOld = XMLoadFloat3(&oldTarget);
-            XMVECTOR vNew = XMLoadFloat3(&target);
-
-            float speed = 2.0f;
-            float t = std::clamp(deltaTime * speed, 0.0f, 1.0f);
-
-            XMVECTOR vInterp = XMVectorLerp(vOld, vNew, t);
-            XMFLOAT3 interpTarget;
-            XMStoreFloat3(&interpTarget, vInterp);
-
-            DirectX::XMFLOAT3 clampedTarget;
-            clampedTarget.x = std::clamp(interpTarget.x, cameraMin.x, cameraMax.x);
-            //clampedTarget.y = std::clamp(interpTarget.y, cameraMin.y, cameraMax.y);
-            clampedTarget.y = interpTarget.y;
-            clampedTarget.z = std::clamp(interpTarget.z, cameraMin.z, cameraMax.z);
-
-            // 補間済み目標位置を使って、eye にオフセットを適用
-            DirectX::XMFLOAT3 eye;
-            eye.x = clampedTarget.x + offset.x;
-            eye.y = clampedTarget.y + offset.y;
-            eye.z = clampedTarget.z + offset.z;
-            SetPosition(eye);
-
-            oldTarget = clampedTarget;
-
-            //DirectX::XMFLOAT3 eye = GetPosition();
-            DirectX::XMVECTOR eyeVec = DirectX::XMLoadFloat3(&eye);
-            DirectX::XMFLOAT3 tar = target;
-            tar.y += 0.5f;// player の腰当たり
-            DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&target);
-            DirectX::XMVECTOR dirVec = DirectX::XMVectorSubtract(targetVec, eyeVec);
-            DirectX::XMVECTOR dirNormalized = DirectX::XMVector3Normalize(dirVec);
-
-            // 前フレームのターゲット
-            preTarget = tar;
-
-            RaycastHit result;
-            DirectX::XMFLOAT3 origin = GetPosition();
-            DirectX::XMFLOAT3 direction;
-            direction.x = mainCameraComponent->GetView()._31;
-            direction.y = -mainCameraComponent->GetView()._32;
-            direction.z = mainCameraComponent->GetView()._33;
-            DirectX::XMVECTOR distanceVec = DirectX::XMVector3Length(dirVec);
-            float distance;
-            DirectX::XMVECTOR DirVec = DirectX::XMLoadFloat3(&direction);
-            DirVec = DirectX::XMVector3Normalize(DirVec);
-            DirectX::XMStoreFloat3(&direction, DirVec);
-            DirectX::XMStoreFloat(&distance, distanceVec);
-            if (PhysicsTest::Instance().SphereCast(origin, direction, distance, 0.4f, result, CollisionHelper::ToBit(CollisionLayer::Camera),     // myLayer
-                CollisionHelper::ToBit(CollisionLayer::Building)))   // wantHitRayer)
-            {
-                if (auto build = dynamic_cast<Building*>(result.actor))
-                {
-                    build->preSkeltalMeshComponent->model->SetAlpha(0.3f);
-                }
-                else if (auto bossBuild = dynamic_cast<BossBuilding*>(result.actor))
-                {
-                    bossBuild->preSkeltalMeshComponent->model->SetAlpha(0.3f);
-                }
-            }
-            else
-            {
-                for (const auto& actor : ShockWaveTargetRegistry::GetTargets())
-                {
-                    if (auto build = std::dynamic_pointer_cast<Building>(actor))
-                    {
-                        build->preSkeltalMeshComponent->model->SetAlpha(1.0f);
-                    }
-                    else if (auto bossBuild = std::dynamic_pointer_cast<BossBuilding>(actor))
-                    {
-                        bossBuild->preSkeltalMeshComponent->model->SetAlpha(1.0f);
-                    }
-                }
-            }
-        }
-
-#endif // 0
     }
 
     void Shake(float power = 0.02f, float time = 0.2f)

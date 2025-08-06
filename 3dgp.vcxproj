@@ -318,6 +318,7 @@
     <ClInclude Include="Source\Core\ActorManager.h" />
     <ClInclude Include="Source\Core\World.h" />
     <ClInclude Include="Source\Engine\Audio\Audio.h" />
+    <ClInclude Include="Source\Engine\Camera\CameraConstants.h" />
     <ClInclude Include="Source\Engine\Camera\CameraManager.h" />
     <ClInclude Include="Source\Engine\Debug\Assert.h" />
     <ClInclude Include="Source\Engine\Framework\Framework.h" />

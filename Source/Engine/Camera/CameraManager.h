@@ -2,6 +2,7 @@
 #include <memory>
 
 class CameraComponent;
+class Camera;
 
 class CameraManager
 {

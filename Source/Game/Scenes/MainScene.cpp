@@ -217,7 +217,7 @@ void MainScene::Start()
 
 void MainScene::Update(ID3D11DeviceContext* immediateContext, float elapsedTime)
 {
-    auto camera = std::dynamic_pointer_cast<Camera>(ActorManager::GetActorByName("mainCameraActor"));
+    auto camera = std::dynamic_pointer_cast<MainCamera>(ActorManager::GetActorByName("mainCameraActor"));
 
     ////elapsedTime‚ðŽ~‚ß‚Äpose‚·‚é
     //if (elapsed_time > 0.05f)
@@ -1676,7 +1676,7 @@ void MainScene::SetUpActors()
     //Transform bombTr1(DirectX::XMFLOAT3{ -1.0f,10.0f,3.0f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.1f,1.1f,1.1f });
     //auto bomb1 = ActorManager::CreateAndRegisterActorWithTransform<Bomb>("bomb", bombTr1);
 
-    auto mainCameraActor = ActorManager::CreateAndRegisterActor<Camera>("mainCameraActor");
+    auto mainCameraActor = ActorManager::CreateAndRegisterActor<MainCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
     //auto mainCameraActor = gameWorld_->SpawnActor<Actor>("mainCameraActor");
     //auto springArmComponent = mainCameraActor->NewComponent<class SpringArmComponent>("springArm");

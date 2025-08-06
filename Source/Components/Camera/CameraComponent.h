@@ -119,7 +119,6 @@ public:
         // デフォルトパラメータ
         fovY = DirectX::XMConvertToRadians(45); // 45度
         aspectRatio = Graphics::GetScreenWidth() / Graphics::GetScreenHeight();
-        //aspectRatio = 1280.0f / 720.0f;
         nearZ = 0.1f;
         farZ = 1000.0f;
     }

@@ -349,7 +349,7 @@ void TutorialScene::Start()
 
 void TutorialScene::Update(ID3D11DeviceContext* immediate_context, float deltaTime)
 {
-    auto camera = std::dynamic_pointer_cast<Camera>(ActorManager::GetActorByName("mainCameraActor"));
+    auto camera = std::dynamic_pointer_cast<MainCamera>(ActorManager::GetActorByName("mainCameraActor"));
 
     TutorialSystem::Update(deltaTime);
     Physics::Instance().Update(deltaTime);
@@ -431,7 +431,7 @@ void TutorialScene::SetUpActors()
     Transform playerTr(DirectX::XMFLOAT3{ 0.7f,0.8f,-9.5f }, DirectX::XMFLOAT4{ 0.0f,0.0f,0.0f,1.0f }, DirectX::XMFLOAT3{ 1.0f,1.0f,1.0f });
     player = ActorManager::CreateAndRegisterActorWithTransform<Player>("actor", playerTr);
 
-    auto mainCameraActor = ActorManager::CreateAndRegisterActor<Camera>("mainCameraActor");
+    auto mainCameraActor = ActorManager::CreateAndRegisterActor<MainCamera>("mainCameraActor");
     auto mainCameraComponent = mainCameraActor->GetComponent<CameraComponent>();
 
     CameraManager::SetGameCamera(mainCameraComponent);
