@@ -65,6 +65,16 @@ public:
     struct Asset
     {
         std::string version = "2.0";
+        std::string generator;
+        std::string minversion;
+        std::string copyright;
+    };
+    Asset asset;
+
+    struct PunctualLight
+    {
+        std::string name;
+        float color[3] = { 1.0f,1.0f,1.0f };
     };
 
     // ƒ}ƒeƒŠƒAƒ‹‚Ì variants

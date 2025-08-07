@@ -41,6 +41,7 @@ public:
         this->isAnimationFinished = false;
         this->animationNextClip = animationNameToIndex_[animationName];
         this->isAnimationLoop = loop;
+        this->currentAnimationName = animationName;
         this->transitionTime = blendTime;
         if (isBlend)
         {
@@ -191,6 +192,9 @@ private:
 
     // ループ終了フラグ 
     bool requestStopLoop = false; // 切りよくループを終わらせる
+
+    // 今再生しているアニメーションの名前
+    std::string currentAnimationName = "";
 };
 
 #endif  //ANIMATION_CONTROLLER_H

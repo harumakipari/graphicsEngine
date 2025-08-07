@@ -57,7 +57,6 @@ InterleavedGltfModel::InterleavedGltfModel(ID3D11Device* device, const std::stri
         deserialization(cereal::make_nvp("meshes", meshes));
         deserialization(cereal::make_nvp("textures", textures), cereal::make_nvp("images", images));
         deserialization(cereal::make_nvp("skins", skins), cereal::make_nvp("animations", animations));
-
     }
     else
     {
