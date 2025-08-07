@@ -140,7 +140,8 @@ public:
 
         bossHandComponent = this->NewSceneComponent<class SphereComponent>("bossHand", "skeltalComponent");
         bossHandComponent->SetRadius(0.5f);
-        DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("R_thumb1_FK", skeltalMeshComponent->model->nodes);
+        //DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("R_thumb1_FK", skeltalMeshComponent->model->GetNodes());
+        DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("R_thumb1_FK", skeltalMeshComponent->modelNodes);
         bossHandComponent->SetRelativeLocationDirect(bossHand);
         bossHandComponent->SetMass(40.0f);
         bossHandComponent->SetLayer(CollisionLayer::EnemyHand);
@@ -203,7 +204,7 @@ public:
         // –Ú‹Ê‚ÉƒWƒ‡ƒCƒ“ƒg‚ð“ü‚ê‚é
         bossJointComponent = this->NewSceneComponent<SphereComponent>("bossJointComponent", "skeltalComponent");
         bossJointComponent->SetRadius(1.0f);
-        DirectX::XMFLOAT3 bossJoint = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->nodes);
+        DirectX::XMFLOAT3 bossJoint = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->GetNodes());
         bossJointComponent->SetRelativeLocationDirect(bossJoint);
 
         OutputDebugStringA(("Actor::Initialize called. rootComponent_ use_count = " + std::to_string(rootComponent_.use_count()) + "\n").c_str());

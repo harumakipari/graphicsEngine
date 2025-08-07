@@ -17,10 +17,10 @@ public:
     AnimationController(SkeltalMeshComponent* target) :target_(target)
     {
         // アニメーションブレンドに使用するノード
-        animationNodes[0] = target_->model->nodes;
-        animationNodes[1] = target_->model->nodes;
+        animationNodes[0] = target_->model->GetNodes();
+        animationNodes[1] = target_->model->GetNodes();
 
-        blendAnimationNodes = target_->model->nodes;
+        blendAnimationNodes = target_->model->GetNodes();
     }
 
     void AddAnimation(std::string animationName, size_t animationClip)
@@ -124,7 +124,8 @@ public:
             break;
         }
         // 描画に使うノードをブレンドのノードにする
-        target_->model->nodes = blendAnimationNodes;
+        //target_->model->nodes = blendAnimationNodes;
+        target_->modelNodes = blendAnimationNodes;
     }
 
     // アニメーションの再生倍率を変更する関数
@@ -173,16 +174,16 @@ private:
     // 次再生したいアニメーションのインデックス
     size_t animationNextClip = 0;
 
-    //アニメーションをループするか
+    // アニメーションをループするか
     bool isAnimationLoop = true;
 
-    //現在のブレンドの比率
+    // 現在のブレンドの比率
     float blendFactor = 0.0f;
 
-    //ブレンド中かどうか
+    // ブレンド中かどうか
     bool isBlendingAnimation = false;
 
-    //ブレンドしている時間
+    // ブレンドしている時間
     float transitionTime = 0.0f;
 
     // アニメーションが終了したかどうか

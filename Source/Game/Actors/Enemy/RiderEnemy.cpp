@@ -103,7 +103,7 @@ void RiderEnemy::Finalize()
 void RiderEnemy::Update(float elapsedTime)
 {
     // ボスの目玉のジョイント
-    DirectX::XMFLOAT3 bossEye = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->nodes);
+    DirectX::XMFLOAT3 bossEye = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->GetNodes());
     bossJointComponent->SetRelativeLocationDirect(bossEye);
 
     hasHitThisFrame = false;
@@ -160,7 +160,7 @@ void RiderEnemy::Update(float elapsedTime)
     // 水平移動処理更新
     UpdateHorizontalMove(elapsedTime);
 
-    DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("R_thumb1_FK", skeltalMeshComponent->model->nodes);
+    DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("R_thumb1_FK", skeltalMeshComponent->model->GetNodes());
     bossHandComponent->SetRelativeLocationDirect(bossHand);
     //DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointWorldPosition("PLT:ThumbFinger2_L_BK", skeltalMeshComponent->model->nodes, rootComponent_->GetComponentWorldTransform().ToWorldTransform());
     //bossHandComponent->SetWorldLocationDirect(bossHand);

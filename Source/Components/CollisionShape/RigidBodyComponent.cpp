@@ -221,7 +221,7 @@ void MultiRigidBodyComponent::Initialize(physx::PxPhysics* physics)
     using namespace physx;
     auto& model = meshComponent_->model;
 
-    animatedNodes_ = model->nodes;
+    animatedNodes_ = model->GetNodes();
 
     for (size_t i = 0; i < animatedNodes_.size(); ++i)
     {

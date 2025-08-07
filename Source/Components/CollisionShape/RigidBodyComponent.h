@@ -610,7 +610,8 @@ private:
                 continue;
             }
 
-            const auto& node = model->nodes[parentIndex];
+            auto nodes = model->GetNodes();
+            auto node = nodes[parentIndex];
             for (int childIndex : node.children)
             {
                 if (childIndex < 0 || static_cast<size_t>(childIndex) >= rigidBodies_.size())

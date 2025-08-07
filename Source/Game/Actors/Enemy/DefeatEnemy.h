@@ -47,7 +47,7 @@ public:
 
         bossJointComponent = this->NewSceneComponent<SphereComponent>("bossJointComponent", "skeltalComponent");
         bossJointComponent->SetRadius(1.0f);
-        DirectX::XMFLOAT3 bossJoint = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->nodes);
+        DirectX::XMFLOAT3 bossJoint = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->GetNodes());
         bossJointComponent->SetRelativeLocationDirect(bossJoint);
 
         SetPosition(transform.GetLocation());
@@ -58,7 +58,7 @@ public:
 
     void Update(float deltaTime)override
     {
-        DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->nodes);
+        DirectX::XMFLOAT3 bossHand = skeltalMeshComponent->model->GetJointLocalPosition("spine2_FK", skeltalMeshComponent->model->GetNodes());
         bossJointComponent->SetRelativeLocationDirect(bossHand);
 
         Character::Update(deltaTime);

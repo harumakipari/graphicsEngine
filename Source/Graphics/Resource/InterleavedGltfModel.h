@@ -142,8 +142,13 @@ public:
             );
         }
     };
-    std::vector<Node> nodes;
 
+    // ÉmÅ[ÉhÇéÊìæÇ∑ÇÈä÷êî
+    std::vector<Node> GetNodes()  { return nodes; }
+
+private:
+    std::vector<Node> nodes;
+public:
 
     struct IndexBufferView
     {
@@ -329,7 +334,7 @@ public:
     // INTERLEAVED_GLTF_MODEL
     void BatchRender(ID3D11DeviceContext* immediate_context, const DirectX::XMFLOAT4X4& world, RenderPass pass, const PipeLineState& pipeline);
 
-    void InstancedStaticBatchRender(ID3D11DeviceContext* immediate_context/*, const DirectX::XMFLOAT4X4& world*/, RenderPass pass, const PipeLineState& pipeline={});
+    void InstancedStaticBatchRender(ID3D11DeviceContext* immediate_context/*, const DirectX::XMFLOAT4X4& world*/, RenderPass pass, const PipeLineState& pipeline = {});
 
 
     struct TextureInfo

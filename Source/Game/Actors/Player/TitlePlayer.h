@@ -63,7 +63,7 @@ public:
 
         playerJointComponent = this->NewSceneComponent<SphereComponent>("playerJointComponent", "skeltalComponent");
         playerJointComponent->SetRadius(1.0f);
-        DirectX::XMFLOAT3 playerHead = skeltalMeshComponent->model->GetJointLocalPosition("atama_FK", skeltalMeshComponent->model->nodes);
+        DirectX::XMFLOAT3 playerHead = skeltalMeshComponent->model->GetJointLocalPosition("atama_FK", skeltalMeshComponent->model->GetNodes());
 
         playerJointComponent->SetRelativeLocationDirect(playerHead);
 
@@ -98,7 +98,7 @@ public:
 
     void Update(float deltaTime)override
     {
-        DirectX::XMFLOAT3 playerHead = skeltalMeshComponent->model->GetJointLocalPosition("atama_FK", skeltalMeshComponent->model->nodes);
+        DirectX::XMFLOAT3 playerHead = skeltalMeshComponent->model->GetJointLocalPosition("atama_FK", skeltalMeshComponent->model->GetNodes());
         playerJointComponent->SetRelativeLocationDirect(playerHead);
         socketNodeComponent->SetRelativeLocationDirect(jointOffset);
         Character::Update(deltaTime);

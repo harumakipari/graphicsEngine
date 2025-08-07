@@ -36,6 +36,8 @@ public:
 public:
     MeshComponent(const std::string& name, std::shared_ptr<Actor> owner) :SceneComponent(name, owner) {};
     std::shared_ptr<InterleavedGltfModel> model;
+    // モデルのノード情報
+    std::vector<InterleavedGltfModel::Node> modelNodes = {};
 
     virtual void Tick(float deltaTime)override
     {
@@ -90,6 +92,7 @@ public:
     {
         ID3D11Device* device = Graphics::GetDevice();
         model = std::make_shared<InterleavedGltfModel>(device, filename, InterleavedGltfModel::Mode::SkeltalMesh, isSaveVerticesData);
+        modelNodes = model->GetNodes();
     }
 
     void AppendAnimations(const std::vector<std::string>& filenames)
@@ -116,27 +119,24 @@ public:
 
     void RenderOpaque(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
-        //model->Animate(animationClip, animationTime, model->nodes);
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
+        //model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
     }
     void RenderMask(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
-        //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        //model->Animate(animationClip, animationTime, model->nodes);
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
+        //model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
     }
     void RenderBlend(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
-        //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        //model->Animate(animationClip, animationTime, model->nodes);
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
+        //model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
     }
 
     void CastShadow(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
-        //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        //model->Animate(animationClip, animationTime, model->nodes);
-        model->CastShadow(immediateContext, world, model->nodes);
+        //model->CastShadow(immediateContext, world, model->nodes);
+        model->CastShadow(immediateContext, world, modelNodes);
     }
 
     DirectX::XMFLOAT3 GetJointWorldPosition(const std::string& name)
@@ -144,24 +144,29 @@ public:
         if (auto parent = attachParent_.lock())
         {
             DirectX::XMFLOAT4X4 parentWorld = parent->GetComponentWorldTransform().ToWorldTransform();
-            return model->GetJointWorldPosition(name, model->nodes, parentWorld);
+            //return model->GetJointWorldPosition(name, model->nodes, parentWorld);
+            return model->GetJointWorldPosition(name, modelNodes, parentWorld);
         }
         else
         {
             DirectX::XMFLOAT4X4 world = GetComponentWorldTransform().ToWorldTransform();
-            return model->GetJointWorldPosition(name, model->nodes, world);
+            //return model->GetJointWorldPosition(name, model->nodes, world);
+            return model->GetJointWorldPosition(name, modelNodes, world);
         }
 
         return { 0.0f,0.0f,0.0f };
     }
 
 private:
+
 };
 
 class BuildMeshComponent :public SceneComponent
 {
 public:
     PipeLineState pipeLineState_;
+    // モデルのノード情報
+    std::vector<InterleavedGltfModel::Node> modelNodes = {};
 
     BuildMeshComponent(const std::string& name, std::shared_ptr<Actor> owner) :SceneComponent(name, owner)
     {
@@ -173,6 +178,7 @@ public:
     {
         ID3D11Device* device = Graphics::GetDevice();
         model = std::make_shared<InterleavedGltfModel>(device, filename, InterleavedGltfModel::Mode::SkeltalMesh, isSaveVerticesData);
+        modelNodes = model->GetNodes();
     }
 
     void AppendAnimations(const std::vector<std::string>& filenames)
@@ -200,26 +206,26 @@ public:
     void RenderOpaque(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const
     {
         //model->Animate(animationClip, animationTime, model->nodes);
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
     }
     void RenderMask(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
         //model->Animate(animationClip, animationTime, model->nodes);
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
     }
     void RenderBlend(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
         //model->Animate(animationClip, animationTime, model->nodes);
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
     }
 
     void CastShadow(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
         //model->Animate(animationClip, animationTime, model->nodes);
-        model->CastShadow(immediateContext, world, model->nodes);
+        model->CastShadow(immediateContext, world, modelNodes);
     }
 
     DirectX::XMFLOAT3 GetJointWorldPosition(const std::string& name)
@@ -227,12 +233,12 @@ public:
         if (auto parent = attachParent_.lock())
         {
             DirectX::XMFLOAT4X4 parentWorld = parent->GetComponentWorldTransform().ToWorldTransform();
-            return model->GetJointWorldPosition(name, model->nodes, parentWorld);
+            return model->GetJointWorldPosition(name, modelNodes, parentWorld);
         }
         else
         {
             DirectX::XMFLOAT4X4 world = GetComponentWorldTransform().ToWorldTransform();
-            return model->GetJointWorldPosition(name, model->nodes, world);
+            return model->GetJointWorldPosition(name, modelNodes, world);
         }
 
         return { 0.0f,0.0f,0.0f };
@@ -284,6 +290,7 @@ public:
     {
         ID3D11Device* device = Graphics::GetDevice();
         model = std::make_shared<InterleavedGltfModel>(device, filename, InterleavedGltfModel::Mode::StaticMesh, isSaveVerticesData);
+        modelNodes = model->GetNodes();
     }
 
     //void Update(float deltaTime)override {}
@@ -291,23 +298,23 @@ public:
     void RenderOpaque(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Opaque, pipeLineState_);
     }
     void RenderMask(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Mask, pipeLineState_);
     }
     void RenderBlend(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        model->Render(immediateContext, world, model->nodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
+        model->Render(immediateContext, world, modelNodes, InterleavedGltfModel::RenderPass::Blend, pipeLineState_);
     }
 
     void CastShadow(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4 world) const override
     {
         //const DirectX::XMFLOAT4X4 world = CreateWorldMatrix();
-        model->CastShadow(immediateContext, world, model->nodes);
+        model->CastShadow(immediateContext, world, modelNodes);
     }
 };
 
@@ -318,12 +325,15 @@ public:
     InstancedStaticMeshComponent(const std::string& name, std::shared_ptr<Actor> owner) :StaticMeshComponent(name, owner)
     {
     }
+    //// モデルのノード情報
+    //std::vector<InterleavedGltfModel::Node> modelNodes = {};
 
     void SetModel(const std::string& filename, bool isSaveVerticesData = false)override
     {
         ID3D11Device* device = Graphics::GetDevice();
         model = std::make_shared<InterleavedGltfModel>(device, filename, InterleavedGltfModel::Mode::InstancedStaticMesh, isSaveVerticesData);
         model->SetMeshComponent(this);
+        modelNodes = model->GetNodes();
     }
 
 

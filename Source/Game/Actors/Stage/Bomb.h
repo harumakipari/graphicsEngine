@@ -47,7 +47,7 @@ public:
             auto enemyModel = enemy->skeltalMeshComponent->model;
             if (enemyModel)
             {
-                pos = enemyModel->GetJointWorldPosition("head_end_FK", enemyModel->nodes, enemyTr);
+                pos = enemyModel->GetJointWorldPosition("head_end_FK", enemyModel->GetNodes(), enemyTr);
             }
             SetPosition(pos);
 
