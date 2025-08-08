@@ -36,80 +36,74 @@ public:
             { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         };
         desc.primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
+        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
+        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
 
         // StaticMesh forward Opaque 用
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
-        desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
-        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
-        AddPipeLineState("forwardOpaqueStaticMesh", desc);
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("forwardOpaqueStaticMesh", desc);
+        }
 
         // StaticMesh defferd Opaque 用
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
-        desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
-        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
-        AddPipeLineState("defferdOpaqueStaticMesh", desc);
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("defferdOpaqueStaticMesh", desc);
+        }
 
         // StaticMesh forward Mask 用
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
-        desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
-        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
-        AddPipeLineState("forwardMaskStaticMesh", desc);
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("forwardMaskStaticMesh", desc);
+        }
 
         // StaticMesh defferd Mask 用
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
-        desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
-        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
-        AddPipeLineState("defferdMaskStaticMesh", desc);
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("defferdMaskStaticMesh", desc);
+        }
 
         // StaticMesh forward Blend 用
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
-        desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA;
-        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
-        AddPipeLineState("forwardBlendStaticMesh", desc);
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA;
+            AddPipeLineState("forwardBlendStaticMesh", desc);
+        }
 
         // StaticMesh defferd Blend 用
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
-        desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA;
-        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
-        AddPipeLineState("defferdBlendStaticMesh", desc);
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA;
+            AddPipeLineState("defferdBlendStaticMesh", desc);
+        }
 
         // StaticMesh Cascade ShadowMap 用
-        desc.pixelShader = nullptr;
-        hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingCsmVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), NULL, NULL, 0);
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        hr = CreateGsFromCSO(device, "./Shader/GltfModelCsmGS.cso", desc.gemetryShader.ReleaseAndGetAddressOf());
-        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-        AddPipeLineState("CascadeShadowMapStaticMesh", desc);
+        {
+            desc.pixelShader = nullptr;
+            hr = CreateVsFromCSO(device, "./Shader/GltfModelStaticBatchingCsmVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), NULL, NULL, 0);
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+            hr = CreateGsFromCSO(device, "./Shader/GltfModelCsmGS.cso", desc.gemetryShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+            desc.blendState = BLEND_STATE::NONE;
+            AddPipeLineState("CascadeShadowMapStaticMesh", desc);
+        }
     }
 
     // SkeltalMesh のパイプラインの設定する関数
@@ -117,7 +111,86 @@ public:
     {
         HRESULT hr = S_OK;
         PipeLineStateDesc desc;
+        D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
+        {
+            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "JOINTS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "JOINTS", 1, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "WEIGHTS", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        };
+        desc.primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        hr = CreateVsFromCSO(device, "./Shader/GltfModelVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), desc.inputLayout.ReleaseAndGetAddressOf(), inputElementDesc, _countof(inputElementDesc));
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+        desc.rasterState = RASTERRIZER_STATE::SOLID_CULL_BACK;
+        desc.depthState = DEPTH_STATE::ZT_ON_ZW_ON;
 
+        // SkeltalMesh forward Opaque 用
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("forwardOpaqueSkeltalMesh", desc);
+        }
+
+        // SkeltalMesh defferd Opaque 用
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("defferdOpaqueSkeltalMesh", desc);
+        }
+
+        // SkeltalMesh forward Mask 用
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("forwardMaskSkeltalMesh", desc);
+        }
+
+        // SkeltalMesh defferd Mask 用
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_NONE;
+            AddPipeLineState("defferdMaskSkeltalMesh", desc);
+        }
+
+        // SkeltalMesh forward Blend 用
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA;
+            AddPipeLineState("forwardBlendSkeltalMesh", desc);
+        }
+
+        // SkeltalMesh defferd Blend 用
+        {
+            hr = CreatePsFromCSO(device, "./Shader/GltfModelDefferedPS.cso", desc.pixelShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+            desc.blendState = BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA;
+            AddPipeLineState("defferdBlendSkeltalMesh", desc);
+        }
+
+        // SkeltalMesh Cascade ShadowMap 用
+        {
+            desc.pixelShader = nullptr;
+            hr = CreateVsFromCSO(device, "./Shader/GltfModelCsmVS.cso", desc.vertexShader.ReleaseAndGetAddressOf(), NULL, NULL, 0);
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+            hr = CreateGsFromCSO(device, "./Shader/GltfModelCsmGS.cso", desc.gemetryShader.ReleaseAndGetAddressOf());
+            _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+            AddPipeLineState("CascadeShadowMapSkeltalMesh", desc);
+        }
     }
 
     const PipeLineStateDesc& Get(const std::string& name)const
