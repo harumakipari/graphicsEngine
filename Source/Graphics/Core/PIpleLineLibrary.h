@@ -14,6 +14,151 @@ private:
 
 };
 
+
+enum RenderPath
+{
+    Forward,
+    Defferd,
+    Shadow,
+};
+
+enum MaterialAlphaMode
+{
+    MaterialOpaque,
+    MaterialMask,
+    MaterialBlend,
+};
+
+enum MeshComponentType
+{
+    SkeltalComponent,
+    StaticComponent,
+};
+
+constexpr const char* const SkeltalMesh_ForwardNames[] =
+{
+    "forwardOpaqueSkeltalMesh",
+    "forwardMaskSkeltalMesh",
+    "forwardBlendSkeltalMesh"
+};
+
+constexpr const char* const SkeltalMesh_DeferredNames[] =
+{
+    "deferredOpaqueSkeltalMesh",
+    "deferredMaskSkeltalMesh",
+    "deferredBlendSkeltalMesh"
+};
+
+constexpr const char* const SkeltalMesh_ShadowNames[] =
+{
+    "CascadeShadowMapSkeltalMesh"
+};
+
+constexpr const char* const* const SkeltalMesh_PipelineNames[] =
+{
+    SkeltalMesh_ForwardNames,
+    SkeltalMesh_DeferredNames,
+    SkeltalMesh_ShadowNames
+};
+
+// RenderPath と materialAlphaMode からパイプライン名を作成する関数
+inline std::string GetPipelineName(RenderPath renderPath, MaterialAlphaMode alphaMode, MeshComponentType modelMode)
+{
+    switch (modelMode)
+    {
+    case MeshComponentType::SkeltalComponent:
+        switch (renderPath)
+        {
+        case RenderPath::Forward:
+            switch (alphaMode)
+            {
+            case MaterialOpaque:
+                return "forwardOpaqueSkeltalMesh";
+                break;
+            case MaterialMask:
+                return "forwardMaskSkeltalMesh";
+                break;
+            case MaterialBlend:
+                return "forwardBlendSkeltalMesh";
+                break;
+            default:
+                break;
+            }
+            break;
+        case RenderPath::Defferd:
+            switch (alphaMode)
+            {
+            case MaterialOpaque:
+                return "defferdOpaqueSkeltalMesh";
+                break;
+            case MaterialMask:
+                return "defferdMaskSkeltalMesh";
+                break;
+            case MaterialBlend:
+                return "defferdBlendSkeltalMesh";
+                break;
+            default:
+                break;
+            }
+            break;
+        case RenderPath::Shadow:
+            return "CascadeShadowMapSkeltalMesh";
+            break;
+        default:
+            break;
+        }
+
+        break;
+    case MeshComponentType::StaticComponent:
+        switch (renderPath)
+        {
+        case RenderPath::Forward:
+            switch (alphaMode)
+            {
+            case MaterialOpaque:
+                return "forwardOpaqueStaticMesh";
+                break;
+            case MaterialMask:
+                return "forwardMaskStaticMesh";
+                break;
+            case MaterialBlend:
+                return "forwardBlendStaticMesh";
+                break;
+            default:
+                break;
+            }
+            break;
+        case RenderPath::Defferd:
+            switch (alphaMode)
+            {
+            case MaterialOpaque:
+                return "defferdOpaqueStaticMesh";
+                break;
+            case MaterialMask:
+                return "defferdMaskStaticMesh";
+                break;
+            case MaterialBlend:
+                return "defferdBlendStaticMesh";
+                break;
+            default:
+                break;
+            }
+            break;
+        case RenderPath::Shadow:
+            return "CascadeShadowMapStaticMesh";
+            break;
+        default:
+            break;
+        }
+
+        break;
+    default:
+        break;
+    }
+    // TODO:000ここに出力ウィンドウを出す
+    return "";
+}
+
 class PipeLineStateSet
 {
 public:

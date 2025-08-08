@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <optional>
 
 #define TINYGLTF_NO_EXTERNAL_IMAGE
 #define TINYGLTF_NO_STB_IMAGE
@@ -406,10 +407,16 @@ public:
             );
         }
     };
+
     struct Material
     {
         std::string name;
+
         Microsoft::WRL::ComPtr<ID3D11PixelShader> replacedPixelShader{ nullptr };// カスタムシェーダー
+        // nullptr なら通常のパスから自動的に決定される
+        // 指定があればこの文字列のパイプラインステートを使用する
+        std::optional<std::string> overridePipelineName;
+
         struct Cbuffer
         {
             float emissiveFactor[3] = { 0, 0, 0 };  // length 3. default [0, 0, 0]

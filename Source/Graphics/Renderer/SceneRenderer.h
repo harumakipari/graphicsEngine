@@ -15,6 +15,7 @@
 class SceneRenderer
 {
 public:
+
     SceneRenderer()
     {
         // 定数バッファ
