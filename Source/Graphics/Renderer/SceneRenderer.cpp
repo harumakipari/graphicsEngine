@@ -62,7 +62,7 @@ void SceneRenderer::RenderOpaque(ID3D11DeviceContext* immediateContext/*, std::v
 
             if (meshComponent->model->mode == InterleavedGltfModel::Mode::SkeltalMesh)
             {// 
-                Draw(immediateContext, meshComponent, worldMat, model->GetNodes(), InterleavedGltfModel::RenderPass::Opaque);
+                Draw(immediateContext, meshComponent, worldMat, meshComponent->modelNodes, InterleavedGltfModel::RenderPass::Opaque);
             }
 
             if (!meshComponent->IsVisible())

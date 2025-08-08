@@ -145,7 +145,7 @@ public:
     };
 
     // ƒm[ƒh‚ğæ“¾‚·‚éŠÖ”
-    std::vector<Node> GetNodes() const  { return nodes; }
+    const std::vector<Node>& GetNodes() const  { return nodes; }
 
 private:
     std::vector<Node> nodes;
