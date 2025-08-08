@@ -108,6 +108,17 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
                 primitiveCBuffer->Activate(immediateContext, 1);
 
                 const InterleavedGltfModel::Material& material = model->materials.at(primitive.material);
+
+                std::string pipelineName;
+                if (material.overridePipelineName.has_value())
+                {
+                    pipelineName = *material.overridePipelineName;
+                }
+                else
+                {
+                    pipelineName = GetPipelineName(currentRenderPath, static_cast<MaterialAlphaMode>(material.data.alphaMode), static_cast<ModelMode>(model->mode));
+                }
+                pipeLineStateSet->BindPipeLineState(immediateContext, pipelineName);
                 ////Ç±Ç±Ç≈ê›íË
                 //if (material.replacedPixelShader)
                 //{
@@ -184,7 +195,7 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
         {
             traverse(childIndex);
         }
-        };
+                        };
     for (std::vector<int>::value_type nodeIndex : model->scenes.at(model->defaultScene).nodes)
     {
         traverse(nodeIndex);

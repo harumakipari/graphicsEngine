@@ -61,7 +61,7 @@ public:
 
                 if (meshComponent->model->mode == InterleavedGltfModel::Mode::SkeltalMesh)
                 {// 
-                    pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
+                    //pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
 
                     immediateContext->PSSetShaderResources(0, 1, model->materialResourceView.GetAddressOf());
 
@@ -167,6 +167,7 @@ public:
 
     void Draw(ID3D11DeviceContext* immediateContext, const MeshComponent* meshComponent, const DirectX::XMFLOAT4X4& world, const std::vector<InterleavedGltfModel::Node>& animatedNodes, InterleavedGltfModel::RenderPass pass);
 
+    void DrawWithStaticBatching() {};
 private:
     // カメラの定数バッファ
     std::unique_ptr<ConstantBuffer<ViewConstants>> viewBuffer;
@@ -198,5 +199,7 @@ private:
     };
     std::unique_ptr<ConstantBuffer<PrimitiveConstants>> primitiveCBuffer;
 
+    // 今のRenderPath
+    RenderPath currentRenderPath = RenderPath::Defferd;
 };
 

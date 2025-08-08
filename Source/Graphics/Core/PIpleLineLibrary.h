@@ -29,10 +29,11 @@ enum MaterialAlphaMode
     MaterialBlend,
 };
 
-enum MeshComponentType
+enum ModelMode
 {
     SkeltalComponent,
     StaticComponent,
+    InstanceComponent,
 };
 
 constexpr const char* const SkeltalMesh_ForwardNames[] =
@@ -62,11 +63,11 @@ constexpr const char* const* const SkeltalMesh_PipelineNames[] =
 };
 
 // RenderPath と materialAlphaMode からパイプライン名を作成する関数
-inline std::string GetPipelineName(RenderPath renderPath, MaterialAlphaMode alphaMode, MeshComponentType modelMode)
+inline std::string GetPipelineName(RenderPath renderPath, MaterialAlphaMode alphaMode, ModelMode modelMode)
 {
     switch (modelMode)
     {
-    case MeshComponentType::SkeltalComponent:
+    case ModelMode::SkeltalComponent:
         switch (renderPath)
         {
         case RenderPath::Forward:
@@ -109,7 +110,7 @@ inline std::string GetPipelineName(RenderPath renderPath, MaterialAlphaMode alph
         }
 
         break;
-    case MeshComponentType::StaticComponent:
+    case ModelMode::StaticComponent:
         switch (renderPath)
         {
         case RenderPath::Forward:
