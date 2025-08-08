@@ -70,7 +70,7 @@ void SceneRenderer::RenderOpaque(ID3D11DeviceContext* immediateContext/*, std::v
                 continue;
             }
             //  描画呼び出し
-            meshComponent->RenderOpaque(immediateContext, worldMat);
+            //meshComponent->RenderOpaque(immediateContext, worldMat);
         }
     }
 }
@@ -81,8 +81,9 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
     // 各 MeshComponent の model を取り出す
     const InterleavedGltfModel* model = meshComponent->model.get();
     immediateContext->PSSetShaderResources(0, 1, model->materialResourceView.GetAddressOf());
-    std::string pName = GetPipelineName(currentRenderPath, static_cast<MaterialAlphaMode>(pass), static_cast<ModelMode>(model->mode));
-    pipeLineStateSet->BindPipeLineState(immediateContext, pName);
+    //std::string pName = GetPipelineName(currentRenderPath, static_cast<MaterialAlphaMode>(pass), static_cast<ModelMode>(model->mode));
+    //pipeLineStateSet->BindPipeLineState(immediateContext, pName);
+    pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
     std::function<void(int)> traverse = [&](int nodeIndex)->void {
         const InterleavedGltfModel::Node& node = animatedNodes.at(nodeIndex);
         if (node.skin > -1)
@@ -159,8 +160,8 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
                 DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&coordinateSystemTransforms[static_cast<int>(model->modelCoordinateSystem)]) * DirectX::XMMatrixScaling(scaleFactor,scaleFactor,scaleFactor) };
 
                 DirectX::XMStoreFloat4x4(&primitiveCBuffer->data.world, DirectX::XMLoadFloat4x4(&node.globalTransform) * C * DirectX::XMLoadFloat4x4(&world));
-                // 1番に定数バッファを送る
-                primitiveCBuffer->Activate(immediateContext, 1);
+                // 0番に定数バッファを送る
+                primitiveCBuffer->Activate(immediateContext, 0);
 
                 const InterleavedGltfModel::Material& material = model->materials.at(primitive.material);
 
