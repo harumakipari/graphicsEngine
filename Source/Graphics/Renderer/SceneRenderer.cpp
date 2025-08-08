@@ -83,7 +83,7 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
     immediateContext->PSSetShaderResources(0, 1, model->materialResourceView.GetAddressOf());
     //std::string pName = GetPipelineName(currentRenderPath, static_cast<MaterialAlphaMode>(pass), static_cast<ModelMode>(model->mode));
     //pipeLineStateSet->BindPipeLineState(immediateContext, pName);
-    pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
+    //pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
     std::function<void(int)> traverse = [&](int nodeIndex)->void {
         const InterleavedGltfModel::Node& node = animatedNodes.at(nodeIndex);
         if (node.skin > -1)
