@@ -180,7 +180,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_ITERATOR_DEBUG_LEVEL=0;PX_PHYSX_STATIC_LIB;_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_ITERATOR_DEBUG_LEVEL=0;PX_PHYSX_STATIC_LIB;USE_IMGUI;_SILENCE_CXX20_CISO646_REMOVED_WARNING;_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -377,6 +377,7 @@
     <ClInclude Include="Source\Graphics\Core\Graphics.h" />
     <ClInclude Include="Source\Graphics\Core\Light.h" />
     <ClInclude Include="Source\Graphics\Core\PipelineState.h" />
+    <ClInclude Include="Source\Graphics\Core\PIpleLineLibrary.h" />
     <ClInclude Include="Source\Graphics\Core\RenderState.h" />
     <ClInclude Include="Source\Graphics\Core\Shader.h" />
     <ClInclude Include="Source\Graphics\Effect\ComputeParticleSystem.h" />

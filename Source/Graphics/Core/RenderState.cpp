@@ -285,28 +285,28 @@ void RenderState::Initialize()
         rasterizerDesc.ScissorEnable = FALSE; // スクリーンの切り抜きを無効にする
         rasterizerDesc.MultisampleEnable = FALSE; // マルチサンプルアンチエイリアスを無効にする
         rasterizerDesc.AntialiasedLineEnable = FALSE; // ラインアンチエイリアスを無効にする
-        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTER_STATE::SOLID_CULL_BACK)].GetAddressOf()); // ラスタライザーステート作成
+        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTERRIZER_STATE::SOLID_CULL_BACK)].GetAddressOf()); // ラスタライザーステート作成
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr)); // 作成成功を確認
 
         // ワイヤーフレーム描画のラスタライザーステート設定
         rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // ワイヤーフレーム描画に変更
         rasterizerDesc.CullMode = D3D11_CULL_BACK; // 背面カリングを有効にする
         rasterizerDesc.AntialiasedLineEnable = TRUE; // アンチエイリアス線を有効にする
-        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTER_STATE::WIREFRAME_CULL_BACK)].GetAddressOf()); // ワイヤーフレーム設定のラスタライザーステートを作成
+        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTERRIZER_STATE::WIREFRAME_CULL_BACK)].GetAddressOf()); // ワイヤーフレーム設定のラスタライザーステートを作成
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr)); // 作成成功を確認
 
         //pdf21で作ったラスタライザステート
         rasterizerDesc.FillMode = D3D11_FILL_SOLID;
         rasterizerDesc.CullMode = D3D11_CULL_NONE;
         rasterizerDesc.AntialiasedLineEnable = TRUE; // アンチエイリアス線を有効にする
-        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTER_STATE::SOLID_CULL_NONE)].GetAddressOf()); // カリングなしのワイヤーフレーム設定
+        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTERRIZER_STATE::SOLID_CULL_NONE)].GetAddressOf()); // カリングなしのワイヤーフレーム設定
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr)); // 作成成功を確認
 
         // ワイヤーフレーム描画（カリングなし）のラスタライザーステート設定
         rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // ワイヤーフレーム描画に変更
         rasterizerDesc.CullMode = D3D11_CULL_NONE; // カリングなし
         rasterizerDesc.AntialiasedLineEnable = TRUE; // アンチエイリアス線を有効にする
-        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTER_STATE::WIREFRAME_CULL_NONE)].GetAddressOf()); // カリングなしのワイヤーフレーム設定
+        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<size_t>(RASTERRIZER_STATE::WIREFRAME_CULL_NONE)].GetAddressOf()); // カリングなしのワイヤーフレーム設定
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr)); // 作成成功を確認
 
         rasterizerDesc.FillMode = D3D11_FILL_SOLID;
@@ -314,7 +314,7 @@ void RenderState::Initialize()
         rasterizerDesc.ScissorEnable = TRUE;
         rasterizerDesc.FrontCounterClockwise = FALSE;
         rasterizerDesc.AntialiasedLineEnable = FALSE;
-        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<int>(RASTER_STATE::USE_SCISSOR_RECTS)].GetAddressOf());
+        hr = device->CreateRasterizerState(&rasterizerDesc, rasterizerState[static_cast<int>(RASTERRIZER_STATE::USE_SCISSOR_RECTS)].GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
 

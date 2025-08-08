@@ -973,7 +973,7 @@ void EffectSystem::Render(ID3D11DeviceContext* immediateContext)
     // PARTICLE
     RenderState::BindBlendState(immediateContext, BLEND_STATE::ADD);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_OFF);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+    RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 
 #if 0
     for (auto& effect : particles)

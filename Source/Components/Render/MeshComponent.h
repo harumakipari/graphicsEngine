@@ -31,7 +31,7 @@ class Actor;
 class MeshComponent :public SceneComponent
 {
 public:
-    PipeLineState pipeLineState_;
+    PipeLineStateDesc pipeLineState_;
 
 public:
     MeshComponent(const std::string& name, std::shared_ptr<Actor> owner) :SceneComponent(name, owner) {};
@@ -67,9 +67,9 @@ public:
 #endif
     }
 
-    void SetPipeLineState(const PipeLineState& pipelinesState) { this->pipeLineState_ = pipelinesState; }
+    void SetPipeLineState(const PipeLineStateDesc& pipelinesState) { this->pipeLineState_ = pipelinesState; }
 
-    PipeLineState GetPipeLineState()const { return pipeLineState_; }
+    PipeLineStateDesc GetPipeLineState()const { return pipeLineState_; }
 
     void SetIsCastShadow(bool isCastShadow) { this->isCastShadow_ = isCastShadow; }
 
@@ -164,7 +164,7 @@ private:
 class BuildMeshComponent :public SceneComponent
 {
 public:
-    PipeLineState pipeLineState_;
+    PipeLineStateDesc pipeLineState_;
     // ƒ‚ƒfƒ‹‚Ìƒm[ƒhî•ñ
     std::vector<InterleavedGltfModel::Node> modelNodes = {};
 
@@ -266,9 +266,9 @@ public:
 #endif
     }
 
-    void SetPipeLineState(const PipeLineState& pipelinesState) { this->pipeLineState_ = pipelinesState; }
+    void SetPipeLineState(const PipeLineStateDesc& pipelinesState) { this->pipeLineState_ = pipelinesState; }
 
-    PipeLineState GetPipeLineState()const { return pipeLineState_; }
+    PipeLineStateDesc GetPipeLineState()const { return pipeLineState_; }
 
 protected:
     //•`‰æ‚·‚é‚©‚Ç‚¤‚©

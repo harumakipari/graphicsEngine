@@ -491,7 +491,7 @@ public:
 #endif // 0
 private:
     std::shared_ptr<InterleavedGltfModel> itemModel;
-    PipeLineState pipeLineState_ = {};
+    PipeLineStateDesc pipeLineState_ = {};
 public:
     void RenderBuilding(ID3D11DeviceContext* immediateContext)
     {
@@ -526,9 +526,7 @@ public:
             }
         }
     }
-
     void CastShadowRender(ID3D11DeviceContext* immediateContext);
-
 };
 
 

@@ -41,7 +41,7 @@ enum class BLEND_STATE
 };
 
 //ラスタライザステート
-enum class RASTER_STATE
+enum class RASTERRIZER_STATE
 {
     SOLID_CULL_BACK,
     WIREFRAME_CULL_BACK,
@@ -90,7 +90,7 @@ public:
     }
 
     // ラスタライザーステート取得
-    static ID3D11RasterizerState* GetRasterizerState(RASTER_STATE state) 
+    static ID3D11RasterizerState* GetRasterizerState(RASTERRIZER_STATE state) 
     {
         return rasterizerState[static_cast<int>(state)].Get();
     }
@@ -118,7 +118,7 @@ public:
         immediate_context->OMSetBlendState(blendStates[static_cast<size_t>(blend_state)].Get(), NULL, 0xFFFFFFFF);
     }
 
-    static void BindRasterizerState(ID3D11DeviceContext* immediate_context, RASTER_STATE rasterizer_state)
+    static void BindRasterizerState(ID3D11DeviceContext* immediate_context, RASTERRIZER_STATE rasterizer_state)
     {
         immediate_context->RSSetState(rasterizerState[static_cast<size_t>(rasterizer_state)].Get());
     }
@@ -129,5 +129,5 @@ private:
     //画像の背景色を透過させる
     static inline Microsoft::WRL::ComPtr<ID3D11BlendState> blendStates[static_cast<int>(BLEND_STATE::ENUM_COUNT)];
     //ワイヤーフレームを描画するためのラスタライザ
-    static inline Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState[static_cast<int>(RASTER_STATE::ENUM_COUNT)];
+    static inline Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState[static_cast<int>(RASTERRIZER_STATE::ENUM_COUNT)];
 };

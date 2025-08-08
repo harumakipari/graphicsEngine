@@ -330,11 +330,11 @@ public:
     // INTERLEAVED_GLTF_MODEL
     std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> buffers;
 
-    void Render(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4& world, const std::vector<Node>& animated_nodes, RenderPass pass, const PipeLineState& pipeline = {});
+    void Render(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4& world, const std::vector<Node>& animated_nodes, RenderPass pass, const PipeLineStateDesc& pipeline = {});
     // INTERLEAVED_GLTF_MODEL
-    void BatchRender(ID3D11DeviceContext* immediate_context, const DirectX::XMFLOAT4X4& world, RenderPass pass, const PipeLineState& pipeline);
+    void BatchRender(ID3D11DeviceContext* immediate_context, const DirectX::XMFLOAT4X4& world, RenderPass pass, const PipeLineStateDesc& pipeline);
 
-    void InstancedStaticBatchRender(ID3D11DeviceContext* immediate_context/*, const DirectX::XMFLOAT4X4& world*/, RenderPass pass, const PipeLineState& pipeline = {});
+    void InstancedStaticBatchRender(ID3D11DeviceContext* immediate_context/*, const DirectX::XMFLOAT4X4& world*/, RenderPass pass, const PipeLineStateDesc& pipeline = {});
 
 
     struct TextureInfo

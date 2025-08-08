@@ -1273,7 +1273,7 @@ void InterleavedGltfModel::CreateAndUploadResources(ID3D11Device* device)
 }
 
 
-void InterleavedGltfModel::Render(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4& world, const std::vector<Node>& animated_nodes, RenderPass pass, const PipeLineState& pipeline)
+void InterleavedGltfModel::Render(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4& world, const std::vector<Node>& animated_nodes, RenderPass pass, const PipeLineStateDesc& pipeline)
 {
     if (mode == Mode::StaticMesh)
     {
@@ -1386,7 +1386,7 @@ void InterleavedGltfModel::Render(ID3D11DeviceContext* immediateContext, const D
                 {
                     immediateContext->PSSetShader(pipeline.pixelShader ? pipeline.pixelShader.Get() : pixelShader.Get(), nullptr, 0);
                 }
-                RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+                RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
                 bool passed = false;
                 switch (pass)
                 {
@@ -1460,7 +1460,7 @@ void InterleavedGltfModel::Render(ID3D11DeviceContext* immediateContext, const D
     }
 }
 // INTERLEAVED_GLTF_MODEL
-void InterleavedGltfModel::BatchRender(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4& world, RenderPass pass, const PipeLineState& pipeline)
+void InterleavedGltfModel::BatchRender(ID3D11DeviceContext* immediateContext, const DirectX::XMFLOAT4X4& world, RenderPass pass, const PipeLineStateDesc& pipeline)
 {
     _ASSERT_EXPR(mode == Mode::StaticMesh, L"This function only works with static_batching data.");
 
@@ -1567,7 +1567,7 @@ void InterleavedGltfModel::BatchRender(ID3D11DeviceContext* immediateContext, co
             material.data.occlusionTexture.index,
         };
         //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
         ID3D11ShaderResourceView* nullShaderResourceView{};
         std::vector<ID3D11ShaderResourceView*> shaderResourceViews(_countof(textureIndices));
@@ -1589,7 +1589,7 @@ void InterleavedGltfModel::BatchRender(ID3D11DeviceContext* immediateContext, co
     }
 }
 
-void InterleavedGltfModel::InstancedStaticBatchRender(ID3D11DeviceContext* immediateContext/*, const DirectX::XMFLOAT4X4& world*/, RenderPass pass, const PipeLineState& pipeline)
+void InterleavedGltfModel::InstancedStaticBatchRender(ID3D11DeviceContext* immediateContext/*, const DirectX::XMFLOAT4X4& world*/, RenderPass pass, const PipeLineStateDesc& pipeline)
 {
     _ASSERT_EXPR(mode == Mode::InstancedStaticMesh, L"This function only works with instance_static_batching data.");
 
@@ -1671,7 +1671,7 @@ void InterleavedGltfModel::InstancedStaticBatchRender(ID3D11DeviceContext* immed
             material.data.emissiveTexture.index,
             material.data.occlusionTexture.index,
         };
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 
         ID3D11ShaderResourceView* nullShaderResourceView{};
         std::vector<ID3D11ShaderResourceView*> shaderResourceViews(_countof(textureIndices));

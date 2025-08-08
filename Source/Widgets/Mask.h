@@ -16,7 +16,7 @@ public:
 	void Begin(ID3D11DeviceContext* immediateContext) override {
 #if 1
 		RectTransform* maskRect = gameObject->rect;
-		RenderState::BindRasterizerState(immediateContext, RASTER_STATE::USE_SCISSOR_RECTS);
+		RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::USE_SCISSOR_RECTS);
 		D3D11_VIEWPORT viewport{};
 		UINT numViewports{ 1 };
 		immediateContext->RSGetViewports(&numViewports, &viewport);
@@ -43,7 +43,7 @@ public:
 	}
 
 	void End(ID3D11DeviceContext* immediateContext) override {
-		RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+		RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 	}
 
 	void DrawProperty() override {

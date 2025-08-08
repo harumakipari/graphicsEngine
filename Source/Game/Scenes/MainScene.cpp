@@ -736,7 +736,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
     RenderState::BindSamplerStates(immediateContext);
     RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+    RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
     //IBL
     immediateContext->PSSetShaderResources(32, 1, shaderResourceViews[0].GetAddressOf());
@@ -983,7 +983,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
         //RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
         //skyMap->Blit(immediateContext, sceneConstants.viewProjection);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
 
         // VOLUMETRIC_CLOUDSCAPES
@@ -995,7 +995,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
         RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         //sprite_batches[0]->Begin(immediateContext);
         //sprite_batches[0]->Render(immediateContext, 0, 0, 1280, 720);
         //sprite_batches[0]->End(immediateContext);
@@ -1028,12 +1028,12 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
         RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
         // MULTIPLE_RENDER_TARGETS
         RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
 
         //gameWorld_->Render(immediateContext);
@@ -1045,7 +1045,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
         actorRender.RenderBuilding(immediateContext);
 
 
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::WIREFRAME_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::WIREFRAME_CULL_NONE);
 
         // デバック描画
 #if _DEBUG
@@ -1053,7 +1053,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
     //PhysicsTest::Instance().DebugRender(immediateContext);
     //GameManager::DebugRender(immediateContext);
 #endif
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 #if 1
         // PARTICLE
         //RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_OFF);
@@ -1087,7 +1087,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
                         DirectX::XMFLOAT4X4 world;
                         DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
-                        PipeLineState pipelineState;
+                        PipeLineStateDesc pipelineState;
                         pipelineState.pixelShader = effectSystem->dissolvePixelShader;
 
                         debri->GetMeshComponent()->SetPipeLineState(pipelineState);
@@ -1120,7 +1120,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
 
                         DirectX::XMFLOAT4X4 world;
                         DirectX::XMStoreFloat4x4(&world, DirectX::XMMatrixIdentity());
-                        PipeLineState pipelineState;
+                        PipeLineStateDesc pipelineState;
                         pipelineState.pixelShader = effectSystem->dissolvePixelShader;
 
                         debri->GetMeshComponent()->SetPipeLineState(pipelineState);
@@ -1172,7 +1172,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
         cascadedShadowMaps->Activate(immediateContext, cameraView, cameraProjection, lightDirection, criticalDepthValue, 3/*cbSlot*/);
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         actorRender.CastShadowRender(immediateContext);
         //gameWorld_->CastShadowRender(immediateContext);
         cascadedShadowMaps->Deactive(immediateContext);
@@ -1231,7 +1231,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
             //ブルーム
             RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
             RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-            RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+            RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
             //bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
             bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
 
@@ -1256,7 +1256,7 @@ void MainScene::Render(ID3D11DeviceContext* immediateContext, float elapsedTime)
     // UI描画
     {
         RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
         objectManager.Draw(immediateContext);
     }

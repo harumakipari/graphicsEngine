@@ -231,7 +231,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     RenderState::BindSamplerStates(immediateContext);
     RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
     RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-    RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+    RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
     //IBL
     immediateContext->PSSetShaderResources(32, 1, shaderResourceViews[0].GetAddressOf());
@@ -346,25 +346,25 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
         // SKY_MAP
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         //skyMap->Blit(immediateContext, sceneConstants.viewProjection);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
         RenderState::BindSamplerStates(immediateContext);
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         //splash->Render(immediateContext, 0, 0, viewport.Width, viewport.Height);
 
         RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
         // MULTIPLE_RENDER_TARGETS
         RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 
         actorRender.RenderOpaque(immediateContext);
         actorRender.RenderMask(immediateContext);
@@ -393,7 +393,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         cascadedShadowMaps->Activate(immediateContext, cameraView, cameraProjection, lightDirection, criticalDepthValue, 3/*cbSlot*/);
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         actorRender.CastShadowRender(immediateContext);
         //gameWorld_->CastShadowRender(immediateContext);
         cascadedShadowMaps->Deactive(immediateContext);
@@ -430,7 +430,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
             //ブルーム
             RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
             RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-            RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+            RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
             bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
             //bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
 
@@ -458,15 +458,15 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
         // SKY_MAP
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         skyMap->Blit(immediateContext, sceneConstants.viewProjection);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
         // MULTIPLE_RENDER_TARGETS
         RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 
         actorRender.RenderOpaque(immediateContext);
         actorRender.RenderMask(immediateContext);
@@ -482,17 +482,17 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindSamplerStates(immediateContext);
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         //splash->Render(immediateContext, 0, 0, viewport.Width, viewport.Height);
 
         RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_BACK);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_BACK);
 
         // MULTIPLE_RENDER_TARGETS
         RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 
 
         // ここでライティングの処理
@@ -536,7 +536,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         cascadedShadowMaps->Activate(immediateContext, cameraView, cameraProjection, lightDirection, criticalDepthValue, 3/*cbSlot*/);
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         actorRender.CastShadowRender(immediateContext);
         //gameWorld_->CastShadowRender(immediateContext);
         cascadedShadowMaps->Deactive(immediateContext);
@@ -574,7 +574,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
             //ブルーム
             RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
             RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
-            RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+            RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
             //bloomer->make(immediateContext, gBufferRenderTarget->renderTargetShaderResourceViews[0]);
             bloomer->make(immediateContext, multipleRenderTargets->renderTargetShaderResourceViews[0]);
             //bloomer->make(immediateContext, framebuffers[1]->shaderResourceViews[0].Get());
@@ -608,7 +608,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     // UI描画
     {
         RenderState::BindBlendState(immediateContext, BLEND_STATE::ALPHA);
-        RenderState::BindRasterizerState(immediateContext, RASTER_STATE::SOLID_CULL_NONE);
+        RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_OFF_ZW_OFF);
         objectManager.Draw(immediateContext);
     }
