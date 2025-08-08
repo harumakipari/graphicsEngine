@@ -10,12 +10,13 @@ struct PipeLineStateDesc
 {
     Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader = nullptr;
     Microsoft::WRL::ComPtr <ID3D11VertexShader> vertexShader = nullptr;
-    Microsoft::WRL::ComPtr <ID3D11VertexShader> cascadShadowVertexShader = nullptr;
     Microsoft::WRL::ComPtr <ID3D11HullShader> hullShader = nullptr;
     Microsoft::WRL::ComPtr<ID3D11DomainShader> domainShader = nullptr;
     Microsoft::WRL::ComPtr<ID3D11GeometryShader> gemetryShader = nullptr;
     
     Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout = nullptr;
+
+    D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     BLEND_STATE               blendState = BLEND_STATE::NONE;
     DEPTH_STATE               depthState = DEPTH_STATE::ZT_ON_ZW_ON;
