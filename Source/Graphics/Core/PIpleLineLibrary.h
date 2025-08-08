@@ -17,9 +17,8 @@ private:
 class PipeLineStateSet
 {
 public:
-    PipeLineStateSet()
-    {
-    }
+    PipeLineStateSet() = default;
+    virtual ~PipeLineStateSet() {};
 
     // StaticMesh のパイプラインの設定する関数
     void InitStaticMesh(ID3D11Device* device)
