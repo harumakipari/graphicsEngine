@@ -15,10 +15,11 @@ public:
         HRESULT hr = S_OK;
 
         D3D11_BUFFER_DESC bufferDesc{};
-        bufferDesc.ByteWidth = (sizeof(T) + 0x0f) & ~0x0f;
-        //bufferDesc.ByteWidth = sizeof(T);
+        //bufferDesc.ByteWidth = (sizeof(T) + 15) & ~15;
+        //bufferDesc.ByteWidth = (sizeof(T) + 0x0f) & ~0x0f;
+        bufferDesc.ByteWidth = sizeof(T);
         bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-#if 1
+#if 0
         bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
         bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 #else
@@ -35,7 +36,7 @@ public:
     void Activate(ID3D11DeviceContext* immediateContext, int slot)
     {
         HRESULT hr = S_OK;
-#if 1
+#if 0
         D3D11_MAPPED_SUBRESOURCE mappedSubresource = {};
         hr = immediateContext->Map(constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));

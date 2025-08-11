@@ -20,6 +20,7 @@
 #include "Graphics/PostProcess/MultipleRenderTargets.h"
 #include "Graphics/Effect/EffectSystem.h"
 #include "Graphics/Core/Light.h"
+#include "Graphics/Renderer/SceneRenderer.h"
 
 #include "Game/Actors/Player/TitlePlayer.h"
 #include "Game/Actors/Stage/TitleStage.h"
@@ -239,6 +240,7 @@ private:
     DirectX::XMFLOAT3 cameraTarget = { 0.0f,0.0f,0.0f };
 
     Renderer actorRender;
+    SceneRenderer sceneRender;
 
     // SCREEN_SPACE_AMBIENT_OCCLUSION
     bool enableSSAO = true;

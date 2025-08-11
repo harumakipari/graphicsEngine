@@ -24,9 +24,9 @@ void World::Tick(float deltaTime)
 // •`‰æˆ—
 void World::Render(ID3D11DeviceContext* immediateContext)
 {
-    renderer.RenderOpaque(immediateContext, allActors_);
-    renderer.RenderMask(immediateContext, allActors_);
-    renderer.RenderBlend(immediateContext, allActors_);
+    //renderer.RenderOpaque(immediateContext, allActors_);
+    //renderer.RenderMask(immediateContext, allActors_);
+    //renderer.RenderBlend(immediateContext, allActors_);
 }
 
 // ‰e‚Ì•`‰æˆ—

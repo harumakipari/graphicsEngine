@@ -45,9 +45,9 @@ public:
         const std::vector<std::string> animationFilenames =
         {
             "./Data/Models/Characters/GirlSoldier/Emote_Slice.glb",
-            "./Data/Models/Characters/GirlSoldier/Emote_Slice.glb",
             "./Data/Models/Characters/GirlSoldier/Jog_Fwd.glb",
-            "./Data/Models/Characters/GirlSoldier/Jog_Fwd.glb",
+            "./Data/Models/Characters/GirlSoldier/Ability_E_InMotion.glb",
+            "./Data/Models/Characters/GirlSoldier/HitReact_Front.glb",
         };
         skeltalMeshComponent->AppendAnimations(animationFilenames);
         // アニメーションコントローラーを作成

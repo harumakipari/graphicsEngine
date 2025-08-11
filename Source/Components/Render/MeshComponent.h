@@ -32,7 +32,7 @@ class MeshComponent :public SceneComponent
 {
 public:
     PipeLineStateDesc pipeLineState_;
-
+    std::optional<std::string> overridePipelineName;
 public:
     MeshComponent(const std::string& name, std::shared_ptr<Actor> owner) :SceneComponent(name, owner) {};
     std::shared_ptr<InterleavedGltfModel> model;
