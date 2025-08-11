@@ -368,6 +368,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
         sceneRender.currentRenderPath = RenderPath::Forward;
         sceneRender.RenderOpaque(immediateContext);
+        sceneRender.RenderMask(immediateContext);
+        sceneRender.RenderBlend(immediateContext);
         //actorRender.RenderOpaque(immediateContext);
         //actorRender.RenderMask(immediateContext);
         //actorRender.RenderBlend(immediateContext);

@@ -40,64 +40,9 @@ public:
 
     void RenderOpaque(ID3D11DeviceContext* immediateContext/*, std::vector<std::shared_ptr<Actor>> allActors*/);
 
-    void RenderMask(ID3D11DeviceContext* immediateContext, std::vector<std::shared_ptr<Actor>> allActors)
-    {
-        for (auto actor : allActors)
-        {
-            if (!actor->rootComponent_)
-            {
-                continue;
-            }
+    void RenderMask(ID3D11DeviceContext* immediateContext);
 
-            if (!actor->isActive)
-            {// actorが存在していなかったらスキップ
-                continue;
-            }
-
-            // actor に付属している全ての meshComponent を取り出す
-            std::vector<MeshComponent*> meshComponents;
-            actor->GetComponents<MeshComponent>(meshComponents);
-
-            for (const MeshComponent* meshComponent : meshComponents)
-            {
-                if (!meshComponent->IsVisible())
-                { // 描画フラグが false ならスキップ
-                    continue;
-                }
-                const auto& worldMat = meshComponent->GetComponentWorldTransform().ToWorldTransform();
-                meshComponent->RenderMask(immediateContext, worldMat);
-            }
-        }
-    }
-    void RenderBlend(ID3D11DeviceContext* immediateContext, std::vector<std::shared_ptr<Actor>> allActors)
-    {
-        for (auto actor : allActors)
-        {
-            if (!actor->rootComponent_)
-            {
-                continue;
-            }
-
-            if (!actor->isActive)
-            {// actorが存在していなかったらスキップ
-                continue;
-            }
-
-            // actor に付属している全ての meshComponent を取り出す
-            std::vector<MeshComponent*> meshComponents;
-            actor->GetComponents<MeshComponent>(meshComponents);
-
-            for (const MeshComponent* meshComponent : meshComponents)
-            {
-                if (!meshComponent->IsVisible())
-                { // 描画フラグが false ならスキップ
-                    continue;
-                }
-                const auto& worldMat = meshComponent->GetComponentWorldTransform().ToWorldTransform();
-                meshComponent->RenderBlend(immediateContext, worldMat);
-            }
-        }
-    }
+    void RenderBlend(ID3D11DeviceContext* immediateContext);
 
     void CastShadowRender(ID3D11DeviceContext* immediateContext, std::vector<std::shared_ptr<Actor>> allActors)
     {
@@ -131,7 +76,7 @@ public:
 
     void Draw(ID3D11DeviceContext* immediateContext, const MeshComponent* meshComponent, const DirectX::XMFLOAT4X4& world, const std::vector<InterleavedGltfModel::Node>& animatedNodes, InterleavedGltfModel::RenderPass pass);
 
-    void DrawWithStaticBatching() {};
+    void DrawWithStaticBatching(ID3D11DeviceContext* immediateContext, const MeshComponent* meshComponent, const DirectX::XMFLOAT4X4& world, const std::vector<InterleavedGltfModel::Node>& animatedNodes, InterleavedGltfModel::RenderPass pass);
 private:
     // カメラの定数バッファ
     std::unique_ptr<ConstantBuffer<ViewConstants>> viewBuffer;
