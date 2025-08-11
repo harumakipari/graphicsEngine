@@ -7,7 +7,6 @@
 #endif
 
 #include "Graphics/Core/Graphics.h"
-#include "Camera.h"
 #include "Physics/Physics.h"
 #include "Physics/PhysicsUtility.h"
 #include "Core/ActorManager.h"

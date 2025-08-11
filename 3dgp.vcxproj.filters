@@ -166,6 +166,12 @@
     <Filter Include="Sources\Game\Scenes\Managers">
       <UniqueIdentifier>{3df6efc0-304d-460f-812e-d72dbcb37f95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\UI">
+      <UniqueIdentifier>{572965ef-b1d1-4612-95dd-fd872c12a1d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\UI\Widgets">
+      <UniqueIdentifier>{29462aa3-8e94-4a1f-b67e-bbce756fb8e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -434,6 +440,9 @@
     </ClCompile>
     <ClCompile Include="Source\Core\ActorManager.cpp">
       <Filter>Sources\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Renderer\SceneRenderer.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -925,6 +934,9 @@
     </ClInclude>
     <ClInclude Include="Source\Graphics\Core\PIpleLineLibrary.h">
       <Filter>Sources\Graphics\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UI\Widgets\Widget.h">
+      <Filter>Sources\UI\Widgets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
