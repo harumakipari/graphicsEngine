@@ -780,9 +780,18 @@ void InterleavedGltfModel::FetchTextures(ID3D11Device* device, const tinygltf::M
 
 void InterleavedGltfModel::FetchAnimations(const tinygltf::Model& gltfModel, std::vector<Animation>& outAnimations)
 {
+    char buf[256];
+
+    // skinsÇÃèÛë‘ÇèoóÕ
+    sprintf_s(buf, "Before emplace_back, skins size=%zu, capacity=%zu\n", skins.size(), skins.capacity());
+    OutputDebugStringA(buf);
     for (const tinygltf::Skin& transmissionSkin : gltfModel.skins)
     {
+        sprintf_s(buf, "Processing skin, transmissionSkin.inverseBindMatrices=%d\n", transmissionSkin.inverseBindMatrices);
+        OutputDebugStringA(buf);
         Skin& skin = skins.emplace_back();
+        sprintf_s(buf, "After emplace_back, skins size=%zu\n", skins.size());
+        OutputDebugStringA(buf);
         const tinygltf::Accessor& gltfAccessor = gltfModel.accessors.at(transmissionSkin.inverseBindMatrices);
         const tinygltf::BufferView& gltfBufferView = gltfModel.bufferViews.at(gltfAccessor.bufferView);
         _ASSERT_EXPR(gltfAccessor.type == TINYGLTF_TYPE_MAT4, L"");
