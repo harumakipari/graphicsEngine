@@ -4,7 +4,6 @@
 #include <dxgi1_3.h>
 #include <memory>
 #include "Graphics/Resource/Texture.h"
-#include "Camera.h"
 
 #include "Engine/Scene/SceneRegistry.h"
 #include "Graphics/Core/RenderState.h"

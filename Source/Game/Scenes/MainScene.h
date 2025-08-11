@@ -31,7 +31,6 @@
 #include "Game/Actors/Player/Player.h"
 #include "Game/Actors/Stage/Stage.h"
 #include "Game/Actors/Enemy/RiderEnemy.h"
-#include "CameraController.h"
 
 #include "Physics/CollisionMesh.h"
 #include "Graphics/Effect/Particles.h"
