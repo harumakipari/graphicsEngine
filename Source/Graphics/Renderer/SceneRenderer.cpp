@@ -1,7 +1,5 @@
 #include "SceneRenderer.h"
 
-#include "Engine/Scene/Scene.h"
-
 UINT SizeofComponent(DXGI_FORMAT format)
 {
     switch (format)
@@ -25,65 +23,11 @@ UINT SizeofComponent(DXGI_FORMAT format)
 //    return true;
 //}
 
-void SceneRenderer::RenderOpaque(ID3D11DeviceContext* immediateContext/*, std::vector<std::shared_ptr<Actor>> allActors*/)
-{
-    Scene* currentScene = Scene::GetCurrentScene();  // 現在のシーン取得
-    if (!currentScene) return;
-    auto& allActors = currentScene->GetActorManager()->GetAllActors();
-
-    for (auto actor : allActors)
-    {
-        if (!actor->rootComponent_)
-        {
-            continue;
-        }
-
-        if (!actor->isActive)
-        {// actorが存在していなかったらスキップ
-            continue;
-        }
-
-        // actor に付属している全ての meshComponent を取り出す
-        std::vector<MeshComponent*> meshComponents;
-        actor->GetComponents<MeshComponent>(meshComponents);
-
-        for (MeshComponent* meshComponent : meshComponents)
-        {
-            // 各 MeshComponent 自身の最新ワールド行列を取り出す
-            const auto& worldMat = meshComponent->GetComponentWorldTransform().ToWorldTransform();
-            // 各 MeshComponent の model を取り出す
-            const InterleavedGltfModel* model = meshComponent->model.get();
-
-            auto* convexComponent = actor->GetComponent<ConvexCollisionComponent>();
-            if (convexComponent = dynamic_cast<ConvexCollisionComponent*>(convexComponent))
-            {
-                //meshComponent->model->Render(immediateContext, worldMat, convexComponent->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::Opaque);
-            }
-
-            if (meshComponent->model->mode == InterleavedGltfModel::Mode::SkeltalMesh)
-            {// 
-                Draw(immediateContext, meshComponent, worldMat, meshComponent->modelNodes, InterleavedGltfModel::RenderPass::Opaque);
-            }
-
-            if (!meshComponent->IsVisible())
-            { // 描画フラグが false ならスキップ
-                continue;
-            }
-            //  描画呼び出し
-            //meshComponent->RenderOpaque(immediateContext, worldMat);
-        }
-    }
-}
-
-
 void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshComponent* meshComponent, const DirectX::XMFLOAT4X4& world, const std::vector<InterleavedGltfModel::Node>& animatedNodes, InterleavedGltfModel::RenderPass pass)
 {
     // 各 MeshComponent の model を取り出す
     const InterleavedGltfModel* model = meshComponent->model.get();
-    immediateContext->PSSetShaderResources(0, 1, model->materialResourceView.GetAddressOf());
-    //std::string pName = GetPipelineName(currentRenderPath, static_cast<MaterialAlphaMode>(pass), static_cast<ModelMode>(model->mode));
-    //pipeLineStateSet->BindPipeLineState(immediateContext, pName);
-    //pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
+
     std::function<void(int)> traverse = [&](int nodeIndex)->void {
         const InterleavedGltfModel::Node& node = animatedNodes.at(nodeIndex);
         if (node.skin > -1)
@@ -160,8 +104,8 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
                 DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&coordinateSystemTransforms[static_cast<int>(model->modelCoordinateSystem)]) * DirectX::XMMatrixScaling(scaleFactor,scaleFactor,scaleFactor) };
 
                 DirectX::XMStoreFloat4x4(&primitiveCBuffer->data.world, DirectX::XMLoadFloat4x4(&node.globalTransform) * C * DirectX::XMLoadFloat4x4(&world));
-                // 0番に定数バッファを送る
-                primitiveCBuffer->Activate(immediateContext, 0);
+                // 1番に定数バッファを送る
+                primitiveCBuffer->Activate(immediateContext, 1);
 
                 const InterleavedGltfModel::Material& material = model->materials.at(primitive.material);
 
@@ -251,7 +195,7 @@ void SceneRenderer::Draw(ID3D11DeviceContext* immediateContext, const MeshCompon
         {
             traverse(childIndex);
         }
-        };
+                        };
     for (std::vector<int>::value_type nodeIndex : model->scenes.at(model->defaultScene).nodes)
     {
         traverse(nodeIndex);

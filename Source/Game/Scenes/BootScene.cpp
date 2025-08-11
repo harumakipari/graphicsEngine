@@ -284,7 +284,6 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
 
 #endif // 0
         actorRender.UpdateViewConstants(immediateContext, data);
-        sceneRender.UpdateViewConstants(immediateContext, data);
     }
     lightConstants.lightDirection = lightDirection;
     lightConstants.colorLight = colorLight;
@@ -337,8 +336,8 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
     immediateContext->UpdateSubresource(constantBuffers[3].Get(), 0, 0, &spriteConstants, 0, 0);
     immediateContext->PSSetConstantBuffers(10, 1, constantBuffers[3].GetAddressOf());
 
-    //titlePlayer->SwitchPS(useDeferredRendering);
-    //title->SwitchPS(useDeferredRendering);
+    titlePlayer->SwitchPS(useDeferredRendering);
+    title->SwitchPS(useDeferredRendering);
     if (!useDeferredRendering)
     {
         // MULTIPLE_RENDER_TARGETS
@@ -366,11 +365,10 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindBlendState(immediateContext, BLEND_STATE::MULTIPLY_RENDER_TARGET_ALPHA);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
         RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
-        sceneRender.currentRenderPath = RenderPath::Forward;
-        sceneRender.RenderOpaque(immediateContext);
-        //actorRender.RenderOpaque(immediateContext);
-        //actorRender.RenderMask(immediateContext);
-        //actorRender.RenderBlend(immediateContext);
+
+        actorRender.RenderOpaque(immediateContext);
+        actorRender.RenderMask(immediateContext);
+        actorRender.RenderBlend(immediateContext);
 
         multipleRenderTargets->Deactivate(immediateContext);
 
@@ -396,7 +394,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
         RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
-        //actorRender.CastShadowRender(immediateContext);
+        actorRender.CastShadowRender(immediateContext);
         //gameWorld_->CastShadowRender(immediateContext);
         cascadedShadowMaps->Deactive(immediateContext);
 
@@ -470,12 +468,9 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
         RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
 
-        sceneRender.currentRenderPath = RenderPath::Defferd;
-        sceneRender.RenderOpaque(immediateContext);
-
-        //actorRender.RenderOpaque(immediateContext);
-        //actorRender.RenderMask(immediateContext);
-        //actorRender.RenderBlend(immediateContext);
+        actorRender.RenderOpaque(immediateContext);
+        actorRender.RenderMask(immediateContext);
+        actorRender.RenderBlend(immediateContext);
 
         gBufferRenderTarget->Deactivate(immediateContext);
 
@@ -542,7 +537,7 @@ void BootScene::Render(ID3D11DeviceContext* immediateContext, float delta_time)
         RenderState::BindBlendState(immediateContext, BLEND_STATE::NONE);
         RenderState::BindDepthStencilState(immediateContext, DEPTH_STATE::ZT_ON_ZW_ON);
         RenderState::BindRasterizerState(immediateContext, RASTERRIZER_STATE::SOLID_CULL_NONE);
-        //actorRender.CastShadowRender(immediateContext);
+        actorRender.CastShadowRender(immediateContext);
         //gameWorld_->CastShadowRender(immediateContext);
         cascadedShadowMaps->Deactive(immediateContext);
 

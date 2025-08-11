@@ -19,9 +19,6 @@ public:
     SceneRenderer()
     {
         // 定数バッファ
-        viewBuffer = std::make_unique<ConstantBuffer<ViewConstants>>(Graphics::GetDevice());
-        primitiveJointCBuffer = std::make_unique<ConstantBuffer<PrimitiveJointConstants>>(Graphics::GetDevice());
-        primitiveCBuffer = std::make_unique<ConstantBuffer<PrimitiveConstants>>(Graphics::GetDevice());
 
         // パイプラインステート
         pipeLineStateSet = std::make_unique<PipeLineStateSet>();
@@ -31,15 +28,54 @@ public:
 
     virtual ~SceneRenderer() {}
 
-    // View関連の定数バッファを更新する
-    void UpdateViewConstants(ID3D11DeviceContext* immediateContext, const ViewConstants& data)
+    void RenderOpaque(ID3D11DeviceContext* immediateContext, std::vector<std::shared_ptr<Actor>> allActors)
     {
-        viewBuffer->data = data;
-        viewBuffer->Activate(immediateContext, 8);
+        for (auto actor : allActors)
+        {
+            if (!actor->rootComponent_)
+            {
+                continue;
+            }
+
+            if (!actor->isActive)
+            {// actorが存在していなかったらスキップ
+                continue;
+            }
+
+            // actor に付属している全ての meshComponent を取り出す
+            std::vector<MeshComponent*> meshComponents;
+            actor->GetComponents<MeshComponent>(meshComponents);
+
+            for (MeshComponent* meshComponent : meshComponents)
+            {
+                // 各 MeshComponent 自身の最新ワールド行列を取り出す
+                const auto& worldMat = meshComponent->GetComponentWorldTransform().ToWorldTransform();
+                // 各 MeshComponent の model を取り出す
+                const InterleavedGltfModel* model = meshComponent->model.get();
+
+                auto* convexComponent = actor->GetComponent<ConvexCollisionComponent>();
+                if (convexComponent = dynamic_cast<ConvexCollisionComponent*>(convexComponent))
+                {
+                    meshComponent->model->Render(immediateContext, worldMat, convexComponent->GetAnimatedNodes(), InterleavedGltfModel::RenderPass::Opaque);
+                }
+
+                if (meshComponent->model->mode == InterleavedGltfModel::Mode::SkeltalMesh)
+                {// 
+                    //pipeLineStateSet->BindPipeLineState(immediateContext, "forwardOpaqueSkeltalMesh");
+
+                    immediateContext->PSSetShaderResources(0, 1, model->materialResourceView.GetAddressOf());
+
+                }
+
+                if (!meshComponent->IsVisible())
+                { // 描画フラグが false ならスキップ
+                    continue;
+                }
+                //  描画呼び出し
+                meshComponent->RenderOpaque(immediateContext, worldMat);
+            }
+        }
     }
-
-    void RenderOpaque(ID3D11DeviceContext* immediateContext/*, std::vector<std::shared_ptr<Actor>> allActors*/);
-
     void RenderMask(ID3D11DeviceContext* immediateContext, std::vector<std::shared_ptr<Actor>> allActors)
     {
         for (auto actor : allActors)
@@ -163,7 +199,6 @@ private:
     };
     std::unique_ptr<ConstantBuffer<PrimitiveConstants>> primitiveCBuffer;
 
-public:
     // 今のRenderPath
     RenderPath currentRenderPath = RenderPath::Defferd;
 };
